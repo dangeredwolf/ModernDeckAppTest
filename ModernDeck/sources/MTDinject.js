@@ -1274,7 +1274,7 @@ function mtdAppFunctions() {
 	.html("&#xE15B")
 	.click(function(data,handler){
 		var window = remote.BrowserWindow.getFocusedWindow();
-    	window.minimize();
+		window.minimize();
 	});
 
 	var maximise = make("button")
@@ -1308,9 +1308,18 @@ function mtdAppFunctions() {
 	body.append(windowcontrols);
 
 	ipcRenderer.on('context-menu', (event, p) => {
-	  console.log(p); // prints "pong"
-	  body.append(buildContextMenu(p));
+		console.log(p); // prints "pong"
+		body.append(buildContextMenu(p));
 	})
+
+	const updateOnlineStatus = function(){
+		ipcRenderer.send('online-status-changed', navigator.onLine ? 'online' : 'offline')
+	}
+
+	window.addEventListener('online',	updateOnlineStatus);
+	window.addEventListener('offline',	updateOnlineStatus);
+
+	updateOnlineStatus();
 }
 
 function getIpc() {

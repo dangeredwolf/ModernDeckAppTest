@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
 const electron = require("electron");
-const { app, BrowserWindow, ipcMain, session, systemPreferences, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, session, systemPreferences, Menu, dialog } = require('electron');
 const serve = require('electron-serve');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -106,8 +106,30 @@ function makeWindow() {
     icon:__dirname+"ModernDeck/sources/favicon.ico",
     frame:false,
     minWidth:400,
+    show:false,
     backgroundColor:'#263238'
   });
+
+  if (!navigator.onLine) {
+    dialog.showMessageBox(mainWindow,{
+      title:"ModernDeck",
+      message:"It seems that you aren't connected to the internet. ModernDeck requires an internet connection to function.",
+      type:"error",
+      buttons:["Retry","Close"]
+    },function(response){
+      if (response === 0) {
+        mainWindow.destroy();
+        mainWindow = null;
+        makeWindow();
+      } else if (response === 1) {
+        mainWindow.destroy();
+        mainWindow = null;
+      }
+    });
+    return;
+  }
+
+  mainWindow.show();
 
 
   mainWindow.on('page-title-updated', function(event,url) {

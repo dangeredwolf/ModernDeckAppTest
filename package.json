@@ -1,0 +1,36 @@
+{
+  "name": "ModernDeck",
+  "version": "6.6.0",
+  "description": "A minimal Electron application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/dangeredwolf/ModernDeck",
+  "keywords": [
+    "TweetDeck",
+    "ModernDeck",
+    "Modern",
+    "Tweet",
+    "Deck",
+    "Material",
+    "Design"
+  ],
+  "author": "dangeredwolf",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^4.1.4",
+    "electron-updater": "^3.0.3",
+    "update-electron-app": "^1.0.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-serve": "^0.2.0"
+  },
+  "files": [
+    "*.js",
+    "*.css",
+    "*.png",
+    "*.woff2",
+    "*.woff",
+    "*.ico"
+  ]
+}

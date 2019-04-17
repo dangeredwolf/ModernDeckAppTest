@@ -1,0 +1,12 @@
+
+*.zip
+
+*.crx
+
+*.pem
+
+*.map
+
+ModernDeck\README.md
+
+node_modules

@@ -1,0 +1,1 @@
+(browser || chrome).tabs.create({url:"https://tweetdeck.twitter.com"}, function(){})

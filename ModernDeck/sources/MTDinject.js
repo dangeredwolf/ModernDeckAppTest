@@ -5,7 +5,7 @@
 
 "use strict";
 
-var SystemVersion = "6.6 (updates not done yet)";
+var SystemVersion = "App Build 2019-04-18";
 var MTDBaseURL = "https://rawgit.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if using online client
 
 var msgID,
@@ -46,6 +46,8 @@ var isEdge = typeof MSGesture !== "undefined";
 var isFirefox = typeof mozInnerScreenX !== "undefined";
 var isApp = typeof require !== "undefined";
 
+var injectedFonts = false;
+
 var twitterSucks = document.createElement("script");
 twitterSucks.type = "text/javascript";
 
@@ -78,6 +80,13 @@ window.addEventListener("message", function(e) {
 });
 
 window.addEventListener("beforeunload",savePreferencesToDisk);
+
+
+const forceAppUpdateOnlineStatus = function(e){
+	if (!require) {return;}
+	const {ipcRenderer} = require('electron');
+	ipcRenderer.send('online-status-changed', e)
+}
 
 if (typeof MTDURLExchange === "object" && typeof MTDURLExchange.getAttribute === "function") {
 	MTDBaseURL = MTDURLExchange.getAttribute("type") || "https://dangeredwolf.com/assets/mtdtest/";
@@ -238,6 +247,100 @@ function MTDInit(){
 		document.getElementsByClassName("js-signin-ui block")[0].innerHTML = '<div class="preloader-wrapper big active"><div class="spinner-layer"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>';
 		replacedLoadingSpinnerNew = true;
 	}
+
+	if (!injectedFonts) {
+
+		$(document.head).append(make("style").html(
+			fontParseHelper({name:"Roboto-Regular"}) +
+			fontParseHelper({family:"MD",name:"mdvectors"}) +
+			fontParseHelper({family:"Material",name:"MaterialIcons"}) +
+			fontParseHelper({weight:"500",name:"Roboto-Medium"}) +
+			fontParseHelper({name:"Roboto-Italic",style:"italic"}) +
+			fontParseHelper({weight:"300",name:"Roboto-Light"}) +
+			fontParseHelper({weight:"500",name:"Roboto-MediumItalic",style:"italic"}) +
+			fontParseHelper({weight:"300",name:"Roboto-LightItalic",style:"italic"}) +
+			fontParseHelper({weight:"100",name:"Roboto-Thin"}) +
+			fontParseHelper({weight:"100",name:"Roboto-ThinIalic",style:"italic"}) +
+			fontParseHelper({family:"Noto Sans CJK",weight:"500",name:"NotoSansCJKjp-Medium",format:"opentype",extension:"otf"}) +
+			fontParseHelper({family:"Noto Sans CJK",name:"NotoSansCJKjp-Regular",format:"opentype",extension:"otf"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansHI-Medium",range:"U+0900-097F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansHI-Regular",range:"U+0900-097F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansArabic-Medium",range:"U+0600-06FF,U+0750–077F,U+08A0–08FF,U+FB50–FDFF,U+FE70–FEFF,U+10E60–10E7F,U+1EE00—1EEFF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansArabic-Regular",range:"U+0600-06FF,U+0750–077F,U+08A0–08FF,U+FB50–FDFF,U+FE70–FEFF,U+10E60–10E7F,U+1EE00—1EEFF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansArmenian-Medium",range:"U+0530-0580"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansArmenian-Regular",range:"U+0530-0580"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansBengali-Medium",range:"U+0980-09FF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansBengali-Regular",range:"U+0980-09FF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansBengali-Medium",range:"U+0980-09FF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansBengali-Regular",range:"U+0980-09FF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansBrahmi",range:"U+11000-1107F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansBuginese",range:"U+1A00-1A1B,U+1A1E-1A1F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansBuhid-Regular",range:"U+1740-1753"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansCanadianAboriginal",range:"U+1400-167F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansCarian-Regular",range:"U+102A0-102DF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansChakma-Regular",range:"U+11100-1114F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansCherokee-Regular",range:"U+11100-1114F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansCherokee-Medium",range:"U+13A0-13F4,U+13F5,U+13F8-13FD"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansCherokee-Regular",range:"U+13A0-13F4,U+13F5,U+13F8-13FD"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansEthiopic-Medium",range:"U+1200-137F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansEthiopic-Regular",range:"U+1200-137F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansGeorgian-Medium",range:"U+10A0-10FF,U+2D00-2D2F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansGeorgian-Regular",range:"U+10A0-10FF,U+2D00-2D2F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansGujaratiUI-Bold",range:"U+0A80-0AFF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansGujaratiUI",range:"U+0A80-0AFF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansHebrew-Bold",range:"U+0590-05FF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansHebrew-Regular",range:"U+0590-05FF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansJavanese",range:"U+A980-A9DF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansKannadaUI-Bold",range:"U+0C80-0CFF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansKannadaUI",range:"U+0C80-0CFF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansKayahLi-Regular",range:"U+A900-A92F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansKhmerUI-Medium",range:"U+1780-17FF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansKhmerUI-Regular",range:"U+1780-17FF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansLaoUI-Medium",range:"U+0E80-0EFF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansLaoUI-Regular",range:"U+0E80-0EFF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansLisu-Regular",range:"U+A4D0-A4FF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansMalayalamUI-Bold",range:"U+0D00-0D7F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansMalayalamUI",range:"U+0D00-0D7F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansMyanmarUI-Bold",range:"U+1000-109F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansMyanmarUI-Regular",range:"U+1000-109F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansOriyaUI-Medium",range:"U+0B00-0B7F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansOriyaUI",range:"U+0B00-0B7F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansOriyaUI-Bold",range:"U+0B00-0B7F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansOsage-Regular",range:"U+104B0-104FF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansOsmanya-Regular",range:"U+10480-104AF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansPhagsPa",range:"U+A840-A87F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansNewTaiLue-Regular",range:"U+1980-19DF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansNKo-Regular",range:"U+07C0-07FF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansOlChiki-Regular",range:"U+1C50–1C7F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansRunic-Regular",range:"U+16A0-16FF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansShavian-Regular",range:"U+16A0-16FF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansSinhalaUI-Regular",range:"U+0D80-0DFF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansSinhalaUI-Medium",range:"U+0D80-0DFF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansSundanese",range:"U+1B80-1BBF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansSyriacEastern",range:"U+0700-074F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansSyriacWestern",range:"U+0700-074F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansSyriacEstrangela",range:"U+0700-074F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansTagalog",range:"U+1700-171F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansTagbanwa",range:"U+1760-177F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansTaiLe",range:"U+1950-197F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansTaiTham",range:"U+1A20-1AAF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansTaiViet",range:"U+AA80-AADF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansTamilUI-Regular",range:"U+0B80-0BFF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansTamilUI-Medium",range:"U+0B80-0BFF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansTeluguUI",range:"U+0C00-0C7F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansTeluguUI-Bold",range:"U+0C00-0C7F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansThaana",range:"U+0780-07BF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansThaana-Bold",range:"U+0780-07BF"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansThaiUI-Regular",range:"U+0E00-0E7F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansThaiUI-Medium",range:"U+0E00-0E7F"}) +
+			fontParseHelper({family:"Noto Sans",name:"NotoSansTibetan",range:"U+0F00-0FFF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansTibetan-Bold",range:"U+0F00-0FFF"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansTifinagh-Regular",range:"U+2D30-2D7F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansVai-Regular",range:"U+A500-A63F"}) +
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansYi-Regular",range:"U+A000-A48F"})
+		));
+		injectedFonts = true;
+	}
 	if (
 		typeof TD_mustaches === "undefined" ||
 		typeof TD === "undefined" ||
@@ -321,114 +424,6 @@ function MTDInit(){
 			}
 		});
 	}
-
-	$(document.head).append(make("style").html(
-		// fontParseHelper({name:"Roboto300latin",range:"U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2212,U+2215,U+E0FF,U+EFFD,U+F000"}) +
-		// fontParseHelper({name:"Roboto300latinext"}) +
-		// fontParseHelper({weight:"400",name:"Roboto400latin",range:"U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2212,U+2215,U+E0FF,U+EFFD,U+F000"}) +
-		// fontParseHelper({weight:"400",name:"Roboto400latinext"}) +
-		// fontParseHelper({weight:"500",name:"Roboto500latin",range:"U+0000-00FF,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2212,U+2215,U+E0FF,U+EFFD,U+F000"}) +
-		// fontParseHelper({weight:"500",name:"Roboto500latinext"}) +
-		// fontParseHelper({family:"Material",weight:"400",name:"MaterialIcons",range:"U+0000-F000"}) +
-		// fontParseHelper({family:"MD",weight:"400",name:"mdvectors",range:"U+E000-FFFF"})
-		// fontParseHelper({family:"Font Awesome",weight:"400",name:"fontawesome",range:"U+0000-F000"})
-		fontParseHelper({name:"Roboto-Regular"}) +
-		fontParseHelper({family:"MD",name:"mdvectors"}) +
-		fontParseHelper({family:"Material",name:"MaterialIcons"}) +
-		fontParseHelper({weight:"500",name:"Roboto-Medium"}) +
-		fontParseHelper({name:"Roboto-Italic",style:"italic"}) +
-		fontParseHelper({weight:"300",name:"Roboto-Light"}) +
-		fontParseHelper({weight:"500",name:"Roboto-MediumItalic",style:"italic"}) +
-		fontParseHelper({weight:"300",name:"Roboto-LightItalic",style:"italic"}) +
-		fontParseHelper({weight:"100",name:"Roboto-Thin"}) +
-		fontParseHelper({weight:"100",name:"Roboto-ThinIalic",style:"italic"}) +
-		//fontParseHelper({family:"Noto Sans CJK",weight:"500",name:"NotoSansJP-Medium",range:"U+3000-303F,U+3040-309F,U+30A0-30FF,U+FF00-FFEF,U+4E00-9FAF"}) +
-		//fontParseHelper({family:"Noto Sans CJK",name:"NotoSansJP-Regular",range:"U+3000-303F,U+3040-309F,U+30A0-30FF,U+FF00-FFEF,U+4E00-9FAF"}) +
-		//fontParseHelper({family:"Noto Sans CJK",weight:"500",name:"NotoSansKR-Medium",format:"opentype",extension:"otf",range:"U+2E80–2EFF,U+2F00–2FDF,U+2FF0–2FFF,U+3000–303F,U+3130–318F,U+3300–33FF,U+F900–FAFF,U+1100–11FF,U+A960–A97F,U+D7B0–D7FF"}) +
-		//fontParseHelper({family:"Noto Sans CJK",name:"NotoSansKR-Regular",format:"opentype",extension:"otf",range:"U+2E80–2EFF,U+2F00–2FDF,U+2FF0–2FFF,U+3000–303F,U+3130–318F,U+3300–33FF,U+F900–FAFF,U+1100–11FF,U+A960–A97F,U+D7B0–D7FF"}) +
-		fontParseHelper({family:"Noto Sans CJK",weight:"500",name:"NotoSansCJKjp-Medium",format:"opentype",extension:"otf"}) +
-		fontParseHelper({family:"Noto Sans CJK",name:"NotoSansCJKjp-Regular",format:"opentype",extension:"otf"}) +
-		//fontParseHelper({family:"Noto Sans CJK",weight:"500",name:"NotoSansSC-Medium",format:"opentype",extension:"otf",range:"U+4E00-9FFF,U+3400–4DBF,U+20000-2A6DF,U+2A700–2B73F,U+2B740–2B81F,U+2B820–2CEAF,U+2CEB0–2EBEF,U+2E80–303F,U+31C0-31EF,U+3200-33FF,U+F900-FAFF,U+FE30-FE4F,U+1F200-2F800"}) +
-		//fontParseHelper({family:"Noto Sans CJK",name:"NotoSansSC-Regular",format:"opentype",extension:"otf",range:"U+4E00-9FFF,U+3400–4DBF,U+20000-2A6DF,U+2A700–2B73F,U+2B740–2B81F,U+2B820–2CEAF,U+2CEB0–2EBEF,U+2E80–303F,U+31C0-31EF,U+3200-33FF,U+F900-FAFF,U+FE30-FE4F,U+1F200-2F800"}) +
-		//fontParseHelper({family:"Noto Sans CJK",weight:"500",name:"NotoSansTC-Medium",format:"opentype",extension:"otf",range:"U+4E00-9FFF,U+3400–4DBF,U+20000-2A6DF,U+2A700–2B73F,U+2B740–2B81F,U+2B820–2CEAF,U+2CEB0–2EBEF,U+2E80–303F,U+31C0-31EF,U+3200-33FF,U+F900-FAFF,U+FE30-FE4F,U+1F200-2F800"}) +
-		//fontParseHelper({family:"Noto Sans CJK",name:"NotoSansTC-Regular",format:"opentype",extension:"otf",range:"U+4E00-9FFF,U+3400–4DBF,U+20000-2A6DF,U+2A700–2B73F,U+2B740–2B81F,U+2B820–2CEAF,U+2CEB0–2EBEF,U+2E80–303F,U+31C0-31EF,U+3200-33FF,U+F900-FAFF,U+FE30-FE4F,U+1F200-2F800"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansHI-Medium",range:"U+0900-097F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansHI-Regular",range:"U+0900-097F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansArabic-Medium",range:"U+0600-06FF,U+0750–077F,U+08A0–08FF,U+FB50–FDFF,U+FE70–FEFF,U+10E60–10E7F,U+1EE00—1EEFF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansArabic-Regular",range:"U+0600-06FF,U+0750–077F,U+08A0–08FF,U+FB50–FDFF,U+FE70–FEFF,U+10E60–10E7F,U+1EE00—1EEFF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansArmenian-Medium",range:"U+0530-0580"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansArmenian-Regular",range:"U+0530-0580"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansBengali-Medium",range:"U+0980-09FF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansBengali-Regular",range:"U+0980-09FF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansBengali-Medium",range:"U+0980-09FF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansBengali-Regular",range:"U+0980-09FF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansBrahmi",range:"U+11000-1107F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansBuginese",range:"U+1A00-1A1B,U+1A1E-1A1F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansBuhid-Regular",range:"U+1740-1753"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansCanadianAboriginal",range:"U+1400-167F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansCarian-Regular",range:"U+102A0-102DF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansChakma-Regular",range:"U+11100-1114F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansCherokee-Regular",range:"U+11100-1114F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansCherokee-Medium",range:"U+13A0-13F4,U+13F5,U+13F8-13FD"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansCherokee-Regular",range:"U+13A0-13F4,U+13F5,U+13F8-13FD"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansEthiopic-Medium",range:"U+1200-137F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansEthiopic-Regular",range:"U+1200-137F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansGeorgian-Medium",range:"U+10A0-10FF,U+2D00-2D2F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansGeorgian-Regular",range:"U+10A0-10FF,U+2D00-2D2F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansGujaratiUI-Bold",range:"U+0A80-0AFF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansGujaratiUI",range:"U+0A80-0AFF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansHebrew-Bold",range:"U+0590-05FF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansHebrew-Regular",range:"U+0590-05FF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansJavanese",range:"U+A980-A9DF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansKannadaUI-Bold",range:"U+0C80-0CFF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansKannadaUI",range:"U+0C80-0CFF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansKayahLi-Regular",range:"U+A900-A92F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansKhmerUI-Medium",range:"U+1780-17FF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansKhmerUI-Regular",range:"U+1780-17FF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansLaoUI-Medium",range:"U+0E80-0EFF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansLaoUI-Regular",range:"U+0E80-0EFF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansLisu-Regular",range:"U+A4D0-A4FF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansMalayalamUI-Bold",range:"U+0D00-0D7F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansMalayalamUI",range:"U+0D00-0D7F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansMyanmarUI-Bold",range:"U+1000-109F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansMyanmarUI-Regular",range:"U+1000-109F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansOriyaUI-Medium",range:"U+0B00-0B7F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansOriyaUI",range:"U+0B00-0B7F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansOriyaUI-Bold",range:"U+0B00-0B7F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansOsage-Regular",range:"U+104B0-104FF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansOsmanya-Regular",range:"U+10480-104AF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansPhagsPa",range:"U+A840-A87F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansNewTaiLue-Regular",range:"U+1980-19DF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansNKo-Regular",range:"U+07C0-07FF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansOlChiki-Regular",range:"U+1C50–1C7F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansRunic-Regular",range:"U+16A0-16FF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansShavian-Regular",range:"U+16A0-16FF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansSinhalaUI-Regular",range:"U+0D80-0DFF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansSinhalaUI-Medium",range:"U+0D80-0DFF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansSundanese",range:"U+1B80-1BBF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansSyriacEastern",range:"U+0700-074F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansSyriacWestern",range:"U+0700-074F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansSyriacEstrangela",range:"U+0700-074F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansTagalog",range:"U+1700-171F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansTagbanwa",range:"U+1760-177F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansTaiLe",range:"U+1950-197F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansTaiTham",range:"U+1A20-1AAF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansTaiViet",range:"U+AA80-AADF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansTamilUI-Regular",range:"U+0B80-0BFF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansTamilUI-Medium",range:"U+0B80-0BFF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansTeluguUI",range:"U+0C00-0C7F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansTeluguUI-Bold",range:"U+0C00-0C7F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansThaana",range:"U+0780-07BF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansThaana-Bold",range:"U+0780-07BF"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansThaiUI-Regular",range:"U+0E00-0E7F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansThaiUI-Medium",range:"U+0E00-0E7F"}) +
-		fontParseHelper({family:"Noto Sans",name:"NotoSansTibetan",range:"U+0F00-0FFF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansTibetan-Bold",range:"U+0F00-0FFF"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansTifinagh-Regular",range:"U+2D30-2D7F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansVai-Regular",range:"U+A500-A63F"}) +
-		fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansYi-Regular",range:"U+A000-A48F"})
-
-	));
 
 	document.querySelectorAll(".js-modals-container")[0].removeChild = function(rmnode){
 		$(rmnode).addClass("mtd-modal-window-fade-out");
@@ -644,93 +639,91 @@ function PrefsListener() {
 
 function MTDSettings() {
 	MTDPrepareWindows();
-		setTimeout(function(){$(".js-app-settings").click();},10);
-		setTimeout(function(){
-			$("a[data-action='globalSettings']").click();
-			var mtdsettingsmodalview = $("#settings-modal .mdl");
-			mtdsettingsmodalview.addClass("mtd-settings-panel");
-			var mtdsettingsmodalinner = $("#settings-modal .mdl .mdl-inner");
-			$("#settings-modal .mdl .js-header-title").removeClass("js-header-title");
-			$("#settings-modal .mdl .mdl-header-title").html("ModernDeck");
-			mtdsettingsmodalinner.html('<div class="mdl-content js-mdl-content horizontal-flow-container"> <div class="l-column mdl-column mdl-column-sml"> <div class="l-column-scrollv scroll-v	scroll-alt "> <ul class="lst-group js-setting-list">\
-			<li id="mtd-appearance-li"class="selected"><a href="#"class="list-link" id="mtd_settings_appearance_button" data-action="general"><strong>Appearance</strong></a></li>\
-			\
-			<li id="mtd-accessibility-li"><a href="#"class="list-link" id="mtd_settings_accessibility_button" data-action="general"><strong>Accessibility</strong></a></li>\
-			\
-			<li id="mtd-about-li"><a href="#"class="list-link" id="mtd_settings_about_button" data-action="general"><strong>About</strong></a></li>\
-			\
-			\
-			</ul> </div> </div> <div class="l-column mdl-column mdl-column-lrg"> <div class="l-column-scrollv scroll-v	scroll-alt mdl-col-settings">\
-			\
-			\
-			<form action="#" id="mtd-appearance-form" accept-charset="utf-8"class="frm"><fieldset id="general_settings"><div class="control-group" style="padding-top:10px;">\
-			<label class="checkbox">Use rounded profile pictures<input type="checkbox" checked="checked" id="mtd-round-avatars-control"></label>\
-			<label class="checkbox">Undocked windowing/nav drawer<input type="checkbox" id="mtd-undocked-modals"></label>\
-			<label class="checkbox" style="margin-bottom:30px">Use alternate sensitive media workflow<input type="checkbox" checked="checked" id="mtd-sensitive-alt"></label>\
-			<label class="control-label">Theme</label>\
-			<select id="mtd-theme-control" type="select">\
-			<option value="default" selected="selected">Default</option>\
-			<optgroup label="Complete Themes">\
-			<option value="paper">Paper</option>\
-			<option value="amoled" style="color:#fff!important">AMOLED</option>\
-			</optgroup><optgroup label="Complementary Themes">\
-			<option value="grey" style="color:#fff!important">Grey</option>\
-			<option value="red">Red</option>\
-			<option value="pink">Pink</option>\
-			<option value="orange">Orange</option>\
-			<option value="violet">Violet</option>\
-			<option value="teal">Teal</option>\
-			<option value="green">Green</option>\
-			<option value="yellow">Yellow</option>\
-			<option value="cyan">Cyan</option>\
-			<option value="black" style="color:#fff!important">Black</option>\
-			<option value="blue">Blue</option>\
-			</optgroup></select>\
-			\
-			\
-			\
-			\
-			<label class="control-label" style="margin-top:50px;margin-left:-58px">Scroll Bar Style</label><select id="mtd-scrollbar-style" type="select">\
-			<option value="default" selected="selected">Default</option>\
-			<option value="scrollbarsnarrow">Narrow</option>\
-			<option value="scrollbarsnone">Hidden</option>\
-			</select></div></fieldset></form>\
-			\
-			<form action="#" id="mtd-accessibility-form" accept-charset="utf-8"class="frm" style="display:none;"><fieldset id="general_settings"><label class="checkbox">Always show outlines on focused items (Ctrl+Shift+A to toggle)<input type="checkbox" style="margin-top:-15px" checked="checked" id="mtd-outlines-control"> </label></fieldset></form>\
-			\
-			<form action="#" id="mtd-about-form" accept-charset="utf-8"class="frm" style="display:none;"><fieldset id="general_settings"><i class="icon icon-moderndeck mtd-logo"></i><h1 class="list-placeholder mtd-about-title">ModernDeck</h1><h2 class="mtd-version-title">You have ModernDeck version ' + SystemVersion + '</h2></fieldset></form>\
-			\
-			</div> </div> </div>');
+	new TD.components.GlobalSettings;
 
-			$("#mtd-round-avatars-control").attr("checked",getPref("mtd_round_avatars"));
-			$("#mtd-undocked-modals").attr("checked",getPref("mtd_undocked_modals"));
-			$("#mtd-sensitive-alt").attr("checked",getPref("mtd_sensitive_alt"));
-			$("#mtd-outlines-control").attr("checked",getPref("mtd_outlines"));
-			// $("#mtd-hearts").attr("checked",getPref("mtd_hearts"));
-			if (getPref("mtd_theme") !== "AF_2019_fabulous")
-				$("#mtd-theme-control").val(getPref("mtd_theme"));
-			$("#mtd-scrollbar-style").val(getPref("mtd_scrollbar_style"));
+	var mtdsettingsmodalview = $("#settings-modal .mdl");
+	mtdsettingsmodalview.addClass("mtd-settings-panel");
+	var mtdsettingsmodalinner = $("#settings-modal .mdl .mdl-inner");
+	$("#settings-modal .mdl .js-header-title").removeClass("js-header-title");
+	$("#settings-modal .mdl .mdl-header-title").html("ModernDeck");
+	mtdsettingsmodalinner.html('<div class="mdl-content js-mdl-content horizontal-flow-container"> <div class="l-column mdl-column mdl-column-sml"> <div class="l-column-scrollv scroll-v	scroll-alt "> <ul class="lst-group js-setting-list">\
+	<li id="mtd-appearance-li"class="selected"><a href="#"class="list-link" id="mtd_settings_appearance_button" data-action="general"><strong>Appearance</strong></a></li>\
+	\
+	<li id="mtd-accessibility-li"><a href="#"class="list-link" id="mtd_settings_accessibility_button" data-action="general"><strong>Accessibility</strong></a></li>\
+	\
+	<li id="mtd-about-li"><a href="#"class="list-link" id="mtd_settings_about_button" data-action="general"><strong>About</strong></a></li>\
+	\
+	\
+	</ul> </div> </div> <div class="l-column mdl-column mdl-column-lrg"> <div class="l-column-scrollv scroll-v	scroll-alt mdl-col-settings">\
+	\
+	\
+	<form action="#" id="mtd-appearance-form" accept-charset="utf-8"class="frm"><fieldset id="general_settings"><div class="control-group" style="padding-top:10px;">\
+	<label class="checkbox">Use rounded profile pictures<input type="checkbox" checked="checked" id="mtd-round-avatars-control"></label>\
+	<label class="checkbox">Undocked windowing/nav drawer<input type="checkbox" id="mtd-undocked-modals"></label>\
+	<label class="checkbox" style="margin-bottom:30px">Use alternate sensitive media workflow<input type="checkbox" checked="checked" id="mtd-sensitive-alt"></label>\
+	<label class="control-label">Theme</label>\
+	<select id="mtd-theme-control" type="select">\
+	<option value="default" selected="selected">Default</option>\
+	<optgroup label="Complete Themes">\
+	<option value="paper">Paper</option>\
+	<option value="amoled" style="color:#fff!important">AMOLED</option>\
+	</optgroup><optgroup label="Complementary Themes">\
+	<option value="grey" style="color:#fff!important">Grey</option>\
+	<option value="red">Red</option>\
+	<option value="pink">Pink</option>\
+	<option value="orange">Orange</option>\
+	<option value="violet">Violet</option>\
+	<option value="teal">Teal</option>\
+	<option value="green">Green</option>\
+	<option value="yellow">Yellow</option>\
+	<option value="cyan">Cyan</option>\
+	<option value="black" style="color:#fff!important">Black</option>\
+	<option value="blue">Blue</option>\
+	</optgroup></select>\
+	\
+	\
+	\
+	\
+	<label class="control-label" style="margin-top:50px;margin-left:-58px">Scroll Bar Style</label><select id="mtd-scrollbar-style" type="select">\
+	<option value="default" selected="selected">Default</option>\
+	<option value="scrollbarsnarrow">Narrow</option>\
+	<option value="scrollbarsnone">Hidden</option>\
+	</select></div></fieldset></form>\
+	\
+	<form action="#" id="mtd-accessibility-form" accept-charset="utf-8"class="frm" style="display:none;"><fieldset id="general_settings"><label class="checkbox">Always show outlines on focused items (Ctrl+Shift+A to toggle)<input type="checkbox" style="margin-top:-15px" checked="checked" id="mtd-outlines-control"> </label></fieldset></form>\
+	\
+	<form action="#" id="mtd-about-form" accept-charset="utf-8"class="frm" style="display:none;"><fieldset id="general_settings"><i class="icon icon-moderndeck mtd-logo"></i><h1 class="list-placeholder mtd-about-title">ModernDeck</h1><h2 class="mtd-version-title">You have ModernDeck version ' + SystemVersion + '</h2></fieldset></form>\
+	\
+	</div> </div> </div>');
 
-			PrefsListener();
+	$("#mtd-round-avatars-control").attr("checked",getPref("mtd_round_avatars"));
+	$("#mtd-undocked-modals").attr("checked",getPref("mtd_undocked_modals"));
+	$("#mtd-sensitive-alt").attr("checked",getPref("mtd_sensitive_alt"));
+	$("#mtd-outlines-control").attr("checked",getPref("mtd_outlines"));
+	// $("#mtd-hearts").attr("checked",getPref("mtd_hearts"));
+	if (getPref("mtd_theme") !== "AF_2019_fabulous")
+		$("#mtd-theme-control").val(getPref("mtd_theme"));
+	$("#mtd-scrollbar-style").val(getPref("mtd_scrollbar_style"));
 
-			$("#mtd_settings_about_button").on("mouseup",function() {
-				ResetSettingsUI();
-				$("#mtd-about-li").addClass("selected");
-				$("#mtd-about-form").css("display","block");
-			});
+	PrefsListener();
 
-			$("#mtd_settings_appearance_button").on("mouseup",function() {
-				ResetSettingsUI();
-				$("#mtd-appearance-li").addClass("selected");
-				$("#mtd-appearance-form").css("display","block");
-			});
+	$("#mtd_settings_about_button").on("mouseup",function() {
+		ResetSettingsUI();
+		$("#mtd-about-li").addClass("selected");
+		$("#mtd-about-form").css("display","block");
+	});
 
-			$("#mtd_settings_accessibility_button").on("mouseup",function() {
-				ResetSettingsUI();
-				$("#mtd-accessibility-li").addClass("selected");
-				$("#mtd-accessibility-form").css("display","block");
-			});
-		},100);
+	$("#mtd_settings_appearance_button").on("mouseup",function() {
+		ResetSettingsUI();
+		$("#mtd-appearance-li").addClass("selected");
+		$("#mtd-appearance-form").css("display","block");
+	});
+
+	$("#mtd_settings_accessibility_button").on("mouseup",function() {
+		ResetSettingsUI();
+		$("#mtd-accessibility-li").addClass("selected");
+		$("#mtd-accessibility-form").css("display","block");
+	});
 }
 
 function LoginStuffs() {
@@ -749,7 +742,7 @@ function LoginStuffs() {
 	.mouseup(function(){
 		var profileLinkyThing = $("a[href=\"https://twitter.com/"+getProfileInfo().screenName+"\"]");
 
-				MTDPrepareWindows();
+		MTDPrepareWindows();
 		if (profileLinkyThing.length > -1) {
 			setTimeout(function(){
 				profileLinkyThing.click();
@@ -841,8 +834,11 @@ function NavigationSetup() {
 			.click(function(){
 				MTDPrepareWindows();
 
-				setTimeout(function(){$(".js-app-settings").click()},10);
-				setTimeout(function(){$("a[data-action='globalSettings']").click()},20);
+				console.log("td-settings");
+
+				new TD.components.GlobalSettings;
+				// setTimeout(function(){$(".js-app-settings").click()},10);
+				// setTimeout(function(){$("a[data-action='globalSettings']").click()},20);
 			})
 			.append("TweetDeck Settings"),
 			make("button")
@@ -879,6 +875,8 @@ function NavigationSetup() {
 				.addClass("icon icon-twitter-bird")
 			)
 			.click(function(){
+
+				console.log("td-accs");
 				MTDPrepareWindows();
 				$(".js-show-drawer.js-header-action").click();
 			})
@@ -891,8 +889,9 @@ function NavigationSetup() {
 				.addClass("icon icon-plus")
 			)
 			.click(function(){
+				console.log("td-addcolumn");
 				MTDPrepareWindows();
-				$(".js-header-add-column").click();
+				TD.ui.openColumn.showOpenColumn()
 			})
 			.append("Add Column"),
 			make("div")
@@ -923,8 +922,8 @@ function NavigationSetup() {
 				)
 				.click(function(){
 					MTDPrepareWindows();
-					setTimeout(function(){$(".js-app-settings").click()},10);
-					setTimeout(function(){$("a[href=\"https://twitter.com/i/tweetdeck_release_notes\"]").click()},20);
+					console.log("td-changelog");
+					window.open("https://twitter.com/i/tweetdeck_release_notes");
 				})
 				.append("TweetDeck Release Notes"),
 				make("button")
@@ -936,6 +935,7 @@ function NavigationSetup() {
 				)
 				.click(function(){
 					MTDPrepareWindows();
+					console.log("td-keyboard");
 					setTimeout(function(){$(".js-app-settings").click()},10);
 					setTimeout(function(){$("a[data-action='keyboardShortcutList']").click()},20);
 				})
@@ -948,6 +948,7 @@ function NavigationSetup() {
 				)
 				.click(function(){
 					MTDPrepareWindows();
+					console.log("td-searchtips");
 					setTimeout(function(){$(".js-app-settings").click()},10);
 					setTimeout(function(){$("a[data-action=\"searchOperatorList\"]").click()},20);
 				})
@@ -962,9 +963,9 @@ function NavigationSetup() {
 					.addClass("icon icon-logout")
 				)
 				.click(function(){
-					MTDPrepareWindows();
-					setTimeout(function(){$(".js-app-settings").click()},10);
-					setTimeout(function(){$("a[data-action='signOut']").click()},20);
+					//MTDPrepareWindows();
+					console.log("td-logout");
+					TD.controller.init.signOut();
 				})
 				.append("Sign Out"),
 			),
@@ -1008,6 +1009,7 @@ function NavigationSetup() {
 	)
 
 	window.MTDPrepareWindows = function() {
+		console.info("MTDPrepareWindows called");
 		$("#update-sound,.js-click-trap").click();
 		mtd_nav_drawer_background.click();
 
@@ -1267,6 +1269,8 @@ function onElementAddedToDOM(e) {
 
 function mtdAppFunctions() {
 
+	if (typeof require === "undefined") {return;}
+
 	const {remote,ipcRenderer} = require('electron');
 
 	var minimise = make("button")
@@ -1289,14 +1293,12 @@ function mtdAppFunctions() {
 		}
 	});
 
-	var closefunc = function() {
-		window.close();
-	}
-
 	var close = make("button")
 	.addClass("windowcontrol close")
 	.html("&#xE5CD")
-	.click(closefunc);
+	.click(function() {
+		window.close();
+	});
 
 
 	var windowcontrols = make("div")
@@ -1308,8 +1310,10 @@ function mtdAppFunctions() {
 	body.append(windowcontrols);
 
 	ipcRenderer.on('context-menu', (event, p) => {
-		console.log(p); // prints "pong"
-		body.append(buildContextMenu(p));
+		var menu = buildContextMenu(p);
+		
+		if (exists(menu))
+			body.append(menu);
 	})
 
 	const updateOnlineStatus = function(){
@@ -1368,12 +1372,15 @@ contextMenuFunctions = {
 	},
 	inspectElement:function(e){
 		getIpc().send("inspectElement",e);
+	},
+	restartApp:function(e){
+		getIpc().send("restartApp",e);
 	}
 
 }
 
 function makeCMItem(p) {
-	var a = make("a").attr("href","#").attr("data-action",p.dataaction).html(p.text);
+	var a = make("a").attr("href","#").attr("data-action",p.dataaction).html(p.text).addClass("mtd-context-menu-item");
 	var li = make("li").addClass("is-selectable").append(a);
 
 	if (p.enabled === false) {
@@ -1386,7 +1393,7 @@ function makeCMItem(p) {
 			if (p.mousex && p.mousey) {
 				document.elementFromPoint(p.mousex, p.mousey).focus();
 				console.log("Got proper info, keeping context (x="+p.mousex+",y="+p.mousey+")");
-				console.log(document.elementFromPoint(p.mousex, p.mousey));
+				console.log();
 			}
 			contextMenuFunctions[p.dataaction](p.data);
 			clearContextMenu();
@@ -1423,6 +1430,10 @@ function buildContextMenu(p) {
 		})
 	}
 
+	if ($(document.elementFromPoint(x,y)).hasClass("mtd-context-menu-item")) {
+		return;
+	}
+
 	if (p.isEditable) {
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"undo",text:"Undo",enabled:p.editFlags.canUndo}));
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"redo",text:"Redo",enabled:p.editFlags.canRedo}));
@@ -1448,6 +1459,7 @@ function buildContextMenu(p) {
 	}
 
 	items.push(makeCMItem({mousex:x,mousey:y,dataaction:"inspectElement",text:"Inspect element",enabled:true,data:{x:x,y:y}}));
+	//items.push(makeCMItem({mousex:x,mousey:y,dataaction:"restartApp",text:"Restart app",enabled:true}));
 
 	var ul = make("ul");
 
@@ -1483,15 +1495,42 @@ function buildContextMenu(p) {
 function CoreInit() {
 	if (typeof Raven === "undefined" || typeof mR === "undefined") {
 		setTimeout(CoreInit,10);
-		console.log("waiting on raven or moduleRaid...");
+		console.info("waiting on raven or moduleRaid...");
 		return;
 	}
 
 	if (typeof $ === "undefined") {
-		var jQuery = mR.findFunction('jQuery')[0];
+		// if (typeof require !== "undefined") {
+		// 	console.log("With the ModernDeck app, we can use our own jQuery :3");
+		// 	var jq = require('jquery');
+		// 	window.$ = jq;
+		// 	window.jQuery = jq;
+		// } else {
+		// 	try {
+		// 		var jQuery = mR.findFunction('jQuery')[0];
 
-		window.$ = jQuery;
-		window.jQuery = jQuery;
+		// 		window.$ = jQuery;
+		// 		window.jQuery = jQuery;
+		// 	} catch (e) {
+		// 		console.error(e.message);
+		// 		if (e.message === "No module constructors to search through!") {
+		// 			forceAppUpdateOnlineStatus('offline');
+		// 			return;
+		// 		}
+		// 	}
+		// }
+		try {
+			var jQuery = mR.findFunction('jQuery')[0];
+
+			window.$ = jQuery;
+			window.jQuery = jQuery;
+		} catch (e) {
+			console.error(e.message);
+			if (e.message === "No module constructors to search through!") {
+				forceAppUpdateOnlineStatus('offline');
+				return;
+			}
+		}
 	}
 
 	head = $(document.head);
@@ -1525,7 +1564,7 @@ function CoreInit() {
 		checkIfSigninFormIsPresent();
 		checkIfBTDIsInstalled();
 		loginInterval = setInterval(checkIfSigninFormIsPresent,500);
-		console.log("MTDinject loaded");
+		console.info("MTDinject loaded");
 	});
 }
 

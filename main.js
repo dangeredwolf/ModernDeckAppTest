@@ -1,13 +1,20 @@
+if (require('electron-squirrel-startup')) return;
+// Don't launch if squirrel is updating us
+
+
 // Modules to control application life and create native browser window
 const electron = require("electron");
 const { app, BrowserWindow, ipcMain, session, systemPreferences, Menu, dialog } = require('electron');
 const serve = require('electron-serve');
+
+const devBuildExpiration = {year:2019,month:4,day:18}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 const isDev = true;
+
 
 const loadURL = serve({scheme:"moderndeck",directory:'ModernDeck'});
 
@@ -24,6 +31,10 @@ autoUpdater.setFeedURL({
 	"repo": "ModernDeck",
 	"provider": "github"
 });
+
+var checkDevDate = new Date();
+
+
 
 function makeLoginWindow(url) {
 
@@ -91,6 +102,7 @@ function makeLoginWindow(url) {
 
 function makeWindow() {
 
+
 	var display = {};
 
 
@@ -110,30 +122,32 @@ function makeWindow() {
 		backgroundColor:'#263238'
 	});
 
-  var isOnline = true;
+	console.log("\n")
+	console.log(checkDevDate.getFullYear() + " vs " + devBuildExpiration.year);
+	console.log(checkDevDate.getMonth() + " vs " + devBuildExpiration.month);
+	console.log(checkDevDate.getDate() + " vs " + devBuildExpiration.day);
 
-  var online = mainWindow.webContents.executeJavaScript("return navigator.onLine",false,function(e){
-    isOnline = e;
-  })
-
-	if (!isOnline) {
+	if ((!!devBuildExpiration.year && (!!devBuildExpiration.month || devBuildExpiration.month === 0) && !!devBuildExpiration.day) &&
+		checkDevDate.getFullYear() > devBuildExpiration.year ||
+		(checkDevDate.getMonth() > devBuildExpiration.month && checkDevDate.getFullYear() === devBuildExpiration.year) ||
+		(checkDevDate.getDate() >= devBuildExpiration.day && checkDevDate.getMonth() === devBuildExpiration.month && checkDevDate.getFullYear() === devBuildExpiration.year)) {
 		dialog.showMessageBox(mainWindow,{
 			title:"ModernDeck",
-			message:"It seems that you aren't connected to the internet. ModernDeck requires an internet connection to function.",
+			message:"This development build of ModernDeck has expired. It expired on " + devBuildExpiration.year + "/" + (devBuildExpiration.month<9?"0"+(devBuildExpiration.month+1) : devBuildExpiration.month+1) + "/" + devBuildExpiration.day + ".\n\nPlease uninstall this version of ModernDeck from Programs and Features.",
 			type:"error",
-			buttons:["Retry","Close"]
+			buttons:["Close"]
 		},function(response){
-			if (response === 0) {
-				mainWindow.destroy();
-				mainWindow = null;
-				makeWindow();
-			} else if (response === 1) {
-				mainWindow.destroy();
-				mainWindow = null;
-			}
+			app.quit();
 		});
 		return;
 	}
+
+
+	var isOnline = true;
+
+	// var online = mainWindow.webContents.executeJavaScript("return typeof TD !== \"undefined\"",false,function(e){
+	// 	isOnline = e;
+	// })
 
 	mainWindow.show();
 
@@ -168,10 +182,76 @@ function makeWindow() {
 			');
 	});
 
-	mainWindow.webContents.on('did-finish-load', (event, url) => {
-		// mainWindow.webContents.executeJavaScript('\
-		//	 try{setTimeout(function(){document.querySelector("header.app-header").setAttribute("style","");},1000);}catch(e){};\
-		//	 ');
+	mainWindow.webContents.on('did-fail-load', (event, code, desc) => {
+		var msg = "ModernDeck failed to start.\n\n";
+
+		console.log(desc);
+
+		if (code === -3 || code === -11 || code === -2 || code === -1) {
+			return;
+		}
+
+		var addChromiumErrorCode = false;
+
+		if (code === -13 || code === -12) {
+			msg += "Your PC ran out of memory trying to start ModernDeck. Try closing some programs or restarting your PC and trying again."
+		} else if ((code <= -800 && code >= -900) || code === -137 || code === -105) {
+			msg += "We can't connect to Twitter due to a DNS error.\nPlease check your internet connection.";
+			addChromiumErrorCode = true;
+		} else if (code === -201) {
+			msg += "Please check that your PC's date and time are set correctly. Twitter presented us with a security certificate that either expired or not yet valid.\nIf your date and time are correct, check https://api.twitterstat.us to see if there are any problems at Twitter."
+		} else if (code === -130 || code === -131 || code === -111 || code === -127 || code === -115 || code === -336) {
+			msg += "We can't connect to your internet connection's proxy server.\n\nIf you don't need to connect to a proxy server, you can take the following steps on Windows:\n1. Press Windows Key + R to open the Run dialog.\n2. Enter inetcpl.cpl\n3. Go to the Connections tab\n4. Click the LAN settings button near the bottom\n5. Uncheck \"Use a proxy server for your LAN\""
+			addChromiumErrorCode = true;
+		} else if (code === -22) {
+			msg += "Your domain administrator has blocked access to tweetdeck.twitter.com.\nIf your device is owned by an organization, you might need to ask a network administrator to unblock it.\nIf you are not logged in as part of a domain, you may need to configure your Local Group Policy settings."
+		} else if (code === -7 || code === -118) {
+			msg += "We can't connect to Twitter because the request timed out.\nPlease check your internet connection.\nIf it still doesn't work, check https://api.twitterstat.us to see if there are any problems at Twitter."
+		} else if (code === -29 || code === -107 || (code <= -110 && code >= -117) || code === -123 || (code <= -125 && code >= -129) || code === -134 || code === -135 || code === -141 || (code <= -148 && code >= -153) || code === -156 || code === -159 || code === -164 || code === -167 || code === -172 || code === -175 || (code <= -177 && code >= -181) || (code <= -501 && code >= -504)) {
+			msg += "We can't establish a secure connection to Twitter.\nThis may be caused by network interference or a problem at Twitter.\n\nIf it still doesn't work, but other HTTPS websites appear to load (such as google.com), check https://api.twitterstat.us to see if there are any problems at Twitter.";
+			addChromiumErrorCode = true;
+		} else if (code <= -200 && code >= -220) {
+			msg += "We can't establish a secure connection to Twitter.\nThere is a problem with the digital certificate that was presented to us.\n\nPlease try again later, or check https://api.twitterstat.us to see if there are any problems at Twitter.";
+			addChromiumErrorCode = true;
+		} else if (code <= -1 && code >= -99) {
+			msg += "We can't connect to Twitter due to an unexpected system error. Please refer to the error code below.";
+			addChromiumErrorCode = true;
+		} else if (code <= -100 && code >= -199) {
+			msg += "We can't connect to Twitter due to an unexpected connection error. Please refer to the error code below.";
+			addChromiumErrorCode = true;
+		} else if (code <= -200 && code >= -299) {
+			msg += "We can't connect to Twitter due to an unexpected certificate error. Please refer to the error code below.";
+			addChromiumErrorCode = true;
+		} else if (code <= -300 && code >= -399) {
+			msg += "We can't connect to Twitter due to an unexpected protocol error. Please refer to the error code below.";
+			addChromiumErrorCode = true;
+		} else if (code <= -400 && code >= -499) {
+			msg += "We can't connect to Twitter due to an unexpected caching error. Please refer to the error code below.";
+			addChromiumErrorCode = true;
+		} else {
+			msg += "We can't connect to Twitter due to an unexpected error. Please refer to the error code below.";
+			addChromiumErrorCode = true;
+		}
+
+		if (addChromiumErrorCode) {
+			msg += "\n\n" + desc + " " + code
+		}
+
+
+		console.log(code);
+		dialog.showMessageBox(mainWindow,{
+			title:"ModernDeck",
+			message:msg,
+			type:"error",
+			buttons:["Retry","Close"]
+		},function(response){
+			if (response === 0) {
+				mainWindow.reload();
+			} else if (response === 1) {
+				mainWindow.close();
+			}
+		});
+		return;
 	});
 
 	mainWindow.webContents.session.webRequest.onHeadersReceived(
@@ -195,8 +275,6 @@ function makeWindow() {
 	});
 
 	mainWindow.loadURL("https://tweetdeck.twitter.com");
-	// Open the DevTools.
-	// mainWindow.webContents.openDevTools();
 
 	mainWindow.webContents.on("will-navigate", function(event, url) {
 		const { shell } = electron;
@@ -218,7 +296,6 @@ function makeWindow() {
 	});
 
 	mainWindow.webContents.on("context-menu", function(event, params) {
-		console.log(params);
 		mainWindow.send("context-menu", params);
 	});
 
@@ -248,6 +325,8 @@ function makeWindow() {
 	});
 	ipcMain.on("inspectElement",function(event,arg){
 		mainWindow.webContents.inspectElement(arg.x,arg.y);
+	});
+	ipcMain.on("restartApp",function(event,arg){
 	});
 
 	// Emitted when the window is closed.

@@ -2,7 +2,7 @@
 			moderndeck.css
 
 
-			ModernDeck 6.6 [codename Liberty]
+			ModernDeck codename Liberty
 			Copyright 2014-2019 dangered wolf
 			Released under the MIT Licence
 
@@ -3239,7 +3239,8 @@ div.media-size-small {
 	left:0;
 	right:0;
 	top:50px;
-	transition:.5s all cubic-bezier(.19,1,.22,1)
+	transition:.5s all cubic-bezier(.19,1,.22,1);
+	-webkit-app-region: no-drag;
 }
 
 .compose-text-container {
@@ -3372,6 +3373,7 @@ div.media-size-small {
 	filter:grayscale(100%);
 	opacity:.35;
 	/* z-index:10; */
+	-webkit-app-region: no-drag;
 }
 
 .is-list .compose-account {
@@ -4700,6 +4702,13 @@ input[type="radio"]:checked:before {
 .numbered-badge {
 	transition:.3s all 2s
 }
+
+
+.mtd-app .column-nav-link,
+.mtd-app .numbered-badge {
+	transition:.3s all 0s
+}
+
 
 .column-nav-link:focus,.column-nav-link:active {
 	outline:0;
@@ -7326,7 +7335,7 @@ label[for="inline-account-safeguard-checkbox"] {
 }
 
 .s-minimal .mdl-inner {
-	top:0
+	/* top:0 */
 }
 
 .js-quality-filter-info {
@@ -9153,4 +9162,14 @@ position:relative;
 	padding-left:0;
 	/* height: fit-content; */
 	/* display: block; */
+}
+
+.mtd-app:not(.dark):not(.light):before { 
+	-webkit-app-region:drag;
+	display:block;
+	position:absolute;
+	height:40px;
+	top:0;
+	left:0;
+	right:0;
 }

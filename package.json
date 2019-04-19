@@ -1,10 +1,29 @@
 {
   "name": "ModernDeck",
-  "version": "6.6.0",
-  "description": "A minimal Electron application",
+  "version": "0.0.0",
+  "description": "ModernDeck",
   "main": "main.js",
   "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
     "start": "electron ."
+  },
+  "build": {
+    "appId": "com.dangeredwolf.ModernDeck",
+    "win": {
+      "legalTrademarks": "Copyright 2014-2019 dangered wolf, released under the MIT licence",
+      "publish": [
+        "github"
+      ]
+    },
+    "nsis": {
+      "deleteAppDataOnUninstall": true
+    },
+    "squirrelWindows": {
+      "publish": [
+        "github"
+      ]
+    }
   },
   "repository": "https://github.com/dangeredwolf/ModernDeck",
   "keywords": [
@@ -17,20 +36,27 @@
     "Design"
   ],
   "author": "dangeredwolf",
-  "license": "CC0-1.0",
+  "license": "MIT",
+  "dependencies": {
+    "electron-packager": "^13.0.0",
+    "electron-serve": "^0.2.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-updater": "^4.0.0",
+    "jquery": "^3.3.1",
+    "materialize-css": "^1.0.0"
+  },
   "devDependencies": {
     "electron": "^4.1.4",
-    "electron-updater": "^3.0.3",
-    "update-electron-app": "^1.0.0",
-    "electron-squirrel-startup": "^1.0.0",
-    "electron-serve": "^0.2.0"
+    "electron-builder": "^20.39.0"
   },
   "files": [
+    "**/ModernDeck",
     "*.js",
     "*.css",
     "*.png",
     "*.woff2",
     "*.woff",
+    "*.json",
     "*.ico"
   ]
 }

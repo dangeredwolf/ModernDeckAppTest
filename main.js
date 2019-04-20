@@ -395,6 +395,11 @@ autoUpdater.on("update-downloaded",function(e){
 	mainWindow.webContents.send("update-downloaded",e);
 });
 
+autoUpdater.on("update-not-available",function(e){
+	if (!mainWindow || !mainWindow.webContents){return;}
+	mainWindow.webContents.send("update-not-available",e);
+});
+
 ipcMain.on('check-for-updates',function(e){
 	autoUpdater.checkForUpdates();
 })

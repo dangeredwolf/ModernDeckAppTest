@@ -1095,46 +1095,50 @@ function formatBytes(val) {
 	}
 }
 
-function mtdAppUpdatePage(updateCont,updateh2) {
+function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner) {
 
 	const {ipcRenderer} = require('electron');
 
-	let updateh3;
-
-	ipcRenderer.on("error",function(e){
-		console.log(e);
+	ipcRenderer.on("error",function(e,args){
+		console.log(args);
 		updateh2.html("There was a problem checking for updates. ");
-		if (!exists(updateh3)) {
-			updateh3 = make("h3").addClass("mtd-update-h3");
-			updateCont.append(updateh3);
-		}
 
-		updateh3.html(e);
+		$(".mtd-update-spinner").addClass("hidden");
+		updateh3.html(e).removeClass("hidden");
+		updateIcon.html("error_outline").removeClass("hidden");
 
 	});
 
-	ipcRenderer.on("checking-for-update",function(e){
-		console.log(e);
+	ipcRenderer.on("checking-for-update",function(e,args){
+		console.log(args);
+		$(".mtd-update-spinner").removeClass("hidden");
 		updateh2.html("Checking for updates...");
-		$("h3.mtd-update-h3").remove();
+		updateh3.addClass("hidden");
 	});
 
-	ipcRenderer.on("download-progress",function(e){
-		console.log(e);
+	ipcRenderer.on("download-progress",function(e,args){
+		console.log(args);
+		$(".mtd-update-spinner").removeClass("hidden");
 		updateh2.html("Downloading update...");
-		if (!exists(updateh3)) {
-			updateh3 = make("h3").addClass("mtd-update-h3");
-			updateCont.append(updateh3);
-		}
-
-		updateh3.html(roundMe(percent)+"% complete ("+formatBytes(e.transferred)+"/"+formatBytes(e.total)+", "+formatBytes(e.bytesPerSecond)+"/s)")
+		updateh3.html(roundMe(percent)+"% complete ("+formatBytes(e.transferred)+"/"+formatBytes(e.total)+", "+formatBytes(e.bytesPerSecond)+"/s)").removeClass("hidden");
 	});
 
 
-	ipcRenderer.on("update-downloaded",function(e){
-		console.log(e);
-		updateh2.html("Update downloaded.");
-		$("h3.mtd-update-h3").remove();
+	ipcRenderer.on("update-downloaded",function(e,args){
+		console.log(args);
+		$(".mtd-update-spinner").addClass("hidden");
+		updateIcon.html("info_outline").removeClass("hidden");
+		updateh2.html("Update downloaded");
+		updateh3.html("Restart ModernDeck to complete the update").removeClass("hidden");
+	});
+
+
+	ipcRenderer.on("update-not-available",function(e,args){
+		console.log(args);
+		$(".mtd-update-spinner").addClass("hidden");
+		updateh2.html("No update available");
+		updateIcon.html("info_outline").removeClass("hidden");
+		updateh3.html(SystemVersion + " is the latest version.").removeClass("hidden");
 	});
 
 	ipcRenderer.send('check-for-updates');
@@ -1645,15 +1649,17 @@ function MTDNewSettings() {
 			subPanel.append(logoCont)//.append(make("p").html("This early, development version of the ModernDeck app does not have automatic updating yet. This build expires 1 month after the build date shown above. ").append(make("a").attr("href","https://github.com/dangeredwolf/ModernDeckAPPTEST/releases").html("Please check the linked GitHub releases page for updates.")))
 			;
 
-			var updateCont = make("div").addClass("mtd-update-container").html('<div class="preloader-wrapper small active"><div class="spinner-layer"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>');
-
+			var updateCont = make("div").addClass("mtd-update-container").html('<div class="mtd-update-spinner preloader-wrapper small active"><div class="spinner-layer"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>');
+			var updateSpinner = $(".mtd-update-spinner");//$(updateCont.children()[0]);
+			var updateIcon = make("i").addClass("material-icon hidden");
 			var updateh2 = make("h2").addClass("mtd-update-h2").html("Checking for updates...");
+			var updateh3 = make("h3").addClass("mtd-update-h3 hidden").html("");
 
-			updateCont.append(updateh2);
+			updateCont.append(updateIcon,updateh2,updateh3);
 
 			subPanel.append(updateCont);
 
-			mtdAppUpdatePage(updateCont,updateh2);
+			mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner);
 		}
 
 		tabs.append(tab);

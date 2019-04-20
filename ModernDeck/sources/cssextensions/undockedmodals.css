@@ -61,7 +61,8 @@
     margin:0 auto!important;
     text-align:left;
     border-radius:2px;
-    min-height:170px
+    min-height: 470px;
+    /* overflow-y: auto; */
 }
 
 .mdl.s-fluid {
@@ -109,7 +110,8 @@
 
 .mtd-nav-drawer {
 	height:auto;
-	padding-bottom:10px
+	padding-bottom:10px;
+	border-radius: 0 5px 5px 5px;
 }
 
 .mtd-nav-drawer-hidden {
@@ -146,7 +148,6 @@
 }
 
 .settings-modal .mdl {
-	height:600px;
 	overflow:hidden
 }
 

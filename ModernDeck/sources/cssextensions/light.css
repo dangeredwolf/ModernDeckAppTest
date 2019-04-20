@@ -265,7 +265,8 @@ button[disabled]
 	color:#777
 }
 
-.js-setting-list .list-link strong
+.js-setting-list .list-link strong,
+ .mtd-settings-tab:not(.mtd-settings-tab-selected)
 {
 	font-weight:400;
 	color:rgba(255,255,255,0.5)
@@ -287,12 +288,13 @@ button[disabled]
 .app-navigator .js-hide-drawer,
 .drawer-header,
 body,
-.is-options-open .column-settings-link
+.is-options-open .column-settings-link,
+.mtd-settings-tab-container
 {
 	background:#03A9F4
 }
 
-html,body {
+html,body:not(.signin-sheet-now-present) {
 	background:#03A9F4;
 }
 

@@ -178,7 +178,7 @@ button,a.btn,.column-header {
     margin:0
 }
 
-.conversation-name,.l-column.mdl-column.mdl-column-sml .selected,.js-toggle.padding-al button.is-selected,.facet-type .control-group select,.facet-type .control-group input:not([type="checkbox"]) {
+.conversation-name, .l-column.mdl-column.mdl-column-sml .selected, .js-toggle.padding-al button.is-selected, .facet-type .control-group select, .facet-type .control-group input:not([type="checkbox"]), .mtd-settings-tab-selected {
     border-bottom:2px solid #fff
 }
 

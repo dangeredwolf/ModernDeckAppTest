@@ -5,7 +5,7 @@
 
 "use strict";
 
-var SystemVersion = "App Build 2019-04-18";
+var SystemVersion = "App Build 2019-04-19";
 var MTDBaseURL = "https://rawgit.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if using online client
 
 var msgID,
@@ -15,6 +15,8 @@ loginIntervalTick = 0;
 var contextMenuNum = 0;
 
 const forceFeatureFlags = false;
+
+var useNewSettings = true;
 
 var messagesAccounted = [];
 
@@ -39,7 +41,7 @@ var FindProfButton,
 loginInterval,
 openModal;
 
-var isChrome = typeof chrome !== "undefined"; // may also return true on chromium-based browsers like opera and edge chromium
+var isChrome = typeof chrome !== "undefined"; // may also return true on chromium-based browsers like opera, edge chromium, and electron
 var isOpera = typeof opera !== "undefined";
 var isSafari = typeof safari !== "undefined";
 var isEdge = typeof MSGesture !== "undefined";
@@ -47,9 +49,6 @@ var isFirefox = typeof mozInnerScreenX !== "undefined";
 var isApp = typeof require !== "undefined";
 
 var injectedFonts = false;
-
-var twitterSucks = document.createElement("script");
-twitterSucks.type = "text/javascript";
 
 var make = function(a){return $(document.createElement(a))};
 var head,body,html = undefined;
@@ -93,12 +92,10 @@ if (typeof MTDURLExchange === "object" && typeof MTDURLExchange.getAttribute ===
 	console.info("MTDURLExchange completed with URL " + MTDBaseURL);
 }
 
+var twitterSucks = document.createElement("script");
+twitterSucks.type = "text/javascript";
 twitterSucks.src = MTDBaseURL + "sources/libraries/moduleraid.min.js";
 document.head.appendChild(twitterSucks);
-
-if (typeof chrome === "undefined" && typeof safari === "undefined") {
-	TreatGeckoWithCare = true;
-}
 
 function mutationObserver(obj,func,parms) {
 	if (typeof MutationObserver !== "undefined") {
@@ -216,6 +213,9 @@ function loadPreferences() {
 }
 
 function getPref(id) {
+	if (id === "mtd_core_theme") {
+		return TD.settings.getTheme();
+	}
 	if ((localStorage[id] ? localStorage[id] : MTDStorage[id]) === "true")
 		return true;
 	else if ((localStorage[id] ? localStorage[id] : MTDStorage[id]) === "false")
@@ -225,6 +225,9 @@ function getPref(id) {
 }
 
 function setPref(id,p) {
+	if (id === "mtd_core_theme") {
+		return;
+	}
 	//MTDStorage[id] = p;
 	localStorage[id] = p;
 	//savePreferencesToDisk();
@@ -354,7 +357,7 @@ function MTDInit(){
 	}
 
 	if (isEdge) {
-		var beGoneThot = $("link[rel='apple-touch-icon']+link[rel='stylesheet'")[0];
+		var beGoneThot = $("link[rel='apple-touch-icon']+link[rel='stylesheet']")[0];
 		if (exists(beGoneThot)) {
 			beGoneThot.remove();
 		}
@@ -499,34 +502,6 @@ function MTDInit(){
 	if (typeof TD_mustaches["lists/member.mustache"] !== "undefined")
 		TD_mustaches["lists/member.mustache"] = TD_mustaches["lists/member.mustache"].replace('<span> <img src="{{#asset}}/global/backgrounds/spinner_small_trans.gif{{/asset}}" alt="{{_i}}Loading…{{/i}}"> </span>','<div class="js-spinner-button-active icon-center-16 spinner-button-icon-spinner preloader-wrapper active tiny"><div class="spinner-layer small"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>');
 
-	if (typeof TD.i !== "undefined") {
-		TD.util.prettyTimeString = function(e) {
-			return TD.i("{{hours12}}:{{minutes}} {{amPm}}, {{day}} {{month}} {{fullYear}}", TD.util.prettyTime(e));
-		};	
-	}
-
-	// setTimeout(MTDAFCheckDate,1000);
-	// setInterval(MTDAFCheckDate,3000);
-
-	TD.util.prettyNumber = function(e) {
-		//if (!TD.util.isValidNumber(e) || typeof e !== "string")
-			//return "";
-			var yip = parseInt(e, 10)
-		if (yip >= 100000000) {
-			return parseInt(yip/1000000) + "M";
-		} else if (yip >= 10000000) {
-			return parseInt(yip/100000)/10 + "M";
-		} else if (yip >= 1000000) {
-			return parseInt(yip/10000)/100 + "M";
-		} else if (yip >= 100000) {
-			return parseInt(yip/1000) + "K";
-		} else if (yip >= 10000) {
-			return parseInt(yip/100)/10 + "K";
-		} else if (yip >= 1000) {
-			yip = yip.toString().substring(0,1) + "," + yip.toString().substring(1);
-		}
-		return yip;
-	}
 
 	NavigationSetup();
 
@@ -639,13 +614,19 @@ function PrefsListener() {
 
 function MTDSettings() {
 	MTDPrepareWindows();
+
+	if (useNewSettings) {
+		MTDNewSettings();
+		return;
+	}
+
+	$(".mtd-settings-panel").remove();
 	new TD.components.GlobalSettings;
 
 	var mtdsettingsmodalview = $("#settings-modal .mdl");
 	mtdsettingsmodalview.addClass("mtd-settings-panel");
 	var mtdsettingsmodalinner = $("#settings-modal .mdl .mdl-inner");
 	$("#settings-modal .mdl .js-header-title").removeClass("js-header-title");
-	$("#settings-modal .mdl .mdl-header-title").html("ModernDeck");
 	mtdsettingsmodalinner.html('<div class="mdl-content js-mdl-content horizontal-flow-container"> <div class="l-column mdl-column mdl-column-sml"> <div class="l-column-scrollv scroll-v	scroll-alt "> <ul class="lst-group js-setting-list">\
 	<li id="mtd-appearance-li"class="selected"><a href="#"class="list-link" id="mtd_settings_appearance_button" data-action="general"><strong>Appearance</strong></a></li>\
 	\
@@ -751,17 +732,6 @@ function LoginStuffs() {
 	}); // Fetch profile picture and place in nav drawer
 	$(mtd_nd_header_username).html(name); // Fetch twitter handle and place in nav drawer
 
-	if (!getPref("has_opened_mtd6") && welcomeEnabled) {
-		setTimeout(function(){$(".js-app-settings").click()},10);
-		setTimeout(function() {
-			$("a[data-action='globalSettings']").click();
-			$("#settings-modal .mdl-header-title").html("Welcome to ModernDeck 6.0").removeClass("js-header-title");
-			$("#settings-modal .mdl").addClass("mtd-whats-new");
-			$("#settings-modal .mdl-inner").html(welcomeScreenHtml);
-		},20);
-		setPref("has_opened_mtd6",true)
-	}
-
 	//loadPreferences();
 }
 
@@ -835,7 +805,7 @@ function NavigationSetup() {
 				MTDPrepareWindows();
 
 				console.log("td-settings");
-
+				$(".mtd-settings-panel").remove();
 				new TD.components.GlobalSettings;
 				// setTimeout(function(){$(".js-app-settings").click()},10);
 				// setTimeout(function(){$("a[data-action='globalSettings']").click()},20);
@@ -850,21 +820,6 @@ function NavigationSetup() {
 			)
 			.click(MTDSettings)
 			.append("ModernDeck Settings"),
-			make("button")
-			.addClass("btn mtd-nav-button")
-			.attr("id","btdsettings")
-			.append(
-				make("i")
-				.addClass("icon icon-btd-settings")
-			)
-			.click(function(){
-				MTDPrepareWindows();
-				setTimeout(function(){
-					var opn = window.open("chrome-extension://micblkellenpbfapmcpcfhcoeohhnpob/options/options.html", '_blank');
-					opn.focus();
-				},200);
-			})
-			.append("Better TweetDeck Settings"),
 			make("div")
 			.addClass("mtd-nav-divider"),
 			make("button")
@@ -1017,10 +972,6 @@ function NavigationSetup() {
 		$("#mtd_nav_group_arrow").removeClass("mtd-nav-group-arrow-flipped");
 	}
 
-	if (TreatGeckoWithCare) {
-		btdsettings.remove();
-	}
-
 	LoginStuffs();
 }
 
@@ -1055,19 +1006,11 @@ function checkIfUserSelectedNewTheme() {
 			disableStylesheetExtension("light");
 			html.addClass("mtd-dark").removeClass("mtd-light")
 			MTDDark = true;
-			// if (typeof getPref("mtd_theme") !== "undefined" && getPref("mtd_theme") === "paper") {
-			// 	setPref("mtd_theme","default");
-			// 	disableStylesheetExtension("paper");
-			// }
 		} else {
 			disableStylesheetExtension("dark");
 			enableStylesheetExtension("light");
 			html.addClass("mtd-light").removeClass("mtd-dark")
 			MTDDark = false;
-			// if (typeof getPref("mtd_theme") !== "undefined" && getPref("mtd_theme") ==="amoled") {
-			// 	setPref("mtd_theme","default");
-			// 	disableStylesheetExtension("amoled");
-			// }
 		}
 
 
@@ -1075,135 +1018,7 @@ function checkIfUserSelectedNewTheme() {
 }
 
 function diag() {
-	try {
-		attemptdiag();
-	}
-	catch(err) {
-		$("#open-modal,.js-app-loading").append(
-			make("div")
-			.addClass("mdl s-tall-fixed")
-			.append(
-				make("header")
-				.addClass("mdl-header")
-				.append(
-					make("h3")
-					.addClass("mdl-header-title")
-					.html("Diagnostics")
-				),
-				make("div")
-				.addClass("mdl-inner")
-				.append(
-					make("div")
-					.addClass("mdl-content")
-					.css("padding-left","20px")
-					.html("Well, that's unfortuate. I can't seem to be able to fetch diagnostics right now. Maybe refresh and try again?<br><br>(P.S. the error is " + (err ? err.toString() : "[miraculously, undefined.]") + ")")
-				)
-			)
-		)
-		.css("display","block");
-	}
 }
-
-function closediag() {
-	$("#open-modal,.js-app-loading").css("display","none");
-}
-
-function attemptdiag() {
-	openModal = $("#open-modal,.js-app-loading");
-
-	openModal.append(
-			make("div")
-			.addClass("mdl s-tall-fixed")
-			.append(
-					make("header")
-					.addClass("mdl-header")
-					.append(
-							make("h3")
-							.addClass("mdl-header-title")
-							.html("Diagnostics")
-					),
-					make("div")
-					.addClass("mdl-inner")
-					.append(
-							make("div")
-							.addClass("mdl-content")
-							.css("padding-left","20px")
-							.html('\
-							\
-							\
-							\
-							<button class="btn" onclick="closediag();">Close Diagnostics</button>\
-							<br>SystemVersion: ' + SystemVersion + '\
-							<br>userAgent: ' + navigator.userAgent + '\
-							<br>vendor: ' + navigator.vendor + '\
-							<br>vendorSub: ' + navigator.vendorSub + '\
-							<br>appCodeName: ' + navigator.appCodeName + '\
-							<br>appName: ' + navigator.appName + '\
-							<br>cookieEnabled: ' + navigator.cookieEnabled + '\
-							<br>language: ' + navigator.language + '\
-							<br>platform: ' + navigator.platform + '\
-							<br>TreatGeckoWithCare: ' + TreatGeckoWithCare + '\
-							<br>audiosrc: ' + document.getElementsByTagName("audio")[0].src + '\
-							<br>MTDBaseURL: ' + MTDBaseURL + '\
-							<br>MTDDark: ' + MTDDark + '\
-							<br>FetchProfileInfo: ' + FetchProfileInfo + '\
-							<br>mtd_round_avatars: ' + getPref("mtd_round_avatars") + '\
-							<br>mtd_flag_block_secure_ss: ' + getPref("mtd_flag_block_secure_ss") + '\
-							<br>mtd_flag_block_communications: ' + getPref("mtd_flag_block_communications") + '\
-							<br>mtd_nd_header_image: ' + (typeof $("#mtd_nd_header_image")[0] !== "undefined" && $("#mtd_nd_header_image")[0].style.cssText) + '\
-							<br>mtd_nd_header_username: ' + (typeof $("#mtd_nd_header_username")[0] !== "undefined" && $("#mtd_nd_header_username")[0].innerHTML) + '\
-							<br>mtd_nd_header_photo: ' + (typeof $("#mtd_nd_header_photo")[0] !== "undefined" && $("#mtd_nd_header_photo")[0].src) + '\
-							<br>guestID: ' + (TD.storage.store._backend.guestID) + '\
-							<br>msgID: ' + (msgID) + '\
-							<br>InjectFonts?: ' + (typeof InjectFonts !== "undefined") + '\
-							\
-							\
-							\
-							')
-					)
-			)
-	)
-	.css("display","block");
-}
-
-function dxdiag() {
-
-		openModal = $("#open-modal,.js-app-loading");
-
-		openModal.append(
-				make("div")
-				.addClass("mdl s-tall-fixed")
-				.append(
-						make("header")
-						.addClass("mdl-header")
-						.append(
-								make("h3")
-								.addClass("mdl-header-title")
-								.html("DxDiag Help")
-						),
-						make("div")
-						.addClass("mdl-inner")
-						.append(
-								make("div")
-								.addClass("mdl-content")
-								.css("padding-left","20px")
-								.html('\
-								This is a guide to help you acquire your DxDiag if asked by a developer.\
-								<br><br>\
-								Warning: This only applies for Windows. If you\'re running OS X / Linux / etc., this won\'t work.\
-								<br><br>\
-								Step 1: Press the Windows key + R key to open the Run dialog.<br>\
-								Step 2: In the box of the new window, type in "dxdiag", and press the Enter key.<br>\
-								Step 3: In the DirectX Diagnostic window, click the "Save All Information..." button at the bottom.<br>\
-								Step 4: Save this file somewhere you\'ll remember, like the Desktop.<br>\
-								Step 5: Upload the file to a file hosting site, for example, <a target="_blank" href="https://mega.nz">Mega</a> (no signup needed), or whereever you can easily share the link for the file with developers.\
-								')
-						)
-				)
-		)
-		.css("display","block");
-}
-
 
 var rtbutton;
 
@@ -1217,12 +1032,9 @@ function checkIfSigninFormIsPresent() {
 		if (loginIntervalTick > 5) {
 			clearInterval(loginInterval);
 		}
-	}
-}
-
-function checkIfBTDIsInstalled() {
-	if (body.hasClass("btd-ready")) {
-		enableStylesheetExtension("btdsupport");
+	} else {
+		disableStylesheetExtension("loginpage");
+		html.removeClass("signin-sheet-now-present");
 	}
 }
 
@@ -1375,6 +1187,9 @@ contextMenuFunctions = {
 	},
 	restartApp:function(e){
 		getIpc().send("restartApp",e);
+	},
+	newSettings:function(e){
+		MTDNewSettings();
 	}
 
 }
@@ -1446,6 +1261,7 @@ function buildContextMenu(p) {
 	}
 
 	if (p.linkURL !== '') {
+		console.log(p);
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"openLink",text:"Open link in browser",enabled:true,data:p.linkURL}));
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"copyLink",text:"Copy link address",enabled:true,data:p.linkURL}));
 		items.push(makeCMDivider());
@@ -1459,7 +1275,7 @@ function buildContextMenu(p) {
 	}
 
 	items.push(makeCMItem({mousex:x,mousey:y,dataaction:"inspectElement",text:"Inspect element",enabled:true,data:{x:x,y:y}}));
-	//items.push(makeCMItem({mousex:x,mousey:y,dataaction:"restartApp",text:"Restart app",enabled:true}));
+	items.push(makeCMItem({mousex:x,mousey:y,dataaction:"newSettings",text:"Open new settings test",enabled:true}));
 
 	var ul = make("ul");
 
@@ -1476,12 +1292,12 @@ function buildContextMenu(p) {
 	setTimeout(function(){
 		if (x+xOffset+ul.width() > $(document).width()){
 			console.log("you're too wide!");
-			x = $(document).width() - ul.width() - xOffset;
+			x = $(document).width() - ul.width() - xOffset - xOffset;
 		}
 
 		if (y+yOffset+ul.height() > $(document).height()){
 			console.log("you're too tall!");
-			y = $(document).height() - ul.height() - yOffset;
+			y = $(document).height() - ul.height() - yOffset - yOffset;
 		}
 
 		menu.attr("style","left:"+(x+xOffset)+"px!important;top:"+(y+yOffset)+"px!important")
@@ -1492,6 +1308,299 @@ function buildContextMenu(p) {
 	return menu;
 }
 
+function parseActions(a,opt) {
+	for (var key in a) {
+		console.log(key);
+		if (key === "enableStylesheet") {
+			enableStylesheetExtension(a[key]);
+		} else if (key === "disableStylesheet") {
+			disableStylesheetExtension(a[key]);
+		} else if (key === "htmlAddClass") {
+			if (!html.hasClass(a[key]))
+				html.addClass(a[key]);
+		} else if (key === "htmlRemoveClass") {
+			html.removeClass(a[key]);
+		} else if (key === "func" && typeof a[key] === "function") {
+			a[key](opt);
+		}
+	}
+}
+
+function MTDNewSettings() {
+
+	var settingsData = {
+		appearance: {
+			number:1,
+			tabName:"Appearance",
+			tabId:"appearance",
+			options:{
+				coretheme:{
+					headerBefore:"Themes",
+					title:"Core Theme",
+					type:"dropdown",
+					activate:{
+						func:function(opt){
+							TD.settings.setTheme(opt)
+						}
+					},
+					options:{
+						dark:{value:"dark",text:"Dark"},
+						light:{value:"light",text:"Light"}
+					},
+					settingsKey:"mtd_core_theme",
+					default:"dark"
+				},
+				theme:{
+					title:"Custom Theme",
+					type:"dropdown",
+					activate:{
+						func:function(opt){
+							disableStylesheetExtension(getPref("mtd_theme"));
+							setPref("mtd_theme",opt);
+							enableStylesheetExtension(opt || "default");
+						}
+					},
+					options:{
+						default:{value:"default","text":"Default"},
+						complete:{
+							name:"Complete Themes",
+							children:{
+								paper:{value:"paper",text:"Paperwhite"},
+								amoled:{value:"amoled",text:"AMOLED"}//,
+								//highcontrast:{value:"highcontrast",text:"High Contrast"}
+							}
+						},
+						complementary:{
+							name:"Complementary Themes",
+							children:{
+								grey:{value:"grey","text":"Grey"},
+								red:{value:"red","text":"Red"},
+								pink:{value:"pink","text":"Pink"},
+								orange:{value:"orange","text":"Orange"},
+								violet:{value:"violet","text":"Violet"},
+								teal:{value:"teal","text":"Teal"},
+								green:{value:"green","text":"Green"},
+								yellow:{value:"yellow","text":"Yellow"},
+								cyan:{value:"cyan","text":"Cyan"},
+								black:{value:"black","text":"Black"},
+								blue:{value:"blue","text":"Blue"},
+							}
+						}
+					},
+					settingsKey:"mtd_theme",
+					default:"default"
+				},
+				dockedmodals:{
+					headerBefore:"Customization",
+					title:"Use docked modals",
+					type:"checkbox",
+					activate:{
+						disableStylesheet:"undockedmodals"
+					},
+					deactivate:{
+						enableStylesheet:"undockedmodals"
+					},
+					settingsKey:"mtd_dockedmodals",
+					default:false
+				},
+				roundprofilepics:{
+					title:"Use round profile pictures",
+					type:"checkbox",
+					activate:{
+						disableStylesheet:"squareavatars"
+					},
+					deactivate:{
+						enableStylesheet:"squareavatars"
+					},
+					settingsKey:"mtd_round_avatars",
+					default:true
+				},
+				nonewtweetsbutton:{
+					title:"Enable \"New Tweets\" indicator",
+					type:"checkbox",
+					activate:{
+						disableStylesheet:"nonewtweetsbutton"
+					},
+					deactivate:{
+						enableStylesheet:"nonewtweetsbutton"
+					},
+					settingsKey:"mtd_nonewtweetsbutton",
+					default:true
+				},
+				altsensitive:{
+					title:"Use alternative sensitive media workflow",
+					type:"checkbox",
+					activate:{
+						enableStylesheet:"altsensitive"
+					},
+					deactivate:{
+						disableStylesheet:"altsensitive"
+					},
+					settingsKey:"mtd_sensitive_alt",
+					default:false
+				},
+				scrollbarstyle:{
+					title:"Scrollbar Style",
+					type:"dropdown",
+					activate:{
+						func:function(opt){
+							disableStylesheetExtension(getPref("mtd_scrollbar_style"));
+							setPref("mtd_scrollbar_style",opt);
+							enableStylesheetExtension(opt || "default");
+						}
+					},
+					options:{
+						scrollbarsdefault:{value:"scrollbarsdefault",text:"Default"},
+						scrollbarsnarrow:{value:"scrollbarsnarrow",text:"Narrow"},
+						scrollbarsnone:{value:"scrollbarsnone",text:"Hidden"}
+					},
+					settingsKey:"mtd_scrollbar_style",
+					default:"scrollbarsdefault"
+				}
+			}
+		}, accessibility: {
+			number:2,
+			tabName:"Accessibility",
+			tabId:"accessibility",
+			options:{
+
+				altsensitive:{
+					title:"Always show outlines around focused items (Ctrl+Shift+A to toggle)",
+					type:"checkbox",
+					activate:{
+						htmlAddClass:"mtd-acc-focus-ring"
+					},
+					deactivate:{
+						htmlRemoveClass:"mtd-acc-focus-ring"
+					},
+					settingsKey:"mtd_outlines",
+					default:false
+				}
+			}
+		}, about: {
+			number:3,
+			tabName:"About",
+			tabId:"about",
+			options:{},
+			enum:"aboutpage"
+		}
+	}
+
+	var tabs = make("div").addClass("mtd-settings-tab-container mtd-tabs");
+	var container = make("div").addClass("mtd-settings-inner");
+	var panel = make("div").addClass("mdl mtd-settings-panel").append(tabs).append(container);
+
+
+	for (var key in settingsData) {
+
+		var tab = make("button").addClass("mtd-settings-tab").attr("data-action",key).html(settingsData[key].tabName).click(function(){
+			console.log(settingsData[key].number);
+			$(".mtd-settings-tab-selected").removeClass("mtd-settings-tab-selected");
+			$(this).addClass("mtd-settings-tab-selected");
+			container.css("margin-left","-"+($(this).index()*600)+"px");
+		});
+
+		var subPanel = make("div").addClass("mtd-settings-subpanel mtd-col scroll-v").attr("id",key);
+
+		if (!settingsData[key].enum) {			
+			for (var prefKey in settingsData[key].options) {
+				let pref = settingsData[key].options[prefKey];
+
+				var option = make("div").addClass("mtd-settings-option").addClass("mtd-settings-option-"+pref.type);
+
+				if (exists(pref.headerBefore)) {
+					subPanel.append(
+						make("h3").addClass("mtd-settings-panel-subheader").html(pref.headerBefore)
+					);
+				}
+
+				if (getPref(pref.settingsKey) === undefined || getPref(pref.settingsKey) === "undefined") {
+					setPref(pref.settingsKey, pref.default);
+				}
+
+
+				switch(pref.type) {
+					case "checkbox":
+						var input = make("input").attr("type","checkbox").change(function(){
+							setPref(pref.settingsKey,$(this).is(":checked"));
+							parseActions($(this).is(":checked") ? pref.activate : pref.deactivate, $(this).val());
+
+						});
+
+						if (getPref(pref.settingsKey) === true) {
+							input.attr("checked","checked");
+						}
+
+
+						var label = make("label").addClass("checkbox").html(pref.title).append(input);
+						option.append(label);
+						break;
+					case "dropdown":
+						var select = make("select").attr("type","select").change(function(){
+							//setPref(pref.settingsKey,$(this).val());
+							parseActions(pref.activate, $(this).val());
+						});
+
+						for (var prefKey in pref.options) {
+							if (!!(pref.options[prefKey].value)) {
+								let newPrefSel = pref.options[prefKey];
+								let newoption = make("option").attr("value",newPrefSel.value).html(newPrefSel.text);
+								console.log(newoption);
+								
+								select.append(newoption);
+							} else {
+
+								var group = make("optgroup").attr("label",pref.options[prefKey].name)
+
+								for (var subkey in pref.options[prefKey].children) {
+									let newSubPrefSel = pref.options[prefKey].children[subkey];
+									let newsuboption = make("option").attr("value",newSubPrefSel.value).html(newSubPrefSel.text);
+									console.log(newsuboption);
+									
+									group.append(newsuboption);
+								}
+
+								select.append(group);
+							}
+						}
+
+						select.val(getPref(pref.settingsKey));
+
+						var label = make("label").addClass("control-label").html(pref.title);
+
+						option.append(label).append(select);
+						break;
+
+				}
+
+				subPanel.append(option);
+			}
+		} else if (settingsData[key].enum === "aboutpage") {
+			var logo = make("i").addClass("mtd-logo icon-moderndeck icon");
+			var h1 = make("h1").addClass("mtd-about-title").html("ModernDeck");
+			var h2 = make("h2").addClass("mtd-version-title").html(SystemVersion);
+			var logoCont = make("div").addClass("mtd-logo-container").append(logo,h1,h2);
+
+			subPanel.append(logoCont).append(make("p").html("This early, development version of the ModernDeck app does not have automatic updating yet. This build expires 1 month after the build date shown above. ").append(make("a").attr("href","https://github.com/dangeredwolf/ModernDeckAPPTEST/releases").html("Please check the linked GitHub releases page for updates.")))
+		}
+
+		tabs.append(tab);
+		container.append(subPanel);
+
+
+		if (tab.index() === 0) {
+			tab.addClass("mtd-settings-tab-selected");
+		}
+	}
+
+	new TD.components.GlobalSettings;
+
+	$("#settings-modal>.mdl").remove();
+	$("#settings-modal").append(panel);
+
+	return panel;
+}
+
 function CoreInit() {
 	if (typeof Raven === "undefined" || typeof mR === "undefined") {
 		setTimeout(CoreInit,10);
@@ -1500,25 +1609,6 @@ function CoreInit() {
 	}
 
 	if (typeof $ === "undefined") {
-		// if (typeof require !== "undefined") {
-		// 	console.log("With the ModernDeck app, we can use our own jQuery :3");
-		// 	var jq = require('jquery');
-		// 	window.$ = jq;
-		// 	window.jQuery = jq;
-		// } else {
-		// 	try {
-		// 		var jQuery = mR.findFunction('jQuery')[0];
-
-		// 		window.$ = jQuery;
-		// 		window.jQuery = jQuery;
-		// 	} catch (e) {
-		// 		console.error(e.message);
-		// 		if (e.message === "No module constructors to search through!") {
-		// 			forceAppUpdateOnlineStatus('offline');
-		// 			return;
-		// 		}
-		// 	}
-		// }
 		try {
 			var jQuery = mR.findFunction('jQuery')[0];
 
@@ -1555,14 +1645,12 @@ function CoreInit() {
 
 	Raven.context(function(){
 		window.addEventListener("keyup",KeyboardShortcutHandler,false);
-		html.addClass("mtd-api-ver-6-2 mtd-js-loaded");
+		html.addClass("mtd-js-loaded");
 		mutationObserver(html[0],checkIfUserSelectedNewTheme,{attributes:true});
-		mutationObserver(body[0],checkIfBTDIsInstalled,{attributes:true});
 		mutationObserver(html[0],onElementAddedToDOM,{attributes:false,subtree:true,childList:true})
 
 		checkIfUserSelectedNewTheme();
 		checkIfSigninFormIsPresent();
-		checkIfBTDIsInstalled();
 		loginInterval = setInterval(checkIfSigninFormIsPresent,500);
 		console.info("MTDinject loaded");
 	});

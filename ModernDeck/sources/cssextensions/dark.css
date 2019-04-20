@@ -161,7 +161,8 @@ li:not(.selected) .list-twitter-list .txt-ellipsis,
  .color-twitter-dark-gray,
  .lst-launcher :not(.is-disabled) .color-twitter-darker-gray,
  .js-send-button[disabled],
- button[disabled]
+ button[disabled],
+ .mtd-settings-tab:not(.mtd-settings-tab-selected)
 {
 	color:#6D808B
 }
@@ -192,7 +193,8 @@ textarea:not(.compose-text):not(.js-compose-text),
 .btn-options-tray:not([disabled]):not(.is-disabled),
 .toggle-item-text,
 .accordion-panel .txt-bold,
-.Notification-icon
+.Notification-icon,
+.mtd-settings-tab
 {
 	color:#fff
 }
@@ -229,7 +231,8 @@ optgroup,
 .compose-message-recipient-input-container,
 .compose-media-grid-holder,
 .compose-text-container,
-.status-message
+.status-message,
+.mtd-settings-tab-container
 {
 	background:#263238
 }

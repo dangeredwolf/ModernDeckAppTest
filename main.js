@@ -7,7 +7,7 @@ const electron = require("electron");
 const { app, BrowserWindow, ipcMain, session, systemPreferences, Menu, dialog } = require('electron');
 const serve = require('electron-serve');
 
-const devBuildExpiration = {year:2019,month:4,day:18}
+const devBuildExpiration = {year:2019,month:4,day:19}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

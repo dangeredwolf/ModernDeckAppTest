@@ -5,9 +5,14 @@ if (require('electron-squirrel-startup')) return;
 // Modules to control application life and create native browser window
 const electron = require("electron");
 const { app, BrowserWindow, ipcMain, session, systemPreferences, Menu, dialog } = require('electron');
+
+const log = require('electron-log');
+
+const { autoUpdater } = require("electron-updater");
+
 const serve = require('electron-serve');
 
-const devBuildExpiration = {year:2019,month:4,day:19}
+const devBuildExpiration = {year:2019,month:4,day:20} // months start at 0 for whatever reason, so number is essentially added by 1
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -21,16 +26,18 @@ const loadURL = serve({scheme:"moderndeck",directory:'ModernDeck'});
 app.setAppUserModelId("com.dangeredwolf.ModernDeck");
 
 
-const {autoUpdater} = require("electron-updater");
 var updating = false;
 var installLater = false;
 var showWarning = false;
 
 autoUpdater.setFeedURL({
 	"owner": "dangeredwolf",
-	"repo": "ModernDeck",
+	"repo": "ModernDeckAPPTEST",
 	"provider": "github"
 });
+
+autoUpdater.logger = require("electron-log");
+autoUpdater.logger.transports.file.level = "info";
 
 var checkDevDate = new Date();
 
@@ -51,7 +58,7 @@ function makeLoginWindow(url) {
 		icon:__dirname+"ModernDeck/sources/favicon.ico",
 	});
 
-	loginWindow.on('closed', function () {
+	loginWindow.on('closed', function() {
 		loginWindow = null;
 	});
 
@@ -135,8 +142,12 @@ function makeWindow() {
 			title:"ModernDeck",
 			message:"This development build of ModernDeck has expired. It expired on " + devBuildExpiration.year + "/" + (devBuildExpiration.month<9?"0"+(devBuildExpiration.month+1) : devBuildExpiration.month+1) + "/" + devBuildExpiration.day + ".\n\nPlease uninstall this version of ModernDeck from Programs and Features.",
 			type:"error",
-			buttons:["Close"]
+			buttons:["Upgrade to latest test build","Close"]
 		},function(response){
+			const { shell } = electron;
+			if (response === 0) {
+				shell.openExternal("https://github.com/dangeredwolf/ModernDeckAPPTEST/releases");
+			}
 			app.quit();
 		});
 		return;
@@ -211,7 +222,7 @@ function makeWindow() {
 			msg += "We can't establish a secure connection to Twitter.\nThis may be caused by network interference or a problem at Twitter.\n\nIf it still doesn't work, but other HTTPS websites appear to load (such as google.com), check https://api.twitterstat.us to see if there are any problems at Twitter.";
 			addChromiumErrorCode = true;
 		} else if (code <= -200 && code >= -220) {
-			msg += "We can't establish a secure connection to Twitter.\nThere is a problem with the digital certificate that was presented to us.\n\nPlease try again later, or check https://api.twitterstat.us to see if there are any problems at Twitter.";
+			msg += "We can't establish a secure connection to Twitter.\nThere is a problem with the digital certificate that was presented to us by Twitter.\n\nPlease try again, or check https://api.twitterstat.us to see if there are any problems at Twitter.";
 			addChromiumErrorCode = true;
 		} else if (code <= -1 && code >= -99) {
 			msg += "We can't connect to Twitter due to an unexpected system error. Please refer to the error code below.";
@@ -330,18 +341,18 @@ function makeWindow() {
 	});
 
 	// Emitted when the window is closed.
-	mainWindow.on('closed', function () {
+	mainWindow.on('closed', function() {
 		mainWindow = null;
 	});
 
-	mainWindow.on('maximize', function () {
+	mainWindow.on('maximize', function() {
 		mainWindow.webContents.executeJavaScript('\
 			document.querySelector("html").classList.add("mtd-maximized");\
 			document.querySelector(".windowcontrol.max").innerHTML = "&#xE3E0";\
 			');
 	});
 
-	mainWindow.on('unmaximize', function () {
+	mainWindow.on('unmaximize', function() {
 		mainWindow.webContents.executeJavaScript('\
 			document.querySelector("html").classList.remove("mtd-maximized");\
 			document.querySelector(".windowcontrol.max").innerHTML = "&#xE3C6";\
@@ -355,12 +366,37 @@ function makeWindow() {
 app.on('ready', makeWindow)
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', function() {
 	if (process.platform !== 'darwin') app.quit()
 })
 
-app.on('activate', function () {
+app.on('activate', function() {
 	if (mainWindow === null) makeWindow()
+})
+
+
+autoUpdater.on("error",function(e){
+	if (!mainWindow || !mainWindow.webContents){return;}
+	mainWindow.webContents.send("error",e);
+});
+
+autoUpdater.on("checking-for-update",function(e){
+	if (!mainWindow || !mainWindow.webContents){return;}
+	mainWindow.webContents.send("checking-for-update",e);
+});
+
+autoUpdater.on("download-progress",function(e){
+	if (!mainWindow || !mainWindow.webContents){return;}
+	mainWindow.webContents.send("download-progress",e);
+});
+
+autoUpdater.on("update-downloaded",function(e){
+	if (!mainWindow || !mainWindow.webContents){return;}
+	mainWindow.webContents.send("update-downloaded",e);
+});
+
+ipcMain.on('check-for-updates',function(e){
+	autoUpdater.checkForUpdates();
 })
 
 // In this file you can include the rest of your app's specific main process

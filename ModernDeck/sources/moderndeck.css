@@ -9280,3 +9280,26 @@ position:relative;
 	font-size:16px;
 	padding:30px
 }
+
+.mtd-update-container,.mtd-update-container>* {
+	float:left
+}
+
+.mtd-update-container {
+	margin-top:30px;
+	display:inline-block;
+	position:absolute;
+	left:60px;
+}
+
+.mtd-update-container h2 {
+	font-size:16px;
+	padding-left:20px;
+	font-weight:500
+}
+
+.mtd-update-container h3 {
+	font-size:14px;
+	padding-left:20px;
+	font-weight:400
+}

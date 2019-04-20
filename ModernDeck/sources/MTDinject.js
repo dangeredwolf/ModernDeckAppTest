@@ -5,7 +5,7 @@
 
 "use strict";
 
-var SystemVersion = "App Build 2019-04-19";
+var SystemVersion = "App Build 2019-04-20";
 var MTDBaseURL = "https://rawgit.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if using online client
 
 var msgID,
@@ -1079,6 +1079,67 @@ function onElementAddedToDOM(e) {
 	}
 }
 
+function roundMe(val) {
+	return Math.floor(val * 100)/100;
+}
+
+function formatBytes(val) {
+	if (val < 1000) {
+		return val + " bytes"
+	} else if (val < 1000000) {
+		return roundMe(val/1000) + " KB"
+	} else if (val < 1000000000) {
+		return roundMe(val/1000000) + " MB"
+	} else {
+		return roundMe(val/1000000000) + " GB"
+	}
+}
+
+function mtdAppUpdatePage(updateCont,updateh2) {
+
+	const {ipcRenderer} = require('electron');
+
+	let updateh3;
+
+	ipcRenderer.on("error",function(e){
+		console.log(e);
+		updateh2.html("There was a problem checking for updates. ");
+		if (!exists(updateh3)) {
+			updateh3 = make("h3").addClass("mtd-update-h3");
+			updateCont.append(updateh3);
+		}
+
+		updateh3.html(e);
+
+	});
+
+	ipcRenderer.on("checking-for-update",function(e){
+		console.log(e);
+		updateh2.html("Checking for updates...");
+		$("h3.mtd-update-h3").remove();
+	});
+
+	ipcRenderer.on("download-progress",function(e){
+		console.log(e);
+		updateh2.html("Downloading update...");
+		if (!exists(updateh3)) {
+			updateh3 = make("h3").addClass("mtd-update-h3");
+			updateCont.append(updateh3);
+		}
+
+		updateh3.html(roundMe(percent)+"% complete ("+formatBytes(e.transferred)+"/"+formatBytes(e.total)+", "+formatBytes(e.bytesPerSecond)+"/s)")
+	});
+
+
+	ipcRenderer.on("update-downloaded",function(e){
+		console.log(e);
+		updateh2.html("Update downloaded.");
+		$("h3.mtd-update-h3").remove();
+	});
+
+	ipcRenderer.send('check-for-updates');
+}
+
 function mtdAppFunctions() {
 
 	if (typeof require === "undefined") {return;}
@@ -1275,7 +1336,7 @@ function buildContextMenu(p) {
 	}
 
 	items.push(makeCMItem({mousex:x,mousey:y,dataaction:"inspectElement",text:"Inspect element",enabled:true,data:{x:x,y:y}}));
-	items.push(makeCMItem({mousex:x,mousey:y,dataaction:"newSettings",text:"Open new settings test",enabled:true}));
+	items.push(makeCMItem({mousex:x,mousey:y,dataaction:"newSettings",text:"Open Settings",enabled:true}));
 
 	var ul = make("ul");
 
@@ -1581,7 +1642,18 @@ function MTDNewSettings() {
 			var h2 = make("h2").addClass("mtd-version-title").html(SystemVersion);
 			var logoCont = make("div").addClass("mtd-logo-container").append(logo,h1,h2);
 
-			subPanel.append(logoCont).append(make("p").html("This early, development version of the ModernDeck app does not have automatic updating yet. This build expires 1 month after the build date shown above. ").append(make("a").attr("href","https://github.com/dangeredwolf/ModernDeckAPPTEST/releases").html("Please check the linked GitHub releases page for updates.")))
+			subPanel.append(logoCont)//.append(make("p").html("This early, development version of the ModernDeck app does not have automatic updating yet. This build expires 1 month after the build date shown above. ").append(make("a").attr("href","https://github.com/dangeredwolf/ModernDeckAPPTEST/releases").html("Please check the linked GitHub releases page for updates.")))
+			;
+
+			var updateCont = make("div").addClass("mtd-update-container").html('<div class="preloader-wrapper small active"><div class="spinner-layer"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>');
+
+			var updateh2 = make("h2").addClass("mtd-update-h2").html("Checking for updates...");
+
+			updateCont.append(updateh2);
+
+			subPanel.append(updateCont);
+
+			mtdAppUpdatePage(updateCont,updateh2);
 		}
 
 		tabs.append(tab);

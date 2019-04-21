@@ -5,7 +5,7 @@
 
 "use strict";
 
-var SystemVersion = "App Build 2019-04-20";
+var SystemVersion = "App Build 2019-04-21";
 var MTDBaseURL = "https://rawgit.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if using online client
 
 var msgID,
@@ -130,6 +130,18 @@ var settingsData = {
 					enableStylesheet:"undockedmodals"
 				},
 				settingsKey:"mtd_dockedmodals",
+				default:false
+			},
+			undockednavdrawer:{
+				title:"Replace navigation drawer with menu",
+				type:"checkbox",
+				activate:{
+					enableStylesheet:"undockednavdrawer"
+				},
+				deactivate:{
+					disableStylesheet:"undockednavdrawer"
+				},
+				settingsKey:"mtd_undockednavdrawer",
 				default:false
 			},
 			nonewtweetsbutton:{
@@ -274,13 +286,13 @@ var settingsData = {
 				activate:{
 					func:function(set){
 						TD.settings.setBitlyAccount({
-							apiKey:TD.settings.getBitlyAccount().apiKey,
+							apiKey:(TD.settings.getBitlyAccount() || {apiKey:""}).apiKey,
 							login:set
 						})
 					}
 				},
 				queryFunction:function(){
-					return TD.settings.getBitlyAccount().login;
+					return (TD.settings.getBitlyAccount() || {login:""}).login;
 				}
 			},
 			bitlyApiKey:{
@@ -290,13 +302,13 @@ var settingsData = {
 				activate:{
 					func:function(set){
 						TD.settings.setBitlyAccount({
-							login:TD.settings.getBitlyAccount().login,
+							login:(TD.settings.getBitlyAccount() || {login:""}).login,
 							apiKey:set
 						});
 					}
 				},
 				queryFunction:function(){
-					return TD.settings.getBitlyAccount().apiKey;
+					return (TD.settings.getBitlyAccount() || {apiKey:""}).apiKey;
 				}
 			}
 		}
@@ -882,12 +894,13 @@ function MTDSettings() {
 			var updateIcon = make("i").addClass("material-icon hidden");
 			var updateh2 = make("h2").addClass("mtd-update-h2").html("Checking for updates...");
 			var updateh3 = make("h3").addClass("mtd-update-h3 hidden").html("");
+			var tryAgain = make("button").addClass("btn hidden").html("Try Again")
 
 			var info = make("p").html("Made with <i class=\"icon icon-heart mtd-about-heart\"></i> by dangeredwolf in Columbus, OH<br><br>ModernDeck is an open source project released under the MIT license.");
 			var infoCont = make("div").addClass("mtd-about-info").append(info);
 
 
-			updateCont.append(updateIcon,updateh2,updateh3);
+			updateCont.append(updateIcon,updateh2,updateh3,tryAgain);
 
 			if (isApp) {
 				subPanel.append(updateCont,infoCont);
@@ -896,7 +909,7 @@ function MTDSettings() {
 			subPanel.append(infoCont);
 
 			if (isApp) {
-				mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner);
+				mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,tryAgain);
 			}
 		}
 
@@ -1277,16 +1290,30 @@ function formatBytes(val) {
 	}
 }
 
-function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner) {
+function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,tryAgain) {
 
 	const {ipcRenderer} = require('electron');
 
-	ipcRenderer.on("error",function(e,args){
+	ipcRenderer.on("error",function(e,args,f,g){
+		console.log("E:");
+		console.log(e);
+		console.log("args:");
 		console.log(args);
+		console.log("f:");
+		console.log(f);
+		console.log("g:");
+		console.log(g);
 		updateh2.html("There was a problem checking for updates. ");
 		$(".mtd-update-spinner").addClass("hidden");
-		updateh3.html(args.code + " " + args.errno + " " + args.syscall + " " + args.path).removeClass("hidden");
+		if (exists(args.code)) {
+			updateh3.html(args.code + " " + args.errno + " " + args.syscall + " " + args.path).removeClass("hidden");
+		} else if (exists(f)) {
+			updateh3.html(f.match(/^(Cannot check for updates: )(.)+\n/g)).removeClass("hidden")
+		} else {
+			updateh3.html("We couldn't interpret the error info we received. Please try again later or DM @ModernDeck on Twitter for further help.").removeClass("hidden");
+		}
 		updateIcon.html("error_outline").removeClass("hidden");
+		tryAgain.removeClass("hidden").html("Try Again");
 
 	});
 
@@ -1296,6 +1323,7 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner)
 		$(".mtd-update-spinner").removeClass("hidden");
 		updateh2.html("Checking for updates...");
 		updateh3.addClass("hidden");
+		tryAgain.addClass("hidden");
 	});
 
 	ipcRenderer.on("download-progress",function(e,args){
@@ -1303,16 +1331,18 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner)
 		updateIcon.addClass("hidden");
 		$(".mtd-update-spinner").removeClass("hidden");
 		updateh2.html("Downloading update...");
-		updateh3.html(roundMe(e.percent)+"% complete ("+formatBytes(e.transferred)+"/"+formatBytes(e.total)+", "+formatBytes(e.bytesPerSecond)+"/s)").removeClass("hidden");
+		updateh3.html(Math.floor(args.percent)+"% complete ("+formatBytes(args.transferred)+"/"+formatBytes(args.total)+", "+formatBytes(args.bytesPerSecond)+"/s)").removeClass("hidden");
+		tryAgain.addClass("hidden");
 	});
 
 
 	ipcRenderer.on("update-downloaded",function(e,args){
 		console.log(args);
 		$(".mtd-update-spinner").addClass("hidden");
-		updateIcon.html("info_outline").removeClass("hidden");
+		updateIcon.html("update").removeClass("hidden");
 		updateh2.html("Update downloaded");
 		updateh3.html("Restart ModernDeck to complete the update").removeClass("hidden");
+		tryAgain.addClass("hidden");
 	});
 
 
@@ -1320,9 +1350,14 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner)
 		console.log(args);
 		$(".mtd-update-spinner").addClass("hidden");
 		updateh2.html("No update available");
-		updateIcon.html("info_outline").removeClass("hidden");
+		updateIcon.html("check_circle").removeClass("hidden");
 		updateh3.html(SystemVersion + " is the latest version.").removeClass("hidden");
+		tryAgain.removeClass("hidden").html("Check Again");
 	});
+
+	tryAgain.click(function(){
+		ipcRenderer.send('check-for-updates');
+	})
 
 	ipcRenderer.send('check-for-updates');
 }

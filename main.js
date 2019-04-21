@@ -12,7 +12,7 @@ const { autoUpdater } = require("electron-updater");
 
 const serve = require('electron-serve');
 
-const devBuildExpiration = {year:2019,month:4,day:20} // months start at 0 for whatever reason, so number is essentially added by 1
+const devBuildExpiration = {year:2019,month:4,day:21} // months start at 0 for whatever reason, so number is essentially added by 1
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -371,9 +371,9 @@ app.on('activate', function() {
 })
 
 
-autoUpdater.on("error",function(e){
+autoUpdater.on("error",function(e,f,g){
 	if (!mainWindow || !mainWindow.webContents){return;}
-	mainWindow.webContents.send("error",e);
+	mainWindow.webContents.send("error",e,f,g);
 });
 
 autoUpdater.on("checking-for-update",function(e){

@@ -110,10 +110,10 @@
 
 .mdl .js-user-actions-menu {
 	position:absolute;
-	top:-300px;
+	top: -330px;
 	left:-40px;
 	color:#fff!important;
-	margin:0
+	margin:0;
 }
 
 .js-add-column {

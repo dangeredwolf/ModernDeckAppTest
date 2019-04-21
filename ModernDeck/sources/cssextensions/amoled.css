@@ -62,7 +62,8 @@ div.drawer[data-drawer="compose"],
 .is-selected-tweet,
 .prf-follow-status,
 .typeahead,
-.media-sensitive
+.media-sensitive,
+.mtd-settings-tab-container
 {
 	background:#000!important
 }
@@ -138,7 +139,7 @@ option
 }
 
 .mdl:not(.med-fullpanel),.mtd-nav-drawer {
-	box-shadow:0 3px 16px #344248!important
+	box-shadow:0 10px 80px #344248!important
 }
 
 .mdl.s-profile,

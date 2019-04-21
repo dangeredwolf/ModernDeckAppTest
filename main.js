@@ -222,7 +222,7 @@ function makeWindow() {
 			msg += "We can't establish a secure connection to Twitter.\nThis may be caused by network interference or a problem at Twitter.\n\nIf it still doesn't work, but other HTTPS websites appear to load (such as google.com), check https://api.twitterstat.us to see if there are any problems at Twitter.";
 			addChromiumErrorCode = true;
 		} else if (code <= -200 && code >= -220) {
-			msg += "We can't establish a secure connection to Twitter.\nThere is a problem with the digital certificate that was presented to us by Twitter.\n\nPlease try again, or check https://api.twitterstat.us to see if there are any problems at Twitter.";
+			msg += "We can't establish a secure connection to Twitter.\nThere is a problem with the digital certificate that was presented to us by Twitter.\n\nPlease try again, or if it persists, check https://api.twitterstat.us to see if there are any problems at Twitter.";
 			addChromiumErrorCode = true;
 		} else if (code <= -1 && code >= -99) {
 			msg += "We can't connect to Twitter due to an unexpected system error. Please refer to the error code below.";
@@ -340,7 +340,6 @@ function makeWindow() {
 	ipcMain.on("restartApp",function(event,arg){
 	});
 
-	// Emitted when the window is closed.
 	mainWindow.on('closed', function() {
 		mainWindow = null;
 	});
@@ -360,18 +359,15 @@ function makeWindow() {
 	});
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on('ready', makeWindow)
 
-// Quit when all windows are closed.
 app.on('window-all-closed', function() {
-	if (process.platform !== 'darwin') app.quit()
+	app.quit();
 })
 
 app.on('activate', function() {
-	if (mainWindow === null) makeWindow()
+	if (mainWindow === null)
+		makeWindow();
 })
 
 
@@ -403,6 +399,10 @@ autoUpdater.on("update-not-available",function(e){
 ipcMain.on('check-for-updates',function(e){
 	autoUpdater.checkForUpdates();
 })
+
+setInterval(function(){
+	autoUpdater.checkForUpdates();
+},1000*60*15); //check for updates once every 15 minutes
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

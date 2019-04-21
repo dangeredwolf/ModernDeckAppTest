@@ -1303,7 +1303,7 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner)
 		updateIcon.addClass("hidden");
 		$(".mtd-update-spinner").removeClass("hidden");
 		updateh2.html("Downloading update...");
-		updateh3.html(roundMe(percent)+"% complete ("+formatBytes(e.transferred)+"/"+formatBytes(e.total)+", "+formatBytes(e.bytesPerSecond)+"/s)").removeClass("hidden");
+		updateh3.html(roundMe(e.percent)+"% complete ("+formatBytes(e.transferred)+"/"+formatBytes(e.total)+", "+formatBytes(e.bytesPerSecond)+"/s)").removeClass("hidden");
 	});
 
 

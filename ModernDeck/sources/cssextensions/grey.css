@@ -5,14 +5,52 @@
   Released under the MIT Licence
 */
 
-.mtd-settings-tab-container,.mdl-header,.application,.mtd-back-grey.mtd-light .app-navigator .js-hide-drawer,.app-navigator .js-hide-drawer,.edit-conversation-name,.drawer-header,.column:not(.is-new) .column-message,body,.column-header,.column-header-temp {
+
+.light .mtd-settings-tab-container,.light .mdl-header,.light .application,.light .mtd-back-blue.mtd-light .app-navigator .js-hide-drawer,.light .app-navigator .js-hide-drawer,.light .edit-conversation-name,.light .drawer-header,.light .column:not(.is-new) .column-message,.light body,.light .column-header,.light .column-header-temp {
 	background:#555!important
 }
 
-.is-new .column-header,.is-new .column-header-temp {
+.light .is-new .column-header,.light .is-new .column-header-temp {
 	background:linear-gradient(#555,#00BCD4)!important
 }
 
-.mtd-nd-header-image {
+.light .mtd-nd-header-image {
 	background-color:#555!important
+}
+
+.dark .mtd-settings-option-slider input[type="range"]::-webkit-slider-thumb {
+	background:#77919e
+}
+.dark .mtd-settings-option-slider input[type="range"]::-moz-range-thumb {
+	background:#77919e
+}
+
+.dark a,.dark a:not([href="#"]):not(.column-header-link):not(.js-column-back):not(.js-tweet-social-proof-back):not(.account-selector-grid-mode):not(.account-link):hover,.dark .calweek a:hover,.dark .btn:not([disabled]):not(.is-disabled):not(.btn-options-tray):not(.mtd-nav-button):not(.btn-bg-negative):not(.btn-negative),.dark .compose-send-button-success,.dark .icon-follow-color,.dark .tweet-actions.is-visible .icon-reply,.dark #caltoday,.dark input[type="checkbox"]:checked:before,.dark button,.dark input[type="radio"]:checked:before,.dark .mtd-logo
+{
+	color: #77919e;
+}
+
+.dark a:not(.list-account):not(.js-column-back):not(.compose-account):not(.js-toggle-item):not(.column-header-link):active,.dark a:not(.list-account):not(.js-column-back):not(.compose-account):not(.js-toggle-item):not(.column-header-link):focus,.dark .js-send-button:not([disabled]):active,.dark .gap-chirp-text,.dark .sprite:before,.dark .compose-send-button-success,.dark .more-tweets-btn:focus,.dark .more-tweets-btn:hover,.dark .more-tweets-btn:active,.dark .account-stats a,.dark .prf .lst-profile a,.dark .icon-follow-color,.dark .tweet-action[data-actions-menu-position]:focus,.dark .tweet-actions .tweet-action.is-selected,.dark .tweet-detail-actions .tweet-action.is-selected,.dark .tweet-detail-actions .js-reply-action.is-selected
+{
+	color:#77919e
+}
+
+.dark .spinner-layer
+{
+	border-color:#77919e
+}
+
+.dark div.drawer[data-drawer="compose"],.dark .lst-group .selected,.dark #calcurrent,.dark .btn-compose:not(.js-hide-drawer),.dark .compose,.dark .drawer,.dark .column-options .button-tray,.dark .column-options,.dark .facet-type,.dark .is-options-open .column-settings-link,.dark .is-favorite.is-retweet .tweet-dogear,.dark .is-unread,.dark .js-add-column,.dark .mdl .js-add-column,.dark .list-item.is-selected,.dark .more-tweets-btn,.dark .more-tweets-btn:hover,.dark .tweet-button:not(.js-hide-drawer),.dark .PillGroup .Pill.is-selected,.dark .DatePicker-calendarDay.is-withinRange,.dark button.try-query
+{
+	background: #3A4B54;
+}
+
+.dark .prf-actions .js-follow-button
+{
+	background:#77919e!important
+}
+
+.dark .is-new .column-header,.dark .is-new .column-header-temp
+{
+	background: linear-gradient(#263238,#3A4B54);
 }

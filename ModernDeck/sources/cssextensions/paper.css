@@ -9,8 +9,8 @@
 	border-color:#555!important
 }
 
-.mtd-settings-tab-container,.more-tweets-btn,.mdl-header,.application,.mtd-back-paper.mtd-light .app-navigator .js-hide-drawer,.app-navigator .js-hide-drawer,.edit-conversation-name,.drawer-header,.column:not(.is-new) .column-message,body,.column-header,.column-header-temp {
-	background:#eee!important
+.mtd-settings-tab-container,.more-tweets-btn,.mdl-header,.application,.mtd-back-paper.mtd-light .app-navigator .js-hide-drawer,.app-navigator .js-hide-drawer,.edit-conversation-name,.drawer-header,.column:not(.is-new) .column-message,body,.column-header,.column-header-temp,.is-new .column-message {
+	background:#eee!important;
 }
 
 .mtd-nd-header-image {
@@ -21,7 +21,7 @@
 	color:#fff
 }
 
-.mtd-settings-tab,.lst-launcher a, .lst-launcher a:hover, .lst-launcher a:focus, .lst-launcher a:active, .lst-launcher span, .message-text>.btn, .message-banner, .js-compose-stay-open, .js-compose-stay-open:before, .mdl-header-title a, .title-content .txt-mute, .mtd-nd-header-username, .column-title .attribution, .compose-remember-state, .more-tweets-btn, .selected .list-link strong, .account-selector-grid-mode, .account-selector-grid-mode:hover, .account-selector-grid-mode, .account-selector-grid-mode.is-selected, .js-dm-participants-back:after, .conversation-title .title-content b, .js-tweet-social-proof-back:after, .js-column-detail .column-title-back:before, .js-hide-drawer.app-nav-tab:after, .app-nav-tab, .drawer-header-title.drawer-column-header-title, .btn-back:before, .mdl-header-title, .column-header-temp, .mdl-column.l-column .search-input, .numbered-badge, .app-search .app-search-fake, .column-message, .app-nav-link, .column-title, .column-header .icon, .btn-compose.tweet-button>.icon-compose {
+.windowcontrol,.mtd-settings-tab,.lst-launcher a, .lst-launcher a:hover, .lst-launcher a:focus, .lst-launcher a:active, .lst-launcher span, .message-text>.btn, .message-banner, .js-compose-stay-open, .js-compose-stay-open:before, .mdl-header-title a, .title-content .txt-mute, .mtd-nd-header-username, .column-title .attribution, .compose-remember-state, .more-tweets-btn, .selected .list-link strong, .account-selector-grid-mode, .account-selector-grid-mode:hover, .account-selector-grid-mode, .account-selector-grid-mode.is-selected, .js-dm-participants-back:after, .conversation-title .title-content b, .js-tweet-social-proof-back:after, .js-column-detail .column-title-back:before, .js-hide-drawer.app-nav-tab:after, .app-nav-tab, .drawer-header-title.drawer-column-header-title, .btn-back:before, .mdl-header-title, .column-header-temp, .mdl-column.l-column .search-input, .numbered-badge, .app-search .app-search-fake, .column-message, .app-nav-link, .column-title, .column-header .icon, .btn-compose.tweet-button>.icon-compose {
 	color:#555!important
 }
 
@@ -46,7 +46,7 @@ a .column-title-back .icon:after,.drawer-header:active .drawer-header-title .ico
 	color:#666!important;
 }
 
-.js-send-button,.js-add-image-button,.js-tweet-button,.js-dm-button,.js-schedule-button {
+.js-column-message .dark-only--color-twitter-gray,.js-send-button, .js-add-image-button, .js-tweet-button, .js-dm-button, .js-schedule-button,.compose-reply-tweet-remove {
 	color:#777!important
 }
 

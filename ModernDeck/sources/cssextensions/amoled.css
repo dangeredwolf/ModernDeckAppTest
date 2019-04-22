@@ -152,3 +152,7 @@ option
 .keyboard-shortcut-list-modal {
 	scrollbar-color:rgba(149,175,191,.5) #000!important;
 }
+
+.windowcontrol:hover {
+	background:rgba(255,255,255,0.2)
+}

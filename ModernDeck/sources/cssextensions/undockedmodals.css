@@ -7,12 +7,12 @@
 
 .mdl:not(.med-fullpanel) {
 	animation:windowDown .3s cubic-bezier(.19,1,.22,1);
-	width:600px;
+	width: 640px;
 	margin:0 auto;
 	max-height:900px;
 	bottom:auto;
 	top:auto;
-	height:auto
+	height:auto;
 }
 
 .prf-stats>li {
@@ -54,6 +54,10 @@
 	display:none
 }
 
+.mdl.cmp.s-inreply {
+	min-height:250px!important
+}
+
 .mdl:not(.sentry-error-embed):not(.med-fullpanel) {
     display:inline-block;
     vertical-align:middle;
@@ -63,6 +67,7 @@
     border-radius:2px;
     min-height: 470px;
     /* overflow-y: auto; */
+    max-height: 700px;
 }
 
 .mdl.s-fluid {
@@ -117,7 +122,7 @@
 }
 
 .js-add-column {
-	right:-66px!important
+	/* right:-66px!important */
 }
 
 .mdl-drag-handle {
@@ -147,5 +152,5 @@
 }
 
 .cmp-replyto {
-	padding-bottom:40px
+	padding-bottom: 50px;
 }

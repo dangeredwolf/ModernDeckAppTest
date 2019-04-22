@@ -68,7 +68,22 @@ var settingsData = {
 				type:"dropdown",
 				activate:{
 					func:function(opt){
-						TD.settings.setTheme(opt)
+						console.log("ACTIVATE FUNC");
+						console.log(opt);
+						disableStylesheetExtension("dark");
+						disableStylesheetExtension("light");
+						html.removeClass("dark").removeClass("light").addClass(opt);
+						TD.settings.setTheme(opt);
+						enableStylesheetExtension(opt);
+
+						if (opt === "light" && (isStylesheetExtensionEnabled("amoled"))) {
+							disableStylesheetExtension("amoled");
+							setPref("mtd_theme","default");
+						}
+						if (opt === "dark" && isStylesheetExtensionEnabled("paper")) {
+							disableStylesheetExtension("paper");
+							setPref("mtd_theme","default");
+						}
 					}
 				},
 				options:{
@@ -76,8 +91,13 @@ var settingsData = {
 					light:{value:"light",text:"Light"}
 				},
 				queryFunction:function(){
+					console.log("QUERYFUNCTION");
+					console.log(TD.settings.getTheme());
+					html.addClass(TD.settings.getTheme());
 					return TD.settings.getTheme()
-				}
+				},
+				settingsKey:"mtd_core_theme",
+				default:"dark"
 			},
 			theme:{
 				title:"Custom Theme",
@@ -87,6 +107,26 @@ var settingsData = {
 						disableStylesheetExtension(getPref("mtd_theme"));
 						setPref("mtd_theme",opt);
 						enableStylesheetExtension(opt || "default");
+
+						if (opt === "amoled" && TD.settings.getTheme() === "light") {
+							TD.settings.setTheme("dark");
+							disableStylesheetExtension("light");
+							enableStylesheetExtension("dark");
+							html.removeClass("light").addClass("dark");
+						}
+
+						if (opt === "paper" && TD.settings.getTheme() === "dark") {
+							TD.settings.setTheme("light");
+							disableStylesheetExtension("dark");
+							enableStylesheetExtension("light");
+							html.removeClass("dark").addClass("light");
+						}
+
+						if (opt === "black" && TD.settings.getTheme() === "dark") {
+							disableStylesheetExtension("black");
+							enableStylesheetExtension("amoled");
+							setPref("mtd_theme","amoled");
+						}
 					}
 				},
 				options:{
@@ -173,6 +213,22 @@ var settingsData = {
 				},
 				settingsKey:"mtd_scrollbar_style",
 				default:"scrollbarsdefault"
+			},
+			columnwidth:{
+				title:"Column width",
+				type:"slider",
+				activate:{
+					func:function(opt){
+						console.log(opt);
+						setPref("mtd_columnwidth",opt);
+						enableCustomStylesheetExtension("columnwidth",".column-header,.column{width:"+opt+"px!important}");
+					}
+				},
+				minimum:250,
+				maximum:500,
+				settingsKey:"mtd_columnwidth",
+				displayUnit:"px",
+				default:330
 			},
 			roundprofilepics:{
 				headerBefore:"Display",
@@ -265,6 +321,7 @@ var settingsData = {
 		tabId:"links",
 		options:{
 			linkshort:{
+				headerBefore:"Link Shortening",
 				title:"Link Shortener Service",
 				type:"dropdown",
 				activate:{
@@ -286,13 +343,13 @@ var settingsData = {
 				activate:{
 					func:function(set){
 						TD.settings.setBitlyAccount({
-							apiKey:(TD.settings.getBitlyAccount() || {apiKey:""}).apiKey,
+							apiKey:((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().apiKey) ? TD.settings.getBitlyAccount() : {apiKey:""}).login,
 							login:set
 						})
 					}
 				},
 				queryFunction:function(){
-					return (TD.settings.getBitlyAccount() || {login:""}).login;
+					return ((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().login) ? TD.settings.getBitlyAccount() : {login:""}).login;
 				}
 			},
 			bitlyApiKey:{
@@ -302,13 +359,13 @@ var settingsData = {
 				activate:{
 					func:function(set){
 						TD.settings.setBitlyAccount({
-							login:(TD.settings.getBitlyAccount() || {login:""}).login,
+							login:((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().login) ? TD.settings.getBitlyAccount() : {login:""}).login,
 							apiKey:set
 						});
 					}
 				},
 				queryFunction:function(){
-					return (TD.settings.getBitlyAccount() || {apiKey:""}).apiKey;
+					return ((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().apiKey) ? TD.settings.getBitlyAccount() : {apiKey:""}).apiKey;
 				}
 			}
 		}
@@ -365,11 +422,14 @@ function exists(thing) {
 }
 
 function isStylesheetExtensionEnabled(name) {
+	if ($("#mtd_custom_css_"+name).length > 0) {
+		return true;
+	}
 	return !!document.querySelector("link.mtd-stylesheet-extension[href=\"" + MTDBaseURL + "sources/cssextensions/" + name + ".css\"\]");
 }
 
 function enableStylesheetExtension(name) {
-	if (name === "default" || !exists($))
+	if (name === "default" || $("#mtd_custom_css_"+name).length > 0)
 		return;
 
 	var url = MTDBaseURL + "sources/cssextensions/" + name + ".css";
@@ -391,6 +451,19 @@ function disableStylesheetExtension(name) {
 		return;
 	console.log("disableStylesheetExtension(\""+name+"\")");
 	$('head>link[href="' + MTDBaseURL + "sources/cssextensions/" + name + '.css"]').remove();
+
+	if ($("#mtd_custom_css_"+name).length > 0) {
+		$("#mtd_custom_css_"+name).remove();
+	}
+}
+
+function enableCustomStylesheetExtension(name,styles) {
+	console.log("enableCustomStylesheetExtension(\""+name+"\")");
+	if (isStylesheetExtensionEnabled(name)) {
+		$("#mtd_custom_css_"+name).html(styles);
+		return;
+	}
+	head.append(make("style").html(styles).attr("id","mtd_custom_css_"+name))
 }
 
 function getProfileInfo() {
@@ -421,6 +494,7 @@ function loadPreferences() {
 							break;
 						case "dropdown":
 						case "textbox":
+						case "slider":
 							parseActions(pref.activate, getPref(prefKey));
 							break;
 					}
@@ -465,6 +539,7 @@ function MTDInit(){
 	}
 
 	enableStylesheetExtension("dark");
+	html.addClass("dark");
 
 	if (!injectedFonts) {
 
@@ -662,7 +737,7 @@ function MTDInit(){
 		$(rmnode).addClass("mtd-modal-window-fade-out");
 		setTimeout(function(){
 			rmnode.remove();
-		},300);
+		},200);
 	};
 
 	$(document.querySelector(".application").childNodes).each(function(obj){
@@ -670,7 +745,7 @@ function MTDInit(){
 			$(rmnode).addClass("mtd-modal-window-fade-out");
 			setTimeout(function(){
 				rmnode.remove();
-			},300);
+			},200);
 		};
 	})
 
@@ -679,7 +754,7 @@ function MTDInit(){
 			$(rmnode).addClass("mtd-modal-window-fade-out");
 			setTimeout(function(){
 				rmnode.remove();
-			},300);
+			},200);
 		});
 	}
 
@@ -712,7 +787,7 @@ function MTDInit(){
 	if (typeof TD_mustaches["modal.mustache"] !== "undefined")
 		TD_mustaches["modal.mustache"] = TD_mustaches["modal.mustache"].replace('<img src="{{#asset}}/global/backgrounds/spinner_large_white.gif{{/asset}}" alt="{{_i}}Loading…{{/i}}" />','<div class="preloader-wrapper active"><div class="spinner-layer small"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>');
 	if (typeof TD_mustaches["twitter_profile.mustache"] !== "undefined")
-		TD_mustaches["twitter_profile.mustache"] = TD_mustaches["twitter_profile.mustache"].replace('<img src="{{#asset}}/web/assets/global/backgrounds/spinner_large_white.gif{{/asset}}" alt="{{_i}}Loading…{{/i}}"> ','<div class="preloader-wrapper active"><div class="spinner-layer small"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>');
+		TD_mustaches["twitter_profile.mustache"] = TD_mustaches["twitter_profile.mustache"].replace('<img src="{{#asset}}/global/backgrounds/spinner_large_white.gif{{/asset}}" alt="{{_i}}Loading…{{/i}}">','<div class="preloader-wrapper active"><div class="spinner-layer small"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>');
 	if (typeof TD_mustaches["follow_button.mustache"] !== "undefined")
 		TD_mustaches["follow_button.mustache"] = TD_mustaches["follow_button.mustache"].replace('<img src="{{#asset}}/web/assets/global/backgrounds/spinner_small_trans.gif{{/asset}}" alt="{{_i}}Loading…{{/i}}"> ','<div class="preloader-wrapper active tiny"><div class="spinner-layer small"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>')
 	if (typeof TD_mustaches["login/2fa_verification_code.mustache"] !== "undefined")
@@ -773,7 +848,7 @@ function MTDSettings() {
 			console.log(settingsData[key].number);
 			$(".mtd-settings-tab-selected").removeClass("mtd-settings-tab-selected");
 			$(this).addClass("mtd-settings-tab-selected");
-			container.css("margin-left","-"+($(this).index()*600)+"px");
+			container.css("margin-left","-"+($(this).index()*700)+"px");
 		});
 
 		var subPanel = make("div").addClass("mtd-settings-subpanel mtd-col scroll-v").attr("id",key);
@@ -798,10 +873,12 @@ function MTDSettings() {
 					setPref(pref.settingsKey, pref.default);
 				}
 
+				let input,select,label,minimum,maximum;
+
 
 				switch(pref.type) {
 					case "checkbox":
-						var input = make("input").attr("type","checkbox").change(function(){
+						input = make("input").attr("type","checkbox").change(function(){
 							setPref(pref.settingsKey,$(this).is(":checked"));
 							parseActions($(this).is(":checked") ? pref.activate : pref.deactivate, $(this).val());
 
@@ -818,11 +895,11 @@ function MTDSettings() {
 						}
 
 
-						var label = make("label").addClass("checkbox").html(pref.title).append(input);
+						label = make("label").addClass("checkbox").html(pref.title).append(input);
 						option.append(label);
 						break;
 					case "dropdown":
-						var select = make("select").attr("type","select").change(function(){
+						select = make("select").attr("type","select").change(function(){
 							//setPref(pref.settingsKey,$(this).val());
 							parseActions(pref.activate, $(this).val());
 						});
@@ -856,24 +933,52 @@ function MTDSettings() {
 							select.val(pref.queryFunction())
 						}
 
-						var label = make("label").addClass("control-label").html(pref.title);
+						label = make("label").addClass("control-label").html(pref.title);
 
-						option.append(label).append(select);
+						option.append(label,select);
 						break;
 					case "textbox":
-						var select = make("input").attr("type","text").change(function(){
+						input = make("input").attr("type","text").change(function(){
 							parseActions(pref.activate, $(this).val());
 						});
 
 						if (exists(pref.settingsKey)) {
-							select.val(getPref(pref.settingsKey));
+							input.val(getPref(pref.settingsKey));
 						} else if (!exists(pref.settingsKey) && exists(pref.queryFunction)) {
-							select.val(pref.queryFunction())
+							input.val(pref.queryFunction())
 						}
 
-						var label = make("label").addClass("control-label").html(pref.title);
+						label = make("label").addClass("control-label").html(pref.title);
 
-						option.append(label).append(select);
+						option.append(label,input);
+						break;
+					case "slider":
+						label = make("label").addClass("control-label");
+
+						input = make("input").attr("type","range")
+						.attr("min",pref.minimum)
+						.attr("max",pref.maximum)
+						.change(function(){
+							parseActions(pref.activate, $(this).val());
+						}).on("input",function(){
+							label.html(pref.title + " <b>" + $(this).val() + (pref.displayUnit || "") +"</b>");
+							console.log("changed: "+$(this).val());
+						});
+
+						if (exists(pref.settingsKey)) {
+							input.val(parseInt(getPref(pref.settingsKey)));
+						} else if (!exists(pref.settingsKey) && exists(pref.queryFunction)) {
+							input.val(pref.queryFunction());
+						} else if (exists(pref.default)) {
+							input.val(pref.default);
+						}
+
+						label.html(pref.title + " <b>" + input.val() + (pref.displayUnit || "") +"</b>");
+
+						maximum = make("label").addClass("control-label mtd-slider-maximum").html(pref.maximum + (pref.displayUnit || ""));
+						minimum = make("label").addClass("control-label mtd-slider-minimum").html(pref.minimum + (pref.displayUnit || ""));
+
+						option.append(label,maximum,input,minimum);
 						break;
 
 				}
@@ -896,7 +1001,7 @@ function MTDSettings() {
 			var updateh3 = make("h3").addClass("mtd-update-h3 hidden").html("");
 			var tryAgain = make("button").addClass("btn hidden").html("Try Again")
 
-			var info = make("p").html("Made with <i class=\"icon icon-heart mtd-about-heart\"></i> by dangeredwolf in Columbus, OH<br><br>ModernDeck is an open source project released under the MIT license.");
+			var info = make("p").html("Made with <i class=\"icon icon-heart mtd-about-heart\"></i> by dangeredwolf in Columbus, OH since 2014<br><br>ModernDeck is an open source project released under the MIT license.");
 			var infoCont = make("div").addClass("mtd-about-info").append(info);
 
 
@@ -1349,7 +1454,7 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,
 	ipcRenderer.on("update-not-available",function(e,args){
 		console.log(args);
 		$(".mtd-update-spinner").addClass("hidden");
-		updateh2.html("No update available");
+		updateh2.html("You're up to date");
 		updateIcon.html("check_circle").removeClass("hidden");
 		updateh3.html(SystemVersion + " is the latest version.").removeClass("hidden");
 		tryAgain.removeClass("hidden").html("Check Again");
@@ -1531,20 +1636,24 @@ function buildContextMenu(p) {
 	if ($(document.elementFromPoint(x,y)).hasClass("mtd-context-menu-item")) {
 		return;
 	}
+		console.log(p);
 
-	if (p.isEditable) {
-		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"undo",text:"Undo",enabled:p.editFlags.canUndo}));
-		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"redo",text:"Redo",enabled:p.editFlags.canRedo}));
-		items.push(makeCMDivider());
-		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"cut",text:"Cut",enabled:p.editFlags.canCut}));
+	if (p.isEditable || (exists(p.selectionText) && p.selectionText.length > 0)) {
+		if (p.isEditable) {
+			items.push(makeCMItem({mousex:x,mousey:y,dataaction:"undo",text:"Undo",enabled:p.editFlags.canUndo}));
+			items.push(makeCMItem({mousex:x,mousey:y,dataaction:"redo",text:"Redo",enabled:p.editFlags.canRedo}));
+			items.push(makeCMDivider());
+			items.push(makeCMItem({mousex:x,mousey:y,dataaction:"cut",text:"Cut",enabled:p.editFlags.canCut}));
+		}
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"copy",text:"Copy",enabled:p.editFlags.canCopy}));
-		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"paste",text:"Paste",enabled:p.editFlags.canPaste}));
-		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"selectAll",text:"Select All",enabled:p.editFlags.canSelectAll}));
+		if (p.isEditable) {
+			items.push(makeCMItem({mousex:x,mousey:y,dataaction:"paste",text:"Paste",enabled:p.editFlags.canPaste}));
+			items.push(makeCMItem({mousex:x,mousey:y,dataaction:"selectAll",text:"Select All",enabled:p.editFlags.canSelectAll}));
+		}
 		items.push(makeCMDivider());
 	}
 
-	if (p.linkURL !== '') {
-		console.log(p);
+	if (p.linkURL !== '' && p.linkURL !== "https://tweetdeck.twitter.com/#") {
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"openLink",text:"Open link in browser",enabled:true,data:p.linkURL}));
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"copyLink",text:"Copy link address",enabled:true,data:p.linkURL}));
 		items.push(makeCMDivider());
@@ -1570,23 +1679,25 @@ function buildContextMenu(p) {
 	var menu = make("menu").addClass("mtd-context-menu dropdown-menu").append(ul).attr("style","opacity:0;animation:none;transition:none");
 
 
-	//console.log("x: "+x+" y: "+y+" ul.width(): "+ ul.width() +" ul.height(): "+ ul.height() +" $(document).width(): " + $(document).width() + " $(document).height(): " + $(document).height())
+	if (items.length > 0) {
+		setTimeout(function(){
+			console.log("x: "+x+" y: "+y+" menu.width(): "+ menu.width() +" menu.height(): "+ menu.height() +" $(document).width(): " + $(document).width() + " $(document).height(): " + $(document).height())
 
-	setTimeout(function(){
-		if (x+xOffset+ul.width() > $(document).width()){
-			console.log("you're too wide!");
-			x = $(document).width() - ul.width() - xOffset - xOffset;
-		}
+			if (x+xOffset+menu.width() > $(document).width()){
+				console.log("you're too wide!");
+				x = $(document).width() - menu.width() - xOffset - xOffset;
+			}
 
-		if (y+yOffset+ul.height() > $(document).height()){
-			console.log("you're too tall!");
-			y = $(document).height() - ul.height() - yOffset - yOffset;
-		}
+			if (y+yOffset+menu.height() > $(document).height()){
+				console.log("you're too tall!");
+				y = $(document).height() - menu.height();
+			}
 
-		menu.attr("style","left:"+(x+xOffset)+"px!important;top:"+(y+yOffset)+"px!important")
+			menu.attr("style","left:"+(x+xOffset)+"px!important;top:"+(y+yOffset)+"px!important")
 
 
-	},0)
+		},20);
+	}
 
 	return menu;
 }

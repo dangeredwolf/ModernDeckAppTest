@@ -157,7 +157,7 @@ body,body.signin-sheet-present {
 }
 @keyframes mediaSlideUp {
 	0% {bottom:-60px}
-	100% {bottom:-16px}
+	100% {bottom:-20px}
 }
 @keyframes dontTouchMe {
 	0% {transform:scale(1) rotate(0deg)}
@@ -632,7 +632,7 @@ i {
 	width:1em
 }
 
-.icon:before,.Icon:before,.search-input-control:before {
+.icon:before,.Icon:before,.search-input-control:before,.sprite-gif:before {
 	font-weight:400;
 	font-style:normal;
 	-webkit-font-smoothing:antialiased;
@@ -643,7 +643,7 @@ i {
 	font-family:'Material';
 	font-weight:normal;
 	font-style:normal;
-	font-size:24px;/* Preferred icon size */
+	font-size:24px;
 	display:inline-block;
 	line-height:1;
 	text-transform:none;
@@ -659,6 +659,23 @@ i {
 
 .pull-right>button[data-action="quote"]:before,.pull-right>button[data-action="retweet"]:before,.icon-twitter-bird:before,.icon-logout:before,.icon-tweetdeck:before,.icon-moderndeck:before,.icon-mtdmini:before,.icon-hashtag:before,.icon-settings:before,.icon-td-settings:before,.icon-retweet:before,.icon-retweet-filled:before,.icon-mtd-settings:before,.icon-btd:before,.icon-btd-settings:before,.icon-quote-tweet:before,.icon-compose-grid:before,.icon-user-switch:before,.icon-user-switch:before,.icon-compose-minigrid:before,.icon-compose-list:before,.Icon--quote-tweet:before,.Icon--compose-grid:before,.Icon--user-switch:before,.Icon--user-switch:before,.Icon--compose-minigrid:before,.Icon--compose-list:before {
 	font-family:"MD"
+}
+
+.sprite-gif:before {
+	content: "\e908";
+	text-shadow: 0px 1px 7px rgba(0,0,0,1),0px 1px 7px rgba(0,0,0,1);
+	font-size:32px!important;
+	color: #fff!important;
+	z-index: 99;
+}
+
+.sprite-gif {
+	font-size:32px!important;
+	text-shadow:0 30px 70px rgba(17,17,17,.6);
+	z-index: 99;
+	display: block;
+	position: absolute;
+	margin-bottom: 30px;
 }
 
 .Icon--circleError:before {
@@ -1215,8 +1232,7 @@ button:hover,button:focus,.Button--primary {
 
 .s-not-following .follow-text {
 	display:block;
-	margin-left:-2px;
-	margin-top:7px
+	margin-top:7px;
 }
 
 .button-group .btn,.button-group .Button {
@@ -2164,12 +2180,13 @@ div.media-size-small {
 	margin-left:-20px;
 	margin-bottom:-15px;
 	margin-top:9px;
-	width:200px!important
+	width: 700px!important;
+	max-width: 700px;
 }
 
 .tweet-actions>li {
 	float:left;
-	margin:0 0 0 8%!important
+	margin: 0 0 0 7%!important;
 }
 
 .tweet-action .icon,.tweet-detail-action i {
@@ -2702,7 +2719,7 @@ div.media-size-small {
 
 .tooltip,.Tooltip {
 	position:absolute;
-	z-index:6;
+	z-index:31;
 	padding:5px;
 	font-size:12px;
 	pointer-events:none
@@ -2745,7 +2762,7 @@ div.media-size-small {
 
 .numbered-badge {
 	position:absolute;
-	top:9px;
+	bottom: 0;
 	right:-2px;
 	padding:2px 3px;
 	visibility:hidden;
@@ -2753,11 +2770,11 @@ div.media-size-small {
 	font-weight:400;
 	font-style:normal;
 	margin-top:0;
-	font-size:12px;
+	font-size: 13px;
 	width:1px;
 	height:3px;
 	margin-right:5px;
-	opacity:0
+	opacity:0;
 }
 
 .drawer {
@@ -3028,7 +3045,8 @@ div.media-size-small {
 
 .lst-launcher .attribution {
 	font-size:13px;
-	display:inline
+	display:inline;
+	padding-top: 30px;
 }
 
 .lst-launcher span {
@@ -4698,14 +4716,14 @@ input[type="radio"]:checked:before {
 .column-nav-link {
 	position:relative;
 	height:100%;
-	color:rgba(255,255,255,.5);
+	color: rgba(255,255,255,.5)!important;
 	font-size:18px;
 	cursor:pointer;
 	overflow:visible;
 	transform:none!important;
 	box-shadow:none;
 	top:0;
-	padding-top:0!important
+	padding-top:0!important;
 }
 
 .column-nav-link,
@@ -6126,7 +6144,7 @@ r
 }
 
 .l-column.mdl-column.mdl-column-sml li {
-	width: 32.1%;
+	width: 48%;
 	display:inline-block;
 	position:relative;
 	text-transform:uppercase;
@@ -6369,8 +6387,8 @@ textarea:not(.compose-text):not(.js-compose-text):not(.js-list-description):not(
 }
 
 .js-tweet .tweet-text {
-	padding-left:53px;
-	margin-top:0
+	padding-left: 56px;
+	margin-top:0;
 }
 
 .tweet-text:not(.with-linebreaks) {
@@ -7525,7 +7543,7 @@ body+div,body+div>div {
 
 .s-following .unfollow-text {
 	margin-top:7px;
-	margin-left:-18px
+	/* margin-left:-18px */
 }
 
 .s-following .following-text,.s-following .unfollow-text {
@@ -7618,7 +7636,7 @@ div[data-testid="trend"]>.txt-bold {
 }
 
 .follow-btn .action-text {
-	padding-left:7px
+	padding-left:7px;
 }
 
 .btn-fav>.btn-loader {
@@ -7823,12 +7841,12 @@ div[data-testid="trend"]>.txt-bold {
 .NotificationList {
 	position:absolute;
 	bottom:40px;
-	left:50%;
+	right: 30px;
 	width:372px;
 	padding:0;
 	margin:0;
 	list-style:none;
-	margin-left:-186px
+	margin-left:-186px;
 }
 
 .Notification {
@@ -9043,19 +9061,19 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 	font-family:"Material";
 	font-weight:600;
 	-webkit-appearance:none;
-	color:#fff;
+	color: #fff!important;
 	margin:3px;
 	-webkit-app-region:no-drag;
 	pointer-events:all;
-	transform:rotate(180deg)
+	transform:rotate(180deg);
+	transition: background 300ms,opacity 300ms;
 }
 
 .windowcontrol:hover {
 	background:rgba(0,0,0,0.3);
-	transition:background 300ms,opacity 300ms;
 	cursor:default;
 	opacity:1;
-	border:0
+	border:0;
 }
 
 .windowcontrol:focus,.windowcontrol.close:focus {
@@ -9173,11 +9191,12 @@ position:relative;
 	right:0;
 	top:0;
 	bottom:0;
+	width: 700px!important;
 }
 
 .mtd-settings-subpanel {
 	height:100%;
-	width: 560px;
+	width: 660px;
 	display:block;
 	/* top: 50px; */
 	position: absolute;
@@ -9193,31 +9212,31 @@ position:relative;
 }
 
 .mtd-settings-subpanel:nth-child(2) {
-	margin-left:600px
+	margin-left: 700px;
 }
 
 .mtd-settings-subpanel:nth-child(3) {
-	margin-left:1200px
+	margin-left:1400px
 }
 
 .mtd-settings-subpanel:nth-child(4) {
-	margin-left:1800px
+	margin-left:2100px
 }
 
 .mtd-settings-subpanel:nth-child(5) {
-	margin-left:2400px
+	margin-left:2800px;
 }
 
 .mtd-settings-subpanel:nth-child(6) {
-	margin-left:3000px
+	margin-left:3500px
 }
 
 .mtd-settings-subpanel:nth-child(7) {
-	margin-left:3600px
+	margin-left:4200px
 }
 
 .mtd-settings-subpanel:nth-child(8) {
-	margin-left:4200px
+	margin-left:4900px
 }
 
 .mtd-settings-inner {
@@ -9252,10 +9271,14 @@ position:relative;
 }
 
 .mtd-settings-tab {
-	padding: 20px;
+	padding: 20px 10px;
 	color:#fff;
 	-webkit-app-region: no-drag;
 	transition: color .3s cubic-bezier(.19,1,.22,1), border-bottom .3s cubic-bezier(.19,1,.22,1);
+}
+
+.mtd-settings-tab:not(.mtd-settings-tab-selected) {
+	border-bottom:0px solid rgba(0,0,0,0)!important;
 }
 
 .mtd-settings-tab-container {
@@ -9359,4 +9382,61 @@ label.checkbox::selection,label.control-label::selection {
 
 .mtd-big-text-box>input[type="text"] {
 	width:300px;
+}
+
+#general_settings .js-column-size, #general_settings .js-theme, #general_settings .js-streaming-updates, #general_settings .js-streaming-updates+*, #general_settings .js-display-sensitive-media, #general_settings .js-display-sensitive-media+*, #general_settings .js-auto-play-gifs, #general_settings .js-auto-play-gifs+* {
+	display:none
+}
+
+.js-setting-list>li:nth-child(2) {
+	display: none!important;
+}
+
+.gif-badge {
+	margin-top:-30px;
+	z-index:99;
+	height: 32px;
+}
+
+.mtd-slider-minimum,.mtd-slider-maximum {
+	float:right;
+	padding-left: 8px!important;
+	padding-top: 17px!important;
+}
+
+.mtd-settings-option-slider input[type="range"] {
+  -webkit-appearance: none;
+  width: 55%;
+  float:right;
+  height: 14px;
+  border-radius: 2px;
+  padding: 0;
+  padding-top: 10px;
+}
+
+.mtd-settings-option-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  appearance:none;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  margin-top:18px;
+  cursor:pointer
+}
+
+.mtd-settings-option-slider input[type="range"]::-moz-range-thumb {
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  margin-top:18px;
+  cursor:pointer
+}
+
+.item-box .activity-header .account-link {
+	padding-left:5px
+}
+
+.mtd-settings-option-slider b {
+	font-size:18px;
+	padding-left:20px
 }

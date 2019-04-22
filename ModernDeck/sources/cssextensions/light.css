@@ -30,6 +30,14 @@ a:not(.list-account):not(.js-column-back):not(.compose-account):not(.js-toggle-i
 	color:#0DA8BC;
 }
 
+
+.mtd-settings-option-slider input[type="range"]::-webkit-slider-thumb {
+	background:#0DA8BC
+}
+.mtd-settings-option-slider input[type="range"]::-moz-range-thumb {
+	background:#0DA8BC
+}
+
 a:not(.compose-account):not(.js-toggle-item):not(.column-header-link):active,
 a:not(.compose-account):not(.js-toggle-item):not(.column-header-link):focus {
 	background-color:rgba(0,0,0,.05)

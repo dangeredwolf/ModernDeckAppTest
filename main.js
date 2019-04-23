@@ -8,11 +8,16 @@ const { app, BrowserWindow, ipcMain, session, systemPreferences, Menu, dialog } 
 
 const log = require('electron-log');
 
-const { autoUpdater } = require("electron-updater");
+const { autoUpdater } = require('electron-updater');
+
+const Store = require('electron-store');
+const store = new Store({name:"mtdsettings"});
+
+console.log(store);
 
 const serve = require('electron-serve');
 
-const devBuildExpiration = {year:2019,month:4,day:21} // months start at 0 for whatever reason, so number is essentially added by 1
+const devBuildExpiration = {year:2019,month:4,day:22} // months start at 0 for whatever reason, so number is essentially added by 1
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -29,6 +34,8 @@ app.setAppUserModelId("com.dangeredwolf.ModernDeck");
 var updating = false;
 var installLater = false;
 var showWarning = false;
+
+var isRestarting = false;
 
 autoUpdater.setFeedURL({
 	"owner": "dangeredwolf",
@@ -66,7 +73,9 @@ function makeLoginWindow(url) {
 		console.log(url);
 		const { shell } = electron;
 		if (url.indexOf("https://tweetdeck.twitter.com") >= 0) {
-			mainWindow.loadURL(url);
+			if (url.indexOf("https://tweetdeck.twitter.com/web/success.html") < 0) {
+				mainWindow.loadURL(url);
+			}
 			loginWindow.close();
 			event.preventDefault();
 			return;
@@ -107,11 +116,37 @@ function makeLoginWindow(url) {
 
 }
 
+
+
+function saveWindowBounds() {
+	var bounds = mainWindow.getBounds();
+
+	store.set("fullscreen", mainWindow.isFullScreen());
+	store.set("maximised", mainWindow.isMaximized());
+	store.set("windowBounds", mainWindow.getBounds());
+
+	const matchedDisplay = electron.screen.getDisplayMatching({ 
+		x: bounds.x,
+		y: bounds.y,
+		width: bounds.width,
+		height: bounds.height
+  	});
+
+	store.set("usedDisplay", matchedDisplay.id);
+}
+
+
 function makeWindow() {
 
 
 	var display = {};
 
+
+	if (!store.has("mtd_nativetitlebar")) {
+		store.set("mtd_nativetitlebar",false);
+	}
+
+	isRestarting = false;
 
 	mainWindow = new BrowserWindow({
 		width: 975,
@@ -123,7 +158,7 @@ function makeWindow() {
 		autoHideMenuBar:true,
 		title:"ModernDeck",
 		icon:__dirname+"ModernDeck/sources/favicon.ico",
-		frame:false,
+		frame:store.get("mtd_nativetitlebar"),
 		minWidth:400,
 		show:false,
 		backgroundColor:'#263238'
@@ -160,17 +195,17 @@ function makeWindow() {
 	// 	isOnline = e;
 	// })
 
-	mainWindow.show();
 
 
 	mainWindow.on('page-title-updated', function(event,url) {
 		event.preventDefault();
 	})
 
+	mainWindow.show();
 
 	mainWindow.webContents.on('dom-ready', function(event, url) {
-		mainWindow.webContents.executeJavaScript('\
-			document.querySelector("html").classList.add("mtd-app");\
+		mainWindow.webContents.executeJavaScript(
+			(!store.get("mtd_nativetitlebar") ? 'document.querySelector("html").classList.add("mtd-app");\n' : '') + '\
 			var injurl = document.createElement("div");\
 			injurl.setAttribute("type","moderndeck://ModernDeck/");\
 			injurl.id = "MTDURLExchange";\
@@ -303,7 +338,13 @@ function makeWindow() {
 	mainWindow.webContents.on("new-window", function(event, url) {
 		const { shell } = electron;
 		event.preventDefault();
-		shell.openExternal(url);
+
+		if (url.indexOf("https://twitter.com/teams/authorize") >= 0) {
+			makeLoginWindow(url);
+		} else {
+			shell.openExternal(url);
+		}
+
 	});
 
 	mainWindow.webContents.on("context-menu", function(event, params) {
@@ -339,6 +380,18 @@ function makeWindow() {
 	});
 	ipcMain.on("restartApp",function(event,arg){
 	});
+	ipcMain.on("setNativeTitlebar",function(event,arg){
+		mainWindow.close();
+		console.warn("SETNATIVETITLEBAR CALLED");
+		isRestarting = true;
+		store.set("mtd_nativetitlebar",arg);
+
+    	setTimeout(function(){
+    		app.relaunch();
+    		app.exit();
+    	},100);
+
+	});
 
 	mainWindow.on('closed', function() {
 		mainWindow = null;
@@ -362,6 +415,9 @@ function makeWindow() {
 app.on('ready', makeWindow)
 
 app.on('window-all-closed', function() {
+	if (isRestarting) {
+		return;
+	}
 	app.quit();
 })
 
@@ -398,11 +454,19 @@ autoUpdater.on("update-not-available",function(e){
 
 ipcMain.on('check-for-updates',function(e){
 	autoUpdater.checkForUpdates();
-})
+});
+
+systemPreferences.on("inverted-color-scheme-changed",function(e,v){
+	mainWindow.webContents.send("inverted-color-scheme-changed",v);
+});
 
 setInterval(function(){
 	autoUpdater.checkForUpdates();
 },1000*60*15); //check for updates once every 15 minutes
+
+setTimeout(function(){
+	mainWindow.webContents.send("inverted-color-scheme-changed",systemPreferences.isInvertedColorScheme())
+},10000);
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

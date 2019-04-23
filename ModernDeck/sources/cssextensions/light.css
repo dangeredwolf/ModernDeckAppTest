@@ -30,7 +30,6 @@ a:not(.list-account):not(.js-column-back):not(.compose-account):not(.js-toggle-i
 	color:#0DA8BC;
 }
 
-
 .mtd-settings-option-slider input[type="range"]::-webkit-slider-thumb {
 	background:#0DA8BC
 }
@@ -212,7 +211,9 @@ button[disabled]
 #add-filter:not([disabled]),
 .btn-negative:not([disabled]):not(.is-disabled),
 .Button--danger:not([disabled]):not(.is-disabled),
-.txt-twitter-red
+.txt-twitter-red,
+.color-twitter-red,
+.bg-color-twitter-red
 {
 	color:#D80000!important
 }
@@ -440,6 +441,7 @@ html:not(.mtd-dark-media-previews) .med-tweet,
 .column-detail-level-2,
 .contributor-manager,
 .js-contributor-manager-container,
+.column-panel,
 .contributor-adder-block
 {
 	background:#F9F9F9
@@ -864,10 +866,13 @@ textarea::placeholder
 }
 
 .js-column-social-proof .username,
-.dropdown-menu a,
-.js-character-count
+.dropdown-menu a
 {
 	color:#000!important
+}
+.js-character-count {
+
+	color:#000
 }
 
 .mdl-column-small
@@ -966,4 +971,15 @@ button[type="submit"]:active,button[type="submit"]:focus {
 
 .account-settings-bb a[rel="user"] {
 	color:#000;
+}
+
+.stroke-twitter-light-gray {
+	stroke:#CACACA
+}
+
+.stroke-twitter-blue {
+	stroke:#00BCD4
+}
+.stroke-twitter-red {
+	stroke:#D80000
 }

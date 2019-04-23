@@ -1,0 +1,29 @@
+/*
+  newcharacterindicator.css
+
+  Copyright (c) 2014-2019 Dangered Wolf
+  Released under the MIT Licence
+*/
+
+.js-progress-svg {
+	display:inline-block;
+	float:left
+}
+
+.js-character-count.is-hidden {
+	display:none!important
+}
+
+.drawer .js-character-count {
+	font-size:12px;
+	bottom:3px;
+	left:-30px
+}
+
+
+.txt-right.height--16.margin-t--4.margin-r---3.margin-b--1 {
+	width:0;
+	position:absolute;
+	right:67px;
+	bottom:16px
+}

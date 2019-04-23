@@ -22,6 +22,7 @@ input[type="radio"]:checked:before,
 	transition:color .3s
 }
 
+
 a:not(.list-account):not(.js-column-back):not(.compose-account):not(.js-toggle-item):not(.column-header-link):active,
 a:not(.list-account):not(.js-column-back):not(.compose-account):not(.js-toggle-item):not(.column-header-link):focus,
 .js-send-button:not([disabled]):active
@@ -85,17 +86,7 @@ html,
 	color:rgba(255,255,255,.3)
 }
 
-.dropdown-menu a[data-action]:active,
-.column,
-.column-scroller,
-.column-detail-level-2,
-.js-account-manager-container,
-.contributor-manager,
-.js-contributor-manager-container,
-.contributor-adder-block,
-.contributor-row,
-.Notification-inner,
-.DateRange
+.dropdown-menu a[data-action]:active, .column, .column-scroller, .column-detail-level-2, .js-account-manager-container, .contributor-manager, .js-contributor-manager-container, .column-panel, .contributor-adder-block, .contributor-row, .Notification-inner, .DateRange
 {
 	background:#344248
 }
@@ -360,7 +351,8 @@ button.is-disabled:active,
 .Button-primary.is-disabled,
 .Button-primary.is-disabled:hover,
 .Button-primary.is-disabled:focus,
-.Button-primary.is-disabled:active
+.Button-primary.is-disabled:active,
+.stroke-twitter-light-gray
 {
 	color: #54707F!important;
 	transition:.2s all;
@@ -395,7 +387,9 @@ button.is-disabled:active,
 #add-filter:not([disabled]),
 .btn-negative:not([disabled]):not(.is-disabled),
 .Button--danger:not([disabled]):not(.is-disabled),
-.txt-twitter-red
+.txt-twitter-red,
+.color-twitter-red,
+.bg-color-twitter-red
 {
 	color:#EA6B6B!important
 }
@@ -765,7 +759,6 @@ button[type="submit"]:active,button[type="submit"]:focus {
 }
 
 .sentry-error-embed .form-submit .powered-by a {
-  -webkit-filter:brightness(1000%);
   filter:brightness(1000%)
 }
 
@@ -780,4 +773,16 @@ button[type="submit"]:active,button[type="submit"]:focus {
 
 .account-settings-bb a[rel="user"] {
 	color:#fff;
+}
+
+
+.stroke-twitter-light-gray {
+	stroke:#6D808B
+}
+
+.stroke-twitter-blue {
+	stroke:#009EAD
+}
+.stroke-twitter-red {
+	stroke:#EA6B6B
 }

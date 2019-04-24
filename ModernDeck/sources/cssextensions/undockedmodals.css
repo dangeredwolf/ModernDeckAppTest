@@ -121,10 +121,6 @@
 	margin:0;
 }
 
-.js-add-column {
-	/* right:-66px!important */
-}
-
 .mdl-drag-handle {
 	display:block;
 	position:absolute;
@@ -148,7 +144,7 @@
 }
 
 .cf.padding-b--20.padding-r--20.padding-t--5 {
-	margin-top:-40px
+	margin-top: -56px;
 }
 
 .cmp-replyto {

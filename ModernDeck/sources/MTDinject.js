@@ -5,8 +5,8 @@
 
 "use strict";
 
-var SystemVersion = "App Build 2019-04-22";
-var MTDBaseURL = "https://rawgit.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if using online client
+var SystemVersion = "Build 2019-04-23";
+var MTDBaseURL = "https://raw.githubusercontent.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if using online client
 
 var msgID,
 FetchProfileInfo,
@@ -35,10 +35,12 @@ var progress = null;
 
 var isDev = false;
 
-var debugStorageSys = true;
+var debugStorageSys = false;
 
 var useAppStore;
 let store;
+
+let saveFile;
 
 var FindProfButton,
 loginInterval,
@@ -243,10 +245,10 @@ var settingsData = {
 					func:function(opt){
 						console.log(opt);
 						setPref("mtd_columnwidth",opt);
-						enableCustomStylesheetExtension("columnwidth",".column-header,.column{width:"+opt+"px!important}");
+						enableCustomStylesheetExtension("columnwidth",":root{--columnSize:"+opt+"px!important}");
 					}
 				},
-				minimum:250,
+				minimum:275,
 				maximum:500,
 				settingsKey:"mtd_columnwidth",
 				displayUnit:"px",
@@ -281,6 +283,23 @@ var settingsData = {
 				settingsKey:"mtd_round_avatars",
 				default:true
 			},
+			avatarSize:{
+				title:"Profile picture size",
+				type:"slider",
+				activate:{
+					func:function(opt){
+						console.log(opt);
+						setPref("mtd_avatarsize",opt);
+						enableCustomStylesheetExtension("avatarsize",":root{--avatarSize:"+opt+"px!important}");
+					}
+				},
+				minimum:24,
+				maximum:64,
+				enabled:false,
+				settingsKey:"mtd_avatarsize",
+				displayUnit:"px",
+				default:48
+			},
 			newcharindicator:{
 				title:"Use new character limit indicator",
 				type:"checkbox",
@@ -291,6 +310,18 @@ var settingsData = {
 					disableStylesheet:"newcharacterindicator"
 				},
 				settingsKey:"mtd_newcharindicator",
+				default:true
+			},
+			nocontextmenuicons:{
+				title:"Display contextual icons in menus",
+				type:"checkbox",
+				activate:{
+					disableStylesheet:"nocontextmenuicons"
+				},
+				deactivate:{
+					enableStylesheet:"nocontextmenuicons"
+				},
+				settingsKey:"mtd_nocontextmenuicons",
 				default:true
 			},
 			sensitive:{
@@ -361,6 +392,22 @@ var settingsData = {
 				},
 				settingsKey:"mtd_nativetitlebar",
 				default:false
+			},
+			inspectElement:{
+				title:"Show Inspect Element in context menus",
+				type:"checkbox",
+				activate:{
+					func:function(){
+						setPref("mtd_inspectElement",true);
+					}
+				},
+				deactivate:{
+					func:function(){
+						setPref("mtd_inspectElement",false);
+					}
+				},
+				settingsKey:"mtd_inspectElement",
+				default:false
 			}
 		}
 	}, tweets: {
@@ -430,11 +477,26 @@ var settingsData = {
 				type:"dropdown",
 				activate:{
 					func:function(set){
+						if (shortener === "twitter") {
+							$("bitlyUsername").addClass("hidden");
+							$("bitlyApiKey").addClass("hidden");
+						} else if (shortener === "bitly") {
+							$("bitlyUsername").removeClass("hidden");
+							$("bitlyApiKey").removeClass("hidden");
+						}
 						TD.settings.setLinkShortener(set);
 					}
 				},
 				queryFunction:function(){
-					return TD.settings.getLinkShortener();
+					var shortener = TD.settings.getLinkShortener();
+					if (shortener === "twitter") {
+						$("bitlyUsername").addClass("hidden");
+						$("bitlyApiKey").addClass("hidden");
+					} else if (shortener === "bitly") {
+						$("bitlyUsername").removeClass("hidden");
+						$("bitlyApiKey").removeClass("hidden");
+					}
+					return shortener;
 				},
 				options:{
 					twitter:{value:"twitter",text:"Twitter"},
@@ -523,6 +585,45 @@ var settingsData = {
 		tabId:"mutes",
 		options:{},
 		enum:"mutepage"
+	}, advanced: {
+		tabName:"Advanced",
+		tabId:"advanced",
+		options:{
+			mtdResetSettings:{
+				title:"Reset Settings",
+				label:"<i class=\"icon material-icon mtd-icon-very-large\">restore</i><b>Reset ModernDeck settings</b><br>If you want to reset ModernDeck to default settings, you can do so here.",
+				type:"button",
+				activate:{
+					func:function(){
+						purgePrefs();
+
+						if (isApp) {
+							const {ipcRenderer} = require('electron');
+							ipcRenderer.send('restartApp');
+						} else {
+							window.location.reload();
+						}
+					}
+				},
+				settingsKey:"mtd_resetSettings"
+			},
+			mtdClearData:{
+				title:"Clear Data",
+				label:"<i class=\"icon material-icon mtd-icon-very-large\">delete_forever</i><b>Clear data</b><br>This option clears all caches and preferences. This option will log you out.",
+				type:"button",
+				activate:{
+					func:function(){
+						if (isApp) {
+							const {ipcRenderer} = require('electron');
+
+							ipcRenderer.send('destroyEverything');
+						}
+					}
+				},
+				settingsKey:"mtd_resetSettings",
+				enabled:isApp
+			}
+		}
 	}, about: {
 		tabName:"About",
 		tabId:"about",
@@ -638,6 +739,8 @@ function loadPreferences() {
 						case "slider":
 							parseActions(pref.activate, setting);
 							break;
+						case "button":
+							break;
 					}
 				}
 			}
@@ -671,6 +774,21 @@ function getPref(id) {
 		return false;
 	else
 		return val;
+}
+
+function purgePrefs() {
+	for (var key in localStorage) {
+		if (key.indexOf("mtd_") >= 0) {
+			localStorage.removeItem(key);
+			console.log("Removing key "+key+"...");
+		}
+	}
+	if (isApp) {
+		const Store = require('electron-store');
+		const store = new Store({name:"mtdsettings"});
+		store.clear();
+		console.log("Clearing electron-store...");
+	}
 }
 
 function setPref(id,p) {
@@ -838,7 +956,7 @@ function MTDInit(){
 	}
 
 	if (forceFeatureFlags) {
-		TD.config.config_overlay = {
+		TD.config.config_overlay = { 
 			tweetdeck_devel: { value: true },
 			tweetdeck_dogfood: { value: true },
 			tweetdeck_insights: { value: true },
@@ -878,10 +996,10 @@ function MTDInit(){
 		TD.config.flight_debug = true
 		TD.config.sync_period = 600
 		TD.config.force_touchdeck = true
-		TD.config.internal_build = true
+		TD.config.internal_build = true 
 		TD.config.help_configuration_overlay = true
 		TD.config.disable_metrics_error = true
-		TD.config.disable_metrics_event = true
+		TD.config.disable_metrics_event = true 
 		TD.controller.stats.setExperiments({
 			config: {
 				live_engagement_in_column_8020: {
@@ -994,6 +1112,23 @@ function MTDInit(){
 	if (typeof TD_mustaches["keyboard_shortcut_list.mustache"] !== "undefined")
 		TD_mustaches["keyboard_shortcut_list.mustache"] = TD_mustaches["keyboard_shortcut_list.mustache"].replace("<kbd class=\"text-like-keyboard-key\">X</kbd>  Expand/Collapse navigation</dd>","<kbd class=\"text-like-keyboard-key\">Q</kbd>  Open Navigation Drawer/Menu</dd>")
 
+	if (typeof TD_mustaches["menus/actions.mustache"] !== "undefined") {
+		TD_mustaches["menus/actions.mustache"] = TD_mustaches["menus/actions.mustache"]
+		.replace("Embed this Tweet","Embed Tweet")
+		.replace("Copy link to this Tweet","Copy link address")
+		.replace("Share via Direct Message","Share via message")
+		.replace("Like from accounts…","Like from...")
+		.replace("Send a Direct Message","Send message")
+		.replace("Add or remove from Lists…","Add/remove from list...")
+		.replace("See who quoted this Tweet","View quotes")
+		.replace("Flagged (learn more)","Flagged")
+		.replace("Mute this conversation","Mute conversation")
+		.replace("Unmute this conversation","Unmute conversation")
+		.replace("Translate this Tweet","Translate Tweet")
+		.replace("{{_i}}Delete{{/i}}","{{_i}}Delete Tweet{{/i}}")
+		.replace(/\…/g,"...");
+	}
+
 	navigationSetup();
 
 }
@@ -1044,7 +1179,7 @@ function openSettings() {
 
 		var subPanel = make("div").addClass("mtd-settings-subpanel mtd-col scroll-v").attr("id",key);
 
-		if (!settingsData[key].enum || settingsData[key].enabled === false) {
+		if (!settingsData[key].enum && settingsData[key].enabled !== false) {
 			for (var prefKey in settingsData[key].options) {
 				let pref = settingsData[key].options[prefKey];
 
@@ -1052,6 +1187,10 @@ function openSettings() {
 
 				if (exists(pref.addClass)) {
 					option.addClass(pref.addClass);
+				}
+
+				if (pref.enabled === false) {
+					continue;
 				}
 
 				if (exists(pref.headerBefore)) {
@@ -1064,7 +1203,7 @@ function openSettings() {
 					setPref(pref.settingsKey, pref.default);
 				}
 
-				let input,select,label,minimum,maximum;
+				let input,select,label,minimum,maximum,button;
 
 
 				switch(pref.type) {
@@ -1113,7 +1252,6 @@ function openSettings() {
 								for (var subkey in pref.options[prefKey].children) {
 									let newSubPrefSel = pref.options[prefKey].children[subkey];
 									let newsuboption = make("option").attr("value",newSubPrefSel.value).html(newSubPrefSel.text);
-									console.log(newsuboption);
 
 									group.append(newsuboption);
 								}
@@ -1187,14 +1325,27 @@ function openSettings() {
 
 						option.append(label,maximum,input,minimum);
 						break;
+					case "button":
+						label = make("label").addClass("control-label").html(pref.label || "");
 
+						button = make("button").html(pref.title).addClass("btn btn-positive mtd-settings-button")
+						.click(function(){
+							parseActions(pref.activate,true);
+						});
+
+						if (exists(pref.initFunc)) {
+							pref.initFunc(button);
+						}
+
+						option.append(label,button);
+						break;
 				}
 
 				subPanel.append(option);
 			}
 		} else if (settingsData[key].enum === "aboutpage") {
 			var logo = make("i").addClass("mtd-logo icon-moderndeck icon");
-			var h1 = make("h1").addClass("mtd-about-title").html("ModernDeck");
+			var h1 = make("h1").addClass("mtd-about-title").html("ModernDeck 7 Beta");
 			var h2 = make("h2").addClass("mtd-version-title").html(SystemVersion);
 			var logoCont = make("div").addClass("mtd-logo-container").append(logo,h1,h2);
 
@@ -1206,13 +1357,14 @@ function openSettings() {
 			var updateIcon = make("i").addClass("material-icon hidden");
 			var updateh2 = make("h2").addClass("mtd-update-h2").html("Checking for updates...");
 			var updateh3 = make("h3").addClass("mtd-update-h3 hidden").html("");
-			var tryAgain = make("button").addClass("btn hidden").html("Try Again")
+			var tryAgain = make("button").addClass("btn hidden").html("Try Again");
+			var restartNow = make("button").addClass("btn hidden").html("Restart Now")
 
 			var info = make("p").html("Made with <i class=\"icon icon-heart mtd-about-heart\"></i> by <a href=\"https://twitter.com/dangeredwolf\" rel=\"user\" target=\"_blank\">dangeredwolf</a> in Columbus, OH since 2014<br><br>ModernDeck is an open source project released under the MIT license.");
 			var infoCont = make("div").addClass("mtd-about-info").append(info);
 
 
-			updateCont.append(updateIcon,updateh2,updateh3,tryAgain);
+			updateCont.append(updateIcon,updateh2,updateh3,tryAgain,restartNow);
 
 			if (isApp) {
 				subPanel.append(updateCont,infoCont);
@@ -1221,7 +1373,7 @@ function openSettings() {
 			subPanel.append(infoCont);
 
 			if (isApp) {
-				mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,tryAgain);
+				mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,tryAgain,restartNow);
 			}
 		} else if (settingsData[key].enum === "mutepage") {
 
@@ -1396,16 +1548,16 @@ function navigationSetup() {
 			make("img").attr("id","mtd_nd_header_image").addClass("mtd-nd-header-image").attr("style",""),
 			make("img").addClass("avatar size73 mtd-nd-header-photo").attr("id","mtd_nd_header_photo").attr("src",""),
 			make("div").addClass("mtd-nd-header-username").attr("id","mtd_nd_header_username").html("PROFILE ERROR<br>Tell @dangeredwolf i said hi"),
-			make("button").addClass("btn mtd-nav-button mtd-settings-button").attr("id","tdaccsbutton").append(make("i").addClass("icon icon-twitter-bird")).click(function(){mtdPrepareWindows();$(".js-show-drawer.js-header-action").click();}).append("Your Accounts"),
+			make("button").addClass("btn mtd-nav-button mtd-nav-first-button").attr("id","tdaccsbutton").append(make("i").addClass("icon icon-twitter-bird")).click(function(){mtdPrepareWindows();$(".js-show-drawer.js-header-action").click();}).append("Your Accounts"),
 			make("button").addClass("btn mtd-nav-button").attr("id","addcolumn").append(make("i").addClass("icon icon-plus")).click(function(){mtdPrepareWindows();TD.ui.openColumn.showOpenColumn()}).append("Add Column"),
 			make("div").addClass("mtd-nav-divider"),
-			make("button").addClass("btn mtd-nav-button").attr("id","mtdsettings").append(make("i").addClass("icon icon-settings")).click(openSettings).append("Settings"),
 			make("button").addClass("btn mtd-nav-button").attr("id","kbshortcuts").append(make("i").addClass("icon icon-keyboard")).click(function(){
 				mtdPrepareWindows();
 				console.log("td-keyboard");
 				setTimeout(function(){$(".js-app-settings").click()},10);
 				setTimeout(function(){$("a[data-action='keyboardShortcutList']").click()},20);
 			}).append("Keyboard Shortcuts"),
+			make("button").addClass("btn mtd-nav-button").attr("id","mtdsettings").append(make("i").addClass("icon icon-settings")).click(openSettings).append("Settings"),
 			make("div").addClass("mtd-nav-divider"),
 			make("button").addClass("btn mtd-nav-button mtd-nav-group-expand").attr("id","mtd_nav_expand").append(make("i").addClass("icon mtd-icon-arrow-down").attr("id","mtd_nav_group_arrow")).click(function(){
 				$("#mtd_nav_group").toggleClass("mtd-nav-group-expanded");
@@ -1573,7 +1725,7 @@ function formatBytes(val) {
 	}
 }
 
-function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,tryAgain) {
+function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,tryAgain,restartNow) {
 
 	const {ipcRenderer} = require('electron');
 
@@ -1607,6 +1759,7 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,
 		updateh2.html("Checking for updates...");
 		updateh3.addClass("hidden");
 		tryAgain.addClass("hidden");
+		restartNow.addClass("hidden");
 	});
 
 	ipcRenderer.on("download-progress",function(e,args){
@@ -1616,6 +1769,7 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,
 		updateh2.html("Downloading update...");
 		updateh3.html(Math.floor(args.percent)+"% complete ("+formatBytes(args.transferred)+"/"+formatBytes(args.total)+", "+formatBytes(args.bytesPerSecond)+"/s)").removeClass("hidden");
 		tryAgain.addClass("hidden");
+		restartNow.addClass("hidden");
 	});
 
 
@@ -1626,6 +1780,7 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,
 		updateh2.html("Update downloaded");
 		updateh3.html("Restart ModernDeck to complete the update").removeClass("hidden");
 		tryAgain.addClass("hidden");
+		restartNow.removeClass("hidden");
 	});
 
 
@@ -1636,20 +1791,49 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,
 		updateIcon.html("check_circle").removeClass("hidden");
 		updateh3.html(SystemVersion + " is the latest version.").removeClass("hidden");
 		tryAgain.removeClass("hidden").html("Check Again");
+		restartNow.addClass("hidden");
 	});
 
 	tryAgain.click(function(){
-		ipcRenderer.send('check-for-updates');
+		ipcRenderer.send('checkForUpdates');
 	})
 
-	ipcRenderer.send('check-for-updates');
+	restartNow.click(function(){
+		ipcRenderer.send('restartApp');
+	});
+
+	ipcRenderer.send('checkForUpdates');
+}
+
+function notifyUpdate() {
+	let notifRoot = mR.findFunction("showErrorNotification")[0].showNotification({title:"ModernDeck Updates",timeoutDelayMs:999999999999999999});
+	let notifId = notifRoot._id;
+	let notif = $("li.Notification[data-id=\""+notifId+"\"]");
+	let notifContent = $("li.Notification[data-id=\""+notifId+"\"] .Notification-content");
+	let notifIcon = $("li.Notification[data-id=\""+notifId+"\"] .Notification-icon .Icon");
+
+	if (notif.length > 0) {
+		notifIcon.removeClass("Icon--notifications").addClass("mtd-icon-update");
+
+		notifContent.append(
+			make("p").html("We found and downloaded updates for ModernDeck."),
+			make("button").html("Relaunch Now").click(function(){
+				ipcRenderer.send('restartApp');
+			}),
+			make("button").html("Later").click(function(){
+				mR.findFunction("showErrorNotification")[0].removeNotification({notification:notif});
+			})
+		)
+	}
 }
 
 function mtdAppFunctions() {
 
 	if (typeof require === "undefined") {return;}
 
-	const {remote, ipcRenderer } = require('electron');
+	const { remote, ipcRenderer } = require('electron');
+
+	saveFile = remote.require('electron-save-file');
 
 	const Store = require('electron-store');
 	store = new Store({name:"mtdsettings"});
@@ -1772,6 +1956,9 @@ contextMenuFunctions = {
 	copyImage:function(e){
 		getIpc().send("copyImage",e);
 	},
+	saveImage:function(e){
+		getIpc().send("saveImage",e);
+	},
 	inspectElement:function(e){
 		getIpc().send("inspectElement",e);
 	},
@@ -1864,11 +2051,13 @@ function buildContextMenu(p) {
 	if (p.srcURL !== '') {
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"openImage",text:"Open image in browser",enabled:true,data:p.srcURL}));
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"copyImage",text:"Copy image",enabled:true,data:{x:x,y:y}}));
+		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"saveImage",text:"Save image...",enabled:true,data:p.srcURL}));
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"copyImageURL",text:"Copy image address",enabled:true,data:p.srcURL}));
 		items.push(makeCMDivider());
 	}
-
-	items.push(makeCMItem({mousex:x,mousey:y,dataaction:"inspectElement",text:"Inspect element",enabled:true,data:{x:x,y:y}}));
+	if (getPref("mtd_inspectElement")) {
+		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"inspectElement",text:"Inspect element",enabled:true,data:{x:x,y:y}}));
+	}
 	//items.push(makeCMItem({mousex:x,mousey:y,dataaction:"newSettings",text:"Open Settings",enabled:true}));
 
 	var ul = make("ul");
@@ -1899,6 +2088,8 @@ function buildContextMenu(p) {
 
 
 		},20);
+	} else {
+		menu.addClass("hidden");
 	}
 
 	return menu;

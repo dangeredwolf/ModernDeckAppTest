@@ -123,7 +123,7 @@ button,a.btn,.column-header {
 }
 
 .mdl .column-header-temp {
-    visibility:hidden
+    /* visibility:hidden */
 }
 
 .app-search .app-search-form,#prev-month,#next-month,.pin-all,.gif-pause,.media-grid-2,.media-grid-3,.media-grid-4,.app-columns-container,.app-content,.antiscroll-inner {

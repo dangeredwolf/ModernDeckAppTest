@@ -40,7 +40,7 @@
 	border-color:#d84074
 }
 
-.dark div.drawer[data-drawer="compose"],.dark .lst-group .selected,.dark #calcurrent,.dark .btn-compose:not(.js-hide-drawer),.dark .compose,.dark .drawer,.dark .column-options .button-tray,.dark .column-options,.dark .facet-type,.dark .is-options-open .column-settings-link,.dark .is-favorite.is-retweet .tweet-dogear,.dark .is-unread,.dark .js-add-column,.dark .mdl .js-add-column,.dark .list-item.is-selected,.dark .more-tweets-btn,.dark .more-tweets-btn:hover,.dark .tweet-button:not(.js-hide-drawer),.dark .PillGroup .Pill.is-selected,.dark .DatePicker-calendarDay.is-withinRange,.dark button.try-query
+.dark .mtd-settings-button,.dark div.drawer[data-drawer="compose"],.dark .lst-group .selected,.dark #calcurrent,.dark .btn-compose:not(.js-hide-drawer),.dark .compose,.dark .drawer,.dark .column-options .button-tray,.dark .column-options,.dark .facet-type,.dark .is-options-open .column-settings-link,.dark .is-favorite.is-retweet .tweet-dogear,.dark .is-unread,.dark .js-add-column,.dark .mdl .js-add-column,.dark .list-item.is-selected,.dark .more-tweets-btn,.dark .more-tweets-btn:hover,.dark .tweet-button:not(.js-hide-drawer),.dark .PillGroup .Pill.is-selected,.dark .DatePicker-calendarDay.is-withinRange,.dark button.try-query
 {
 	background: #d84074;
 }

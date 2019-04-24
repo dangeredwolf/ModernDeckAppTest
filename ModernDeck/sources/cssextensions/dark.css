@@ -165,9 +165,10 @@ li:not(.selected) .list-twitter-list .txt-ellipsis,
 	color:#6D808B
 }
 
- .mtd-settings-tab:not(.mtd-settings-tab-selected)
+ .mtd-settings-tab:not(.mtd-settings-tab-selected),
+input[type="checkbox"][disabled]:before
 {
-	color:#6D808B!important
+	color:#6D808B !important
 }
 
 .txt-r-deep-gray {
@@ -455,6 +456,7 @@ textarea
 	background:rgba(25,112,120,.5)
 }
 
+.mdl::-webkit-scrollbar-thumb,
 .mdl.s-profile::-webkit-scrollbar-thumb,
 .mtd-nav-drawer::-webkit-scrollbar-thumb,
 .lst-launcher::-webkit-scrollbar-thumb,
@@ -469,6 +471,7 @@ textarea
   background:rgba(149,175,191,.5)
 }
 
+.mdl::-webkit-scrollbar-thumb:hover,
 .mdl.s-profile::-webkit-scrollbar-thumb:hover,
 .mtd-nav-drawer::-webkit-scrollbar-thumb:hover,
 .lst-launcher::-webkit-scrollbar-thumb:hover,
@@ -481,6 +484,7 @@ textarea
 	background:#8498A5
 }
 
+.mdl,
 .mdl.s-profile,
 .mtd-nav-drawer,
 .lst-launcher,
@@ -737,19 +741,19 @@ select,
 	color:#fff
 }
 
-button[type="submit"] {
+button[type="submit"],.mtd-settings-button {
 	background:#009EAD
 }
 
-button[type="submit"]:hover {
+button[type="submit"]:hover,.mtd-settings-button:hover {
 	background:#12c3d4
 }
 
-button[type="submit"]:active,button[type="submit"]:focus {
+button[type="submit"]:active,button[type="submit"]:focus,.mtd-settings-button:focus {
 	background:#12c3d4
 }
 
-.js-character-count:not(.color-twitter-red), .lst-group .selected, .lst-launcher a:not(.is-disabled), .lst-launcher a:not(.is-disabled):hover, .character-count, .character-count-compose, .lst-launcher a:not(.is-disabled):focus, .lst-launcher a:not(.is-disabled):active, .lst-launcher li:not(.is-disabled) span, .calweek a:not(.caloff), .mtd-settings-tab
+.mtd-settings-button,.js-character-count:not(.color-twitter-red), .lst-group .selected, .lst-launcher a:not(.is-disabled), .lst-launcher a:not(.is-disabled):hover, .character-count, .character-count-compose, .lst-launcher a:not(.is-disabled):focus, .lst-launcher a:not(.is-disabled):active, .lst-launcher li:not(.is-disabled) span, .calweek a:not(.caloff), .mtd-settings-tab
 {
 	color:#fff!important
 }

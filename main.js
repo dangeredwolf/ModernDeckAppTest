@@ -6,6 +6,10 @@ if (require('electron-squirrel-startup')) return;
 const electron = require("electron");
 const { app, BrowserWindow, ipcMain, session, systemPreferences, Menu, dialog } = require('electron');
 
+const imageType = require('file-type');
+const fs = require('fs');
+const through2 = require('through2');
+
 const log = require('electron-log');
 
 const { autoUpdater } = require('electron-updater');
@@ -17,7 +21,8 @@ console.log(store);
 
 const serve = require('electron-serve');
 
-const devBuildExpiration = {year:2019,month:4,day:22} // months start at 0 for whatever reason, so number is essentially added by 1
+const devBuildExpiration = {year:2019,month:4,day:23} // months start at 0 for whatever reason, so number is essentially added by 1
+const devBuildExpirationActive = true;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -50,7 +55,7 @@ var checkDevDate = new Date();
 
 
 
-function makeLoginWindow(url) {
+function makeLoginWindow(url,teams) {
 
 	var originalUrl = url;
 
@@ -72,7 +77,7 @@ function makeLoginWindow(url) {
 	loginWindow.webContents.on("will-navigate", function(event, url) {
 		console.log(url);
 		const { shell } = electron;
-		if (url.indexOf("https://tweetdeck.twitter.com") >= 0) {
+		if (url.indexOf("https://tweetdeck.twitter.com") >= 0 && !teams) {
 			if (url.indexOf("https://tweetdeck.twitter.com/web/success.html") < 0) {
 				mainWindow.loadURL(url);
 			}
@@ -86,7 +91,7 @@ function makeLoginWindow(url) {
 			event.preventDefault();
 			return;
 		}
-		if (url.indexOf("https://twitter.com/logout") >= 0 || url.indexOf("https://twitter.com/login") >= 0) {
+		if (url.indexOf("https://twitter.com/logout") >= 0 || url.indexOf("https://twitter.com/login") >= 0 || teams) {
 			return;
 		}
 		if (url.indexOf("https://twitter.com/account") >= 0 || url.indexOf("https://twitter.com/signup") >= 0) {
@@ -114,8 +119,56 @@ function makeLoginWindow(url) {
 
 	loginWindow.loadURL(url);
 
+	return loginWindow;
+
 }
 
+
+function saveImageAs(url) {
+  function pipePromise(source, outputPath) {
+    if (!outputPath) {
+      return Promise.resolve();
+    }
+
+    const stream = source.pipe(fs.createWriteStream(outputPath));
+
+    return new Promise((resolve, reject) => {
+      stream.on('finish', resolve);
+      stream.on('error', reject);
+    });
+  };
+
+  const isWeb = url.indexOf('http') === 0;
+
+  var path = url.match(/\/([A-Z])\w+\.[A-z]+/g)[0];
+  path = path.substr(1);
+
+  function getOutputPath(ext) {
+    return dialog.showSaveDialog({ defaultPath: path });
+  };
+
+    const got = require('got');
+
+    const promise = new Promise(resolve => {
+      let resolved;
+
+      const stream = got.stream(url).pipe(
+        through2(function(chunk, enc, callback) {
+          if (!resolved) {
+            resolve({ ext: imageType(chunk).ext, stream });
+            resolved = true;
+          }
+
+          this.push(chunk);
+          callback();
+        }
+      ));
+    });
+
+    return promise
+      .then(result => pipePromise(result.stream, getOutputPath(result.ext)));
+
+};
 
 
 function saveWindowBounds() {
@@ -161,31 +214,34 @@ function makeWindow() {
 		frame:store.get("mtd_nativetitlebar"),
 		minWidth:400,
 		show:false,
+		enableRemoteModule:true,
 		backgroundColor:'#263238'
 	});
 
-	console.log("\n")
-	console.log(checkDevDate.getFullYear() + " vs " + devBuildExpiration.year);
-	console.log(checkDevDate.getMonth() + " vs " + devBuildExpiration.month);
-	console.log(checkDevDate.getDate() + " vs " + devBuildExpiration.day);
+	if (devBuildExpirationActive) {
+		console.log("\n")
+		console.log(checkDevDate.getFullYear() + " vs " + devBuildExpiration.year);
+		console.log(checkDevDate.getMonth() + " vs " + devBuildExpiration.month);
+		console.log(checkDevDate.getDate() + " vs " + devBuildExpiration.day);
 
-	if ((!!devBuildExpiration.year && (!!devBuildExpiration.month || devBuildExpiration.month === 0) && !!devBuildExpiration.day) &&
-		checkDevDate.getFullYear() > devBuildExpiration.year ||
-		(checkDevDate.getMonth() > devBuildExpiration.month && checkDevDate.getFullYear() === devBuildExpiration.year) ||
-		(checkDevDate.getDate() >= devBuildExpiration.day && checkDevDate.getMonth() === devBuildExpiration.month && checkDevDate.getFullYear() === devBuildExpiration.year)) {
-		dialog.showMessageBox(mainWindow,{
-			title:"ModernDeck",
-			message:"This development build of ModernDeck has expired. It expired on " + devBuildExpiration.year + "/" + (devBuildExpiration.month<9?"0"+(devBuildExpiration.month+1) : devBuildExpiration.month+1) + "/" + devBuildExpiration.day + ".\n\nPlease uninstall this version of ModernDeck from Programs and Features.",
-			type:"error",
-			buttons:["Upgrade to latest test build","Close"]
-		},function(response){
-			const { shell } = electron;
-			if (response === 0) {
-				shell.openExternal("https://github.com/dangeredwolf/ModernDeckAPPTEST/releases");
-			}
-			app.quit();
-		});
-		return;
+		if ((!!devBuildExpiration.year && (!!devBuildExpiration.month || devBuildExpiration.month === 0) && !!devBuildExpiration.day) &&
+			checkDevDate.getFullYear() > devBuildExpiration.year ||
+			(checkDevDate.getMonth() > devBuildExpiration.month && checkDevDate.getFullYear() === devBuildExpiration.year) ||
+			(checkDevDate.getDate() >= devBuildExpiration.day && checkDevDate.getMonth() === devBuildExpiration.month && checkDevDate.getFullYear() === devBuildExpiration.year)) {
+			dialog.showMessageBox(mainWindow,{
+				title:"ModernDeck",
+				message:"This development build of ModernDeck has expired. It expired on " + devBuildExpiration.year + "/" + (devBuildExpiration.month<9?"0"+(devBuildExpiration.month+1) : devBuildExpiration.month+1) + "/" + devBuildExpiration.day + ".\n\nPlease uninstall this version of ModernDeck from Programs and Features.",
+				type:"error",
+				buttons:["Upgrade to latest test build","Close"]
+			},function(response){
+				const { shell } = electron;
+				if (response === 0) {
+					shell.openExternal("https://github.com/dangeredwolf/ModernDeckAPPTEST/releases");
+				}
+				app.quit();
+			});
+			return;
+		}
 	}
 
 
@@ -328,7 +384,7 @@ function makeWindow() {
 			event.preventDefault();
 			console.log(url);
 			if (url.indexOf("https://twitter.com/login") >= 0 || url.indexOf("https://twitter.com/logout") >= 0) {
-				makeLoginWindow(url);
+				event.newGuest = makeLoginWindow(url,false);
 			} else {
 				shell.openExternal(url);
 			}
@@ -340,7 +396,7 @@ function makeWindow() {
 		event.preventDefault();
 
 		if (url.indexOf("https://twitter.com/teams/authorize") >= 0) {
-			makeLoginWindow(url);
+			event.newGuest =makeLoginWindow(url,true);
 		} else {
 			shell.openExternal(url);
 		}
@@ -375,10 +431,36 @@ function makeWindow() {
 	ipcMain.on("copyImage",function(event,arg){
 		mainWindow.webContents.copyImageAt(arg.x,arg.y);
 	});
+	ipcMain.on("saveImage",function(event,arg){
+		saveImageAs(arg);
+	});
 	ipcMain.on("inspectElement",function(event,arg){
 		mainWindow.webContents.inspectElement(arg.x,arg.y);
 	});
 	ipcMain.on("restartApp",function(event,arg){
+    	setTimeout(function(){
+    		app.relaunch();
+    		app.exit();
+    	},100);
+	});
+	ipcMain.on("destroyEverything",function(event,arg){
+		var ses = session.defaultSession;
+		store.clear();
+		ses.flushStorageData();
+		ses.clearCache(function(){});
+		ses.clearHostResolverCache();
+		ses.cookies.flushStore(function(){});
+		ses.clearStorageData({
+			storages:['appcache','cookies','filesystem','indexdb','localstorage','shadercache','websql','serviceworkers'],
+        	quotas: ['temporary','persistent','syncable']
+        },function(){
+			setTimeout(function(){
+    			app.relaunch();
+    			app.exit();
+    		},500);
+    	});
+
+
 	});
 	ipcMain.on("setNativeTitlebar",function(event,arg){
 		mainWindow.close();
@@ -452,7 +534,7 @@ autoUpdater.on("update-not-available",function(e){
 	mainWindow.webContents.send("update-not-available",e);
 });
 
-ipcMain.on('check-for-updates',function(e){
+ipcMain.on('checkForUpdates',function(e){
 	autoUpdater.checkForUpdates();
 });
 

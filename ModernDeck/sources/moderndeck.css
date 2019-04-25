@@ -297,7 +297,8 @@ a.js-create-list,
 }
 
 html.scroll-v {
-	overflow-y:hidden
+	overflow-y:hidden;
+	-webkit-app-region:no-drag
 }
 
 .scroll-h {
@@ -640,7 +641,7 @@ i {
 }
 
 .mtd-icon-very-large {
-	font-size: 40px;
+	font-size:40px
 }
 
 .pull-right>button[data-action="quote"]:before,.pull-right>button[data-action="retweet"]:before,.icon-twitter-bird:before,.icon-logout:before,.icon-tweetdeck:before,.icon-moderndeck:before,.icon-mtdmini:before,.icon-hashtag:before,.icon-settings:before,.icon-td-settings:before,.icon-retweet:before,.icon-retweet-filled:before,.icon-mtd-settings:before,.icon-btd:before,.icon-btd-settings:before,.icon-quote-tweet:before,.icon-compose-grid:before,.icon-user-switch:before,.icon-user-switch:before,.icon-compose-minigrid:before,.icon-compose-list:before,.Icon--quote-tweet:before,.Icon--compose-grid:before,.Icon--user-switch:before,.Icon--user-switch:before,.Icon--compose-minigrid:before,.Icon--compose-list:before {
@@ -1404,6 +1405,7 @@ button:hover,button:focus,.Button--primary {
 .modal-content {
 	height:100%;
 	width:100%;
+	position:absolute;
 	margin-left:0!important
 }
 
@@ -1899,7 +1901,7 @@ a .column-title-back .icon:after {
 }
 
 .account-summary-text>a.account-link {
-	margin-top:-12px;
+	margin-top:-10px;
 	margin-left:6px
 }
 
@@ -2154,8 +2156,8 @@ div.media-size-small {
 .emoji {
 	width:1em;
 	height:1em;
-	padding: 0 .2em 0 .1em;
-	vertical-align:-.1em;
+	padding:0 .2em 0 .1em;
+	vertical-align:-.1em
 }
 
 .tweet:hover .tweet-actions,.is-selected-tweet .tweet-actions {
@@ -2221,8 +2223,8 @@ div.media-size-small {
 
 .tweet-actions>li {
 	float:left;
-	margin: 0 0 0 calc(var(--columnSize) / 8)!important; /* / 10 */
- 	display:flex;
+	margin:0 0 0 calc(var(--columnSize) / 8)!important; /* / 10 */
+ 	display:flex
 }
 
 .tweet-actions>li:first-child {
@@ -2419,7 +2421,8 @@ div.media-size-small {
 	top:40px;
 	margin-left:0;
 	overflow:visible;
-	transition:transform .2s cubic-bezier(.19,1,.22,1)
+	transition:transform .2s cubic-bezier(.19,1,.22,1);
+	-webkit-app-region:no-drag
 }
 
 .is-chrome .app-columns-container {
@@ -3928,11 +3931,11 @@ input[type="checkbox"],input[type="radio"] {
 	-moz-appearance:none;
 	font-size:24px;
 	padding:0;
-	margin-right: 11px;
+	margin-right:11px;
 	display:block;
 	text-align:left;
 	position:absolute;
-	margin-left:-30px;
+	margin-left:-30px
 }
 
 input[type="checkbox"]:active {
@@ -4749,7 +4752,7 @@ input[type="checkbox"]:active {
 .mtd-app .column-nav-link,
 .mtd-app .numbered-badge {
 	transition:.3s all 0s;
-	transition-delay: 0s!important;
+	transition-delay:0s!important
 }
 
 .column-nav-link:focus,.column-nav-link:active {
@@ -6418,8 +6421,8 @@ textarea:not(.compose-text):not(.js-compose-text):not(.js-list-description):not(
 
 .js-tweet .tweet-text {
 	padding-left:calc(var(--avatarSize)*1.16);
-	padding-top: calc(50px - var(--avatarSize));
-	margin-top:0;
+	padding-top:calc(50px - var(--avatarSize));
+	margin-top:0
 }
 
 .tweet-text:not(.with-linebreaks) {
@@ -7935,18 +7938,18 @@ div[data-testid="trend"]>.txt-bold {
 }
 
 .Notification-content p {
-	font-size: 13px;
-	padding-top:3px;
+	font-size:13px;
+	padding-top:3px
 }
 
 .Notification-content button {
-	width: 33%;
-	display: inline-block;
-	float: right!important;
-	position: relative;
-	padding-left: 10px;
-	justify-content: normal;
-	white-space: nowrap;
+	width:33%;
+	display:inline-block;
+	float:right!important;
+	position:relative;
+	padding-left:10px;
+	justify-content:normal;
+	white-space:nowrap
 }
 
 .Notification-icon {
@@ -7973,7 +7976,7 @@ div[data-testid="trend"]>.txt-bold {
 	padding:8px 35px 8px 12px;
 	left:50%;
 	overflow:hidden;
-	margin-right:35px;
+	margin-right:35px
 }
 
 .Notification-title {
@@ -9321,10 +9324,10 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 }
 
 .mtd-settings-tab {
-	padding: 20px 14.3px;
+	padding:20px 14.3px;
 	color:#fff;
 	-webkit-app-region:no-drag;
-	transition:color .3s cubic-bezier(.19,1,.22,1), border-bottom .3s cubic-bezier(.19,1,.22,1);
+	transition:color .3s cubic-bezier(.19,1,.22,1), border-bottom .3s cubic-bezier(.19,1,.22,1)
 }
 
 .mtd-settings-tab:not(.mtd-settings-tab-selected) {
@@ -9653,7 +9656,7 @@ label.checkbox::selection,label.control-label::selection {
 .tweet-message>.l-table {
 	width:77%;
 	float:left;
-	margin-top:-24px;
+	margin-top:-24px
 }
 
 .message-stream-item .tweet-actions>li {
@@ -9678,16 +9681,16 @@ footer>.js-tweet-stats>.tweet-stats:not(.js-stats-list) {
 	bottom:0;
 	left:0;
 	right:0;
-	height: auto;
-	width: auto;
+	height:auto;
+	width:auto
 }
 
 .js-in-reply-to.compose-reply-tweet {
 	overflow:hidden
 }
 .js-in-reply-to.compose-reply-tweet>.tweet-header>.account-link>b,.js-in-reply-to.compose-reply-tweet>.tweet-header>.account-link>span {
-	vertical-align: top;
-	line-height: 24px;
+	vertical-align:top;
+	line-height:24px
 }
 
 .query {
@@ -9701,28 +9704,34 @@ footer>.js-tweet-stats>.tweet-stats:not(.js-stats-list) {
 .mtd-settings-button {
 	display:block;
 	float:none;
-	margin-top: 40px;
-	box-shadow: 0 3px 7px rgba(17,17,17,.5);
-	padding: 11px;
-	border-radius: 4px;
+	margin-top:40px;
+	box-shadow:0 3px 7px rgba(17,17,17,.5);
+	padding:11px;
+	border-radius:4px
 }
 
 .mtd-settings-option-button .control-label {
 	display:block;
-	float:none;
+	float:none
 }
 .mtd-settings-option-button .control-label b {
 	font-size:18px;
 	font-weight:400;
-	margin-right: 373px;
-	width: 300px;
-	display: inline;
-	/* text-overflow: clip; */
-	white-space: nowrap;
-	margin-left: 10px;
-	/* margin-bottom: 100px; */
+	margin-right:373px;
+	width:300px;
+	display:inline;
+	white-space:nowrap;
+	margin-left:10px
 }
 
 .mtd-settings-option-button {
 	height:auto
+}
+
+.mtd-app-mac .tweet-button {
+	margin-left:125px
+}
+
+.mtd-app-mac .mtd-drawer-button {
+	margin-left:80px
 }

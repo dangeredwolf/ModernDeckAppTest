@@ -40,8 +40,6 @@ var debugStorageSys = false;
 var useAppStore;
 let store;
 
-let saveFile;
-
 var FindProfButton,
 loginInterval,
 openModal;
@@ -1832,8 +1830,6 @@ function mtdAppFunctions() {
 	if (typeof require === "undefined") {return;}
 
 	const { remote, ipcRenderer } = require('electron');
-
-	saveFile = remote.require('electron-save-file');
 
 	const Store = require('electron-store');
 	store = new Store({name:"mtdsettings"});

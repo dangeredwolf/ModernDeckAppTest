@@ -1,27 +1,64 @@
 {
   "name": "ModernDeck",
-  "version": "0.0.7",
+  "version": "0.7.0",
   "description": "ModernDeck",
   "main": "main.js",
   "scripts": {
     "pack": "electron-builder --dir",
-    "dist": "electron-builder",
+    "dist": "electron-builder -mwl",
     "start": "electron ."
   },
   "build": {
     "appId": "com.dangeredwolf.ModernDeck",
+    "compression":"maximum",
     "win": {
       "legalTrademarks": "Copyright 2014-2019 dangered wolf, released under the MIT licence",
       "publish": [
         "github"
+      ],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
       ]
     },
     "nsis": {
-      "deleteAppDataOnUninstall": true
+      "deleteAppDataOnUninstall": true,
+      "artifactName": "ModernDeck7BetaFull${arch}.${ext}",
+      "uninstallDisplayName": "ModernDeck 7",
+      "differentialPackage":true
     },
-    "squirrelWindows": {
+    "nsisWeb": {
+      "deleteAppDataOnUninstall": true,
+      "artifactName": "ModernDeck7Beta${arch}.${ext}",
+      "uninstallDisplayName": "ModernDeck 7",
+      "differentialPackage":true
+    },
+    "mac": {
       "publish": [
         "github"
+      ],
+      "artifactName": "ModernDeck7Beta.${ext}",
+      "minimumSystemVersion": "10.13.1",
+      "category": "public.app-category.social-networking"
+    },
+    "linux": {
+      "category": "Network",
+      "artifactName": "ModernDeck7Beta${arch}.${ext}",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "ia32",
+            "arm64",
+            "armv7l"
+          ]
+        }
       ]
     }
   },
@@ -38,18 +75,17 @@
   "author": "dangeredwolf",
   "license": "MIT",
   "dependencies": {
+    "file-type": "^3.8.0",
+    "got": "^6.3.0",
+    "through2": "^2.0.1",
+    "electron-log": "^3.0.5",
     "electron-packager": "^13.0.0",
-    "electron-serve": "^0.2.0",
-    "electron-squirrel-startup": "^1.0.0",
-    "electron-updater": "^4.0.0",
-    "electron-log":"^3.0.5",
-    "electron-save-file":"^1.0.2",
     "electron-store": "^1.3.0",
-    "jquery": "^3.3.1",
+    "electron-updater": "^4.0.0",
     "materialize-css": "^1.0.0"
   },
   "devDependencies": {
-    "electron": "^4.1.4",
+    "electron": "^5.0.0",
     "electron-builder": "^20.39.0"
   },
   "files": [

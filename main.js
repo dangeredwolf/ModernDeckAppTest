@@ -1,13 +1,13 @@
-if (require('electron-squirrel-startup')) return;
-// Don't launch if squirrel is updating us
-
-
-// Modules to control application life and create native browser window
 const electron = require("electron");
-const { app, BrowserWindow, ipcMain, session, systemPreferences, Menu, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, session, systemPreferences, Menu, dialog, protocol } = require('electron');
+
+const isDev = true;
 
 const imageType = require('file-type');
 const fs = require('fs');
+const path = require('path');
+const url = require('url');
+const util = require('util');
 const through2 = require('through2');
 
 const log = require('electron-log');
@@ -17,30 +17,17 @@ const { autoUpdater } = require('electron-updater');
 const Store = require('electron-store');
 const store = new Store({name:"mtdsettings"});
 
-console.log(store);
-
-const serve = require('electron-serve');
-
-const devBuildExpiration = {year:2019,month:4,day:23} // months start at 0 for whatever reason, so number is essentially added by 1
+const devBuildExpiration = {year:2019,month:4,day:24}
+// months start at 0 for whatever reason, so number is essentially added by 1
 const devBuildExpirationActive = true;
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-const isDev = true;
+let updating = false;
+let installLater = false;
+let showWarning = false;
 
-
-const loadURL = serve({scheme:"moderndeck",directory:'ModernDeck'});
-
-app.setAppUserModelId("com.dangeredwolf.ModernDeck");
-
-
-var updating = false;
-var installLater = false;
-var showWarning = false;
-
-var isRestarting = false;
+let isRestarting = false;
 
 autoUpdater.setFeedURL({
 	"owner": "dangeredwolf",
@@ -51,15 +38,25 @@ autoUpdater.setFeedURL({
 autoUpdater.logger = require("electron-log");
 autoUpdater.logger.transports.file.level = "info";
 
-var checkDevDate = new Date();
+let checkDevDate = new Date();
 
+app.setAppUserModelId("com.dangeredwolf.ModernDeck");
+
+const mtdSchemeHandler = async (request, callback) => {
+	let myUrl = new url.URL(request.url);
+	const filePath = path.join(electron.app.getAppPath(), "ModernDeck", myUrl.hostname, myUrl.pathname);
+
+	callback({
+		path: filePath
+	});
+};
 
 
 function makeLoginWindow(url,teams) {
 
-	var originalUrl = url;
+	let originalUrl = url;
 
-	var loginWindow = new BrowserWindow({
+	let loginWindow = new BrowserWindow({
 		width: 710,
 		height: 490,
 		webPreferences: {
@@ -138,9 +135,7 @@ function saveImageAs(url) {
     });
   };
 
-  const isWeb = url.indexOf('http') === 0;
-
-  var path = url.match(/\/([A-Z])\w+\.[A-z]+/g)[0];
+  let path = url.match(/\/([A-Z])\w+\.[A-z]+/g)[0];
   path = path.substr(1);
 
   function getOutputPath(ext) {
@@ -198,6 +193,9 @@ function makeWindow() {
 	if (!store.has("mtd_nativetitlebar")) {
 		store.set("mtd_nativetitlebar",false);
 	}
+
+
+	protocol.registerFileProtocol("moderndeck", mtdSchemeHandler);
 
 	isRestarting = false;
 
@@ -259,11 +257,26 @@ function makeWindow() {
 
 	mainWindow.show();
 
+	let mtdAppTag = '';
+
+	if (!store.get("mtd_nativetitlebar")) {
+		mtdAppTag = 'document.querySelector("html").classList.add("mtd-app");\n'
+		if (process.platform === "darwin") {
+			mtdAppTag += 'document.querySelector("html").classList.add("mtd-app-mac");\n'
+		}
+		if (process.platform === "linux") {
+			mtdAppTag += 'document.querySelector("html").classList.add("mtd-app-linux");\n'
+		}
+		if (process.platform === "win32") {
+			mtdAppTag += 'document.querySelector("html").classList.add("mtd-app-win");\n'
+		}
+	}
+
 	mainWindow.webContents.on('dom-ready', function(event, url) {
 		mainWindow.webContents.executeJavaScript(
-			(!store.get("mtd_nativetitlebar") ? 'document.querySelector("html").classList.add("mtd-app");\n' : '') + '\
+			mtdAppTag + '\
 			var injurl = document.createElement("div");\
-			injurl.setAttribute("type","moderndeck://ModernDeck/");\
+			injurl.setAttribute("type","moderndeck://");\
 			injurl.id = "MTDURLExchange";\
 			document.head.appendChild(injurl);\
 			\
@@ -274,11 +287,11 @@ function makeWindow() {
 			\
 			var injStyles = document.createElement("link");\
 			injStyles.rel = "stylesheet";\
-			injStyles.href = "moderndeck://ModernDeck/sources/moderndeck.css";\
+			injStyles.href = "moderndeck://sources/moderndeck.css";\
 			document.head.appendChild(injStyles);\
 			\
 			var InjectScript = document.createElement("script");\
-			InjectScript.src = "moderndeck://ModernDeck/sources/MTDinject.js";\
+			InjectScript.src = "moderndeck://sources/MTDinject.js";\
 			InjectScript.type = "text/javascript";\
 			document.head.appendChild(InjectScript);\
 			');
@@ -493,6 +506,9 @@ function makeWindow() {
 			');
 	});
 }
+
+electron.protocol.registerSchemesAsPrivileged([{scheme:"moderndeck",privileges:{bypassCSP:true,secure:true,standard:true,allowServiceWorkers:true,supportFetchAPI:true,corsEnabled:true}}]);
+
 
 app.on('ready', makeWindow)
 

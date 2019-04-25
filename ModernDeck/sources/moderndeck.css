@@ -298,7 +298,7 @@ a.js-create-list,
 
 html.scroll-v {
 	overflow-y:hidden;
-	-webkit-app-region:no-drag
+	-webkit-app-region:no-drag;
 }
 
 .scroll-h {
@@ -1911,7 +1911,7 @@ a .column-title-back .icon:after {
 }
 
 .padding-axl.flex.flex-row.flex-align--center .account-summary-text>div>a.account-link {
-	margin-top:-1px;	
+	margin-top:-1px;
 	margin-left:-3px
 }
 
@@ -8248,7 +8248,7 @@ button[type="submit"] {
 .s-fluid.mdl .mdl-content.js-mdl-content.horizontal-flow-container.with-scroll.scroll-v.scroll-alt.scroll-styled-v {
 	margin-top:0;
 	margin-left:30px
-} 
+}
 
 .tweet-detail-actions>.feature-customtimelines {
 	position:absolute;
@@ -9092,7 +9092,7 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 	bottom:0
 }
 
-.mtd-app .app-search-fake {
+.mtd-app:not(.mtd-app-mac) .app-search-fake {
 	margin-top:40px
 }
 
@@ -9728,10 +9728,18 @@ footer>.js-tweet-stats>.tweet-stats:not(.js-stats-list) {
 	height:auto
 }
 
-.mtd-app-mac .tweet-button {
-	margin-left:125px
+.mtd-app-mac .tweet-button:not(.is-hidden):not(.js-hide-drawer) {
+	margin-left: 105px;
 }
 
-.mtd-app-mac .mtd-drawer-button {
-	margin-left:80px
+.mtd-app-mac .application:not(.hide-detail-view-inline) .mtd-drawer-button {
+	margin-left: 65px;
+}
+
+.mtd-app-mac .windowcontrols,.mtd-app-mac .tweet-button>i:after {
+	display:none
+}
+
+.mtd-app-mac .tweet-button.is-hidden>i:before {
+	margin-left:105px
 }

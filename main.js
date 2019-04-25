@@ -29,6 +29,8 @@ let showWarning = false;
 
 let isRestarting = false;
 
+let mtdAppTag = '';
+
 autoUpdater.setFeedURL({
 	"owner": "dangeredwolf",
 	"repo": "ModernDeckAPPTEST",
@@ -173,7 +175,7 @@ function saveWindowBounds() {
 	store.set("maximised", mainWindow.isMaximized());
 	store.set("windowBounds", mainWindow.getBounds());
 
-	const matchedDisplay = electron.screen.getDisplayMatching({ 
+	const matchedDisplay = electron.screen.getDisplayMatching({
 		x: bounds.x,
 		y: bounds.y,
 		width: bounds.width,
@@ -199,6 +201,13 @@ function makeWindow() {
 
 	isRestarting = false;
 
+	let useFrame = store.get("mtd_nativetitlebar") || process.platform === "darwin";
+	let titleBarStyle = "hidden";
+
+	if (store.get("mtd_nativetitlebar") && process.platform === "darwin") {
+		titleBarStyle = "default";
+	}
+
 	mainWindow = new BrowserWindow({
 		width: 975,
 		height: 650,
@@ -209,7 +218,8 @@ function makeWindow() {
 		autoHideMenuBar:true,
 		title:"ModernDeck",
 		icon:__dirname+"ModernDeck/sources/favicon.ico",
-		frame:store.get("mtd_nativetitlebar"),
+		frame:useFrame,
+		titleBarStyle:titleBarStyle,
 		minWidth:400,
 		show:false,
 		enableRemoteModule:true,
@@ -256,8 +266,6 @@ function makeWindow() {
 	})
 
 	mainWindow.show();
-
-	let mtdAppTag = '';
 
 	if (!store.get("mtd_nativetitlebar")) {
 		mtdAppTag = 'document.querySelector("html").classList.add("mtd-app");\n'
@@ -504,6 +512,18 @@ function makeWindow() {
 			document.querySelector("html").classList.remove("mtd-maximized");\
 			document.querySelector(".windowcontrol.max").innerHTML = "&#xE3C6";\
 			');
+	});
+
+	mainWindow.on('enter-full-screen', function() {
+		mainWindow.webContents.executeJavaScript('document.querySelector("html").classList.remove("mtd-app");\
+		document.querySelector("html").classList.remove("mtd-app-win");\
+		document.querySelector("html").classList.remove("mtd-app-mac");\
+		document.querySelector("html").classList.remove("mtd-app-linux");\
+		');
+	});
+
+	mainWindow.on('leave-full-screen', function() {
+		mainWindow.webContents.executeJavaScript(mtdAppTag);
 	});
 }
 

@@ -298,7 +298,7 @@ a.js-create-list,
 
 html.scroll-v {
 	overflow-y:hidden;
-	-webkit-app-region:no-drag
+	-webkit-app-region:no-drag;
 }
 
 .scroll-h {
@@ -1412,7 +1412,9 @@ button:hover,button:focus,.Button--primary {
 .column-scroller {
 	width:100%;
 	overflow-x:hidden;
-	opacity:1!important
+	opacity:1!important;
+	overflow-y: auto;
+	max-height: 100%;
 }
 
 .column-holder .column-panel:nth-child(2) {
@@ -1911,7 +1913,7 @@ a .column-title-back .icon:after {
 }
 
 .padding-axl.flex.flex-row.flex-align--center .account-summary-text>div>a.account-link {
-	margin-top:-1px;	
+	margin-top:-1px;
 	margin-left:-3px
 }
 
@@ -2039,8 +2041,8 @@ div.media-size-small {
 }
 
 .media-size-large,.media-size-large-height {
-	max-height:310px;
-	min-height:150px
+	max-height: 360px;
+	min-height:150px;
 }
 
 .video-overlay {
@@ -5887,8 +5889,11 @@ button.mtd-no-transform-case {
 	display:block
 }
 
-.js-search .popover {
-	width:400px!important
+.js-search .popover .js-popover-content {
+	/* width:400px!important; */
+	/* max-height: 100%; */
+	/* overflow-y: auto; */
+	/* overflow-x: visible; */
 }
 
 .edit-conversation-name .btn {
@@ -8248,7 +8253,7 @@ button[type="submit"] {
 .s-fluid.mdl .mdl-content.js-mdl-content.horizontal-flow-container.with-scroll.scroll-v.scroll-alt.scroll-styled-v {
 	margin-top:0;
 	margin-left:30px
-} 
+}
 
 .tweet-detail-actions>.feature-customtimelines {
 	position:absolute;
@@ -9092,12 +9097,17 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 	bottom:0
 }
 
-.mtd-app .app-search-fake {
+.mtd-app:not(.mtd-app-mac) .app-search-fake {
 	margin-top:40px
 }
 
 .mtd-app .js-search-in-popover .popover-position-rt {
-	margin-top:50px
+	margin-top:50px;
+}
+
+.mtd-app-mac .js-search-in-popover .popover-position-rt {
+	margin-top:10px;
+	/* overflow: auto; */
 }
 
 .windowcontrols {
@@ -9110,6 +9120,10 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 	pointer-events:all;
 	top:0;
 	-webkit-app-region:no-drag
+}
+
+html:not(.mtd-app) .windowcontrols, .mtd-app-mac .windowcontrols {
+	display:none
 }
 
 .windowcontrol {
@@ -9728,10 +9742,45 @@ footer>.js-tweet-stats>.tweet-stats:not(.js-stats-list) {
 	height:auto
 }
 
-.mtd-app-mac .tweet-button {
-	margin-left:125px
+.mtd-app-mac .tweet-button:not(.is-hidden):not(.js-hide-drawer) {
+	margin-left: 105px;
 }
 
-.mtd-app-mac .mtd-drawer-button {
-	margin-left:80px
+.mtd-app-mac .application:not(.hide-detail-view-inline) .mtd-drawer-button {
+	margin-left: 65px;
+}
+
+.mtd-app-mac .windowcontrols,.mtd-app-mac .tweet-button>i:after {
+	display:none
+}
+
+.mtd-app-mac .tweet-button.is-hidden>i:before {
+	margin-left:105px
+}
+
+.js-typeahead-dropdown {
+	padding:10px
+}
+
+.remove-recent-search-item  {
+	margin-top:-16px
+}
+
+.popover .js-typeahead-user-item {
+	overflow:hidden
+}
+
+.popover .search-results-container {
+	overflow-y:auto;
+	/* max-height:100%; */
+	position: fixed;
+	bottom:0;
+	top: 47px;
+	/* height:100%; */
+	right:0;
+	width: 355px;
+}
+
+.mtd-app:not(.mtd-app-mac) .popover .search-results-container {
+	top: 88px;
 }

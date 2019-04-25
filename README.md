@@ -47,11 +47,13 @@ First, of course, `cd` into a directory where you want to clone the source to.
 Next, clone the git.
 
 `git clone https://github.com/dangeredwolf/ModernDeckAPPTEST.git`
+
 ⚠ *This URL will only be valid until ModernDeck 7.0 is released, where it will be graduated into the main ModernDeck source tree.*
 
 Finally, install all the necessary dependencies
 
 `npm install`
+
 ℹ *This may take several minutes*
 
 ### Testing and building
@@ -92,6 +94,7 @@ First, of course, `cd` into a directory where you want to clone the source to.
 Next, clone the git.
 
 `git clone https://github.com/dangeredwolf/ModernDeckAPPTEST.git`
+
 ⚠ *This URL will only be valid until ModernDeck 7.0 is released, where it will be graduated into the main ModernDeck source tree.*
 
 ❓ *You can also use [GitHub Desktop](https://desktop.github.com/) to clone ModernDeck*

@@ -2,6 +2,8 @@
   "name": "ModernDeck",
   "short_name": "ModernDeck",
 
+  "author":"dangeredwolf",
+
   "description": "__MSG_description__",
   "version": "7.0",
 
@@ -27,7 +29,8 @@
   ],
 
   "background": {
-    "scripts": ["extension/MTDBackground.js"]
+    "scripts": ["extension/MTDBackground.js"],
+    "persistent": true
   },
 
   "icons": {

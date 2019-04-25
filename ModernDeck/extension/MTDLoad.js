@@ -9,7 +9,7 @@ var isEdge = typeof MSGesture !== "undefined";
 var storage = {};
 var electron,app,BrowserWindow,mainWindow;
 
-let browser = browser || chrome;
+var browser = browser || chrome;
 
 function InjectDevStyles() {
   console.log("bootstrapping moderndeck.css for extensibility");

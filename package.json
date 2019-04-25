@@ -5,13 +5,16 @@
   "main": "main.js",
   "scripts": {
     "pack": "electron-builder --dir",
-    "dist": "electron-builder -mwl",
+    "dist": "electron-builder .",
+    "distWindows": "electron-builder -w",
+    "distMac": "electron-builder -m",
+    "distLinux": "electron-builder -l",
     "start": "electron .",
     "test": "electron-builder -mwl"
   },
   "build": {
     "appId": "com.dangeredwolf.ModernDeck",
-    "compression":"maximum",
+    "compression": "maximum",
     "win": {
       "legalTrademarks": "Copyright 2014-2019 dangered wolf, released under the MIT licence",
       "publish": [
@@ -31,13 +34,13 @@
       "deleteAppDataOnUninstall": true,
       "artifactName": "ModernDeck7BetaFull${arch}.${ext}",
       "uninstallDisplayName": "ModernDeck 7",
-      "differentialPackage":true
+      "differentialPackage": true
     },
     "nsisWeb": {
       "deleteAppDataOnUninstall": true,
       "artifactName": "ModernDeck7Beta${arch}.${ext}",
       "uninstallDisplayName": "ModernDeck 7",
-      "differentialPackage":true
+      "differentialPackage": true
     },
     "mac": {
       "publish": [

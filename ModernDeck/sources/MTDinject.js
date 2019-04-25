@@ -44,12 +44,12 @@ var FindProfButton,
 loginInterval,
 openModal;
 
-var isChrome = typeof chrome !== "undefined"; // may also return true on chromium-based browsers like opera, edge chromium, and electron
 var isOpera = typeof opera !== "undefined";
 var isSafari = typeof safari !== "undefined";
 var isEdge = typeof MSGesture !== "undefined";
 var isFirefox = typeof mozInnerScreenX !== "undefined";
 var isApp = typeof require !== "undefined";
+var isChrome = typeof chrome !== "undefined" && !isEdge && !isFirefox; // may also return true on chromium-based browsers like opera, edge chromium, and electron
 
 var injectedFonts = false;
 
@@ -242,7 +242,7 @@ var settingsData = {
 				activate:{
 					func:function(opt){
 						console.log(opt);
-						setPref("mtd_columnwidth",opt);
+						// setPref("mtd_columnwidth",opt);
 						enableCustomStylesheetExtension("columnwidth",":root{--columnSize:"+opt+"px!important}");
 					}
 				},
@@ -287,7 +287,7 @@ var settingsData = {
 				activate:{
 					func:function(opt){
 						console.log(opt);
-						setPref("mtd_avatarsize",opt);
+						//setPref("mtd_avatarsize",opt);
 						enableCustomStylesheetExtension("avatarsize",":root{--avatarSize:"+opt+"px!important}");
 					}
 				},
@@ -759,7 +759,7 @@ function getPref(id) {
 		else
 			val = undefined;
 	} else {
-		val = localStorage[id];
+		val = localStorage.getItem(id);
 	}
 
 	if (debugStorageSys)
@@ -798,7 +798,7 @@ function setPref(id,p) {
 	if (exists(store)) {
 		store.set(id,p);
 	} else {
-		localStorage[id] = p;
+		localStorage.setItem(id,p);
 	}
 
 	if (debugStorageSys)
@@ -815,7 +815,7 @@ function hasPref(id) {
 	if (exists(store)) {
 		hasIt = store.has(id);
 	} else {
-		hasIt = localStorage[id] !== "undefined" && typeof localStorage[id] !== undefined;
+		hasIt = localStorage.getItem(id) !== null && typeof localStorage.getItem(id) !== "undefined" && localStorage.getItem(id) !== undefined;
 	}
 
 	if (debugStorageSys)
@@ -947,7 +947,7 @@ function MTDInit(){
 	}
 
 	if (isEdge) {
-		var beGoneThot = $("link[rel='apple-touch-icon']+link[rel='stylesheet']")[0];
+		var beGoneThot = $("link[rel='apple-touch-icon']+link[rel='stylesheet']")[0] || document.querySelector("link[rel='apple-touch-icon']+link[rel='stylesheet']");
 		if (exists(beGoneThot)) {
 			beGoneThot.remove();
 		}
@@ -1167,6 +1167,10 @@ function openSettings() {
 
 
 	for (var key in settingsData) {
+
+		if (settingsData[key].enabled === false) {
+			continue;
+		}
 
 		var tab = make("button").addClass("mtd-settings-tab").attr("data-action",key).html(settingsData[key].tabName).click(function(){
 			console.log(settingsData[key].number);
@@ -2110,9 +2114,15 @@ function parseActions(a,opt) {
 }
 
 function coreInit() {
-	if (typeof Raven === "undefined" || typeof mR === "undefined") {
+	if (useRaven && typeof Raven === "undefined") {
 		setTimeout(coreInit,10);
-		console.info("waiting on raven or moduleRaid...");
+		console.info("waiting on raven...");
+		return;
+	}
+
+	if (typeof mR === "undefined") {
+		setTimeout(coreInit,10);
+		console.info("waiting on moduleRaid...");
 		return;
 	}
 

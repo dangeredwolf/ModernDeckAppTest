@@ -3,7 +3,7 @@
 
 // Released under the MIT license
 
-let browser = browser || chrome;
+var browser = browser || chrome;
 
 if (browser !== "undefined") {
 

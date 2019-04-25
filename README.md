@@ -1,6 +1,8 @@
 # ModernDeck 7 Beta
 
-Welcome to the future of ModernDeck.
+Welcome to the future of ModernDeck. ModernDeck is an extension for TweetDeck that brings a vastly overhauled interface with tons of Material Design influence, as well as new customisation features.
+
+ModernDeck is designed by dangeredwolf in Columbus, OH and released under the MIT License.
 
 ℹ *This README file is in itself a prototype document dealing with all the new build options for ModernDeck, so bear with me if anything is missing.*
 

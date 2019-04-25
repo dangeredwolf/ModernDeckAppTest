@@ -7,12 +7,12 @@
 
 .mdl:not(.med-fullpanel) {
 	animation:windowDown .3s cubic-bezier(.19,1,.22,1);
-	width: 640px;
+	width:640px;
 	margin:0 auto;
 	max-height:900px;
 	bottom:auto;
 	top:auto;
-	height:auto;
+	height:auto
 }
 
 .prf-stats>li {
@@ -65,9 +65,8 @@
     margin:0 auto!important;
     text-align:left;
     border-radius:2px;
-    min-height: 470px;
-    /* overflow-y: auto; */
-    max-height: 700px;
+    min-height:470px;
+    max-height:700px
 }
 
 .mdl.s-fluid {
@@ -115,10 +114,10 @@
 
 .mdl .js-user-actions-menu {
 	position:absolute;
-	top: -330px;
+	top:-300px;
 	left:-40px;
 	color:#fff!important;
-	margin:0;
+	margin:0
 }
 
 .mdl-drag-handle {
@@ -144,9 +143,9 @@
 }
 
 .cf.padding-b--20.padding-r--20.padding-t--5 {
-	margin-top: -56px;
+	margin-top:-56px
 }
 
 .cmp-replyto {
-	padding-bottom: 50px;
+	padding-bottom:50px
 }

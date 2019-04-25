@@ -6,7 +6,8 @@
   "scripts": {
     "pack": "electron-builder --dir",
     "dist": "electron-builder -mwl",
-    "start": "electron ."
+    "start": "electron .",
+    "test": "electron-builder -mwl"
   },
   "build": {
     "appId": "com.dangeredwolf.ModernDeck",

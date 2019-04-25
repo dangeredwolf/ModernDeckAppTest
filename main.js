@@ -17,7 +17,7 @@ const { autoUpdater } = require('electron-updater');
 const Store = require('electron-store');
 const store = new Store({name:"mtdsettings"});
 
-const devBuildExpiration = {year:2019,month:4,day:24}
+const devBuildExpiration = {year:2019,month:4,day:25}
 // months start at 0 for whatever reason, so number is essentially added by 1
 const devBuildExpirationActive = true;
 
@@ -387,6 +387,7 @@ function makeWindow() {
 		}
 	);
 
+
 	mainWindow.webContents.session.webRequest.onBeforeRequest({urls:["https://ton.twimg.com/*"]},function(details,callback) {
 
 		if (details.url.indexOf(".css") > -1 && (details.url.indexOf("bundle") > -1 && details.url.indexOf("dist") > -1)) {
@@ -394,9 +395,13 @@ function makeWindow() {
 			return;
 		}
 
+		if (details.url.indexOf(".css") > -1 && (details.url.indexOf("tfw/css") > -1 && details.url.indexOf("tweetdeck_bundle")) > -1) {
+			callback({redirectURL:"moderndeck://sources/cssextensions/twittercard.css"});
+			return;
+		}
+
 		callback({cancel:false});
 	});
-
 	mainWindow.loadURL("https://tweetdeck.twitter.com");
 
 	mainWindow.webContents.on("will-navigate", function(event, url) {
@@ -421,6 +426,8 @@ function makeWindow() {
 		} else {
 			shell.openExternal(url);
 		}
+
+		return event.newGuest;
 
 	});
 

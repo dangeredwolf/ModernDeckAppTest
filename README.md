@@ -8,9 +8,13 @@ Welcome to the future of ModernDeck.
 
 Preparation for building ModernDeck from source varies depending on whether you want to build the extension only, or the extension and app.
 
+
+
 ## Building the ModernDeck (Electron-based) app
 
 ℹ *These steps are not required if you only plan on testing the browser extension and not the app, you can skip to "Building the extension for different browsers" below.*
+
+
 
 ### Dependencies
 
@@ -18,9 +22,13 @@ To build the ModernDeck app, you need to first install Node.js (which comes with
 
 ℹ *ModernDeck is tested against the latest LTS version of Node.js, but it will likely work fine with the Current version as well.*
 
+
+
 #### Windows
 
 For Windows, [you can download Node.js here](https://nodejs.org/en/)
+
+
 
 #### macOS
 
@@ -30,11 +38,15 @@ For macOS, you can install the necessary packages using [Homebrew](https://brew.
 
 ❓ *[Alternatively, you can also install nodejs using the .pkg installer](https://nodejs.org/en/)*
 
+
+
 #### Linux
 
 On Linux, it varies depending on your distribution. If you're using Ubuntu or Debian, you just need to run:
 
 `sudo apt install git nodejs`
+
+
 
 ### Checking out
 
@@ -56,6 +68,8 @@ Finally, install all the necessary dependencies
 
 ℹ *This may take several minutes*
 
+
+
 ### Testing and building
 
 From the main folder where you just were, you can run the app for testing using:
@@ -64,24 +78,34 @@ From the main folder where you just were, you can run the app for testing using:
 
 This will allow you to test code changes without creating an installer every time.
 
+
+
 If you want to create the proper installers, you can run:
 
 `npm run dist`
 ...to build for every platform your OS supports building for
+
 `npm run distWindows`
 ...to build for Windows
+
 `npm run distMac`
 ...to build for macOS
+
 `npm run distLinux`
 ...to build for Linux
+
+
 
 ❓ *For more advanced users, you may prefer to [run electron-builder directly.](https://www.electron.build/)*
 
 ⚠ *Building for macOS requires running under macOS. Under macOS, you can build for Windows, macOS, and Linux. Under both Linux and Windows, you can build for both Linux and Windows.*
 
+
+
 ## Building the extension for different browsers
 
 ℹ *If you have already done the steps above to begin building for apps, you can skip the Checking out section.*
+
 
 ### Checking out
 
@@ -101,9 +125,12 @@ Next, clone the git.
 
 ℹ *Currently, there is no additional preparation necessary to begin testing ModernDeck in your browser from source.*
 
+
+
 ### Loading the unpacked extension into your browser
 
 To test the extension, you'll want to load the unpacked extension. This, of course, varies by browser.
+
 
 #### Chrome
 
@@ -115,12 +142,21 @@ Click the **Load Unpacked** button
 
 Navigate to *ModernDeckAPPTEST\ModernDeck* and click Select Folder
 
+
 #### Firefox
 
 Go to *about:debugging*
 Check **Enable add-on debugging**
 Click **Load Temporary Add-on...**
 Navigate to *ModernDeckAPPTEST\ModernDeck\manifest.json*
+
+
+#### Microsoft Edge (Chromium-based)
+
+Open the **...** menu
+Click **Extension**
+Turn on **Developer Mode** in the bottom left if you haven't already
+
 
 #### Microsoft Edge (EdgeHTML-based)
 
@@ -136,11 +172,6 @@ Scroll down to the bottom
 Click **Load Extension**
 Select the folder *ModernDeckAPPTEST\ModernDeck*
 
-#### Microsoft Edge (Chromium-based)
-
-Open the **...** menu
-Click **Extension**
-Turn on **Developer Mode** in the bottom left if you haven't already
 
 #### Opera
 

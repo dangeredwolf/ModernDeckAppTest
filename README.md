@@ -1,5 +1,7 @@
 # ModernDeck 7 Beta
 
+[![Build Status](https://travis-ci.com/dangeredwolf/ModernDeckAPPTEST.svg?branch=master)](https://travis-ci.com/dangeredwolf/ModernDeckAPPTEST)
+
 Welcome to the future of ModernDeck. ModernDeck is an extension/app for TweetDeck that brings a vastly overhauled interface with tons of Material Design influence, as well as new customisation features.
 
 ModernDeck is designed by dangeredwolf in Columbus, OH and released under the MIT License.

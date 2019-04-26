@@ -5,7 +5,7 @@
 
 "use strict";
 
-var SystemVersion = "Build 2019-04-25";
+var SystemVersion = "Build 2019-04-26";
 var MTDBaseURL = "https://raw.githubusercontent.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if using online client
 
 var msgID,
@@ -35,7 +35,7 @@ var progress = null;
 
 var isDev = false;
 
-var debugStorageSys = false;
+var debugStorageSys = true;
 
 var useAppStore;
 let store;
@@ -630,6 +630,47 @@ var settingsData = {
 	}
 }
 
+function retrieveImageFromClipboardAsBlob(pasteEvent, callback){
+
+    var items = pasteEvent.clipboardData.items;
+
+    if(items == undefined || pasteEvent.clipboardData == false){
+    	console.log("RIP the paste data");
+        return;
+    };
+
+    for (var i = 0; i < items.length; i++) {
+        // Skip content if not image
+        if (items[i].type.indexOf("image") == -1) continue;
+        // Retrieve image on clipboard as blob
+        var blob = items[i].getAsFile();
+
+        if(typeof(callback) == "function"){
+            callback(blob);
+        }
+    }
+}
+
+window.addEventListener("paste", function(e){
+	console.log("got paste");
+	console.log(e);
+    retrieveImageFromClipboardAsBlob(e, function(imageBlob){
+        if(imageBlob){
+			console.log("got imageBlob");
+
+        	let buildEvent = jQuery.Event("dragenter",{originalEvent:{dataTransfer:{files:[imageBlob]}}});
+        	let buildEvent2 = jQuery.Event("drop",{originalEvent:{dataTransfer:{files:[imageBlob]}}});
+
+        	console.info("alright so these are the events we're gonna be triggering:");
+        	console.info(buildEvent);
+        	console.info(buildEvent2);
+
+        	$(document).trigger(buildEvent);
+        	$(document).trigger(buildEvent2);
+        }
+    });
+}, false);
+
 
 const forceAppUpdateOnlineStatus = function(e){
 	if (!require) {return;}
@@ -812,6 +853,10 @@ function hasPref(id) {
 		throw "id not specified for hasPref";
 	}
 
+	if (id === "mtd_core_theme") {
+		return true;
+	}
+
 	if (exists(store)) {
 		hasIt = store.has(id);
 	} else {
@@ -954,7 +999,7 @@ function MTDInit(){
 	}
 
 	if (forceFeatureFlags) {
-		TD.config.config_overlay = { 
+		TD.config.config_overlay = {
 			tweetdeck_devel: { value: true },
 			tweetdeck_dogfood: { value: true },
 			tweetdeck_insights: { value: true },
@@ -994,10 +1039,10 @@ function MTDInit(){
 		TD.config.flight_debug = true
 		TD.config.sync_period = 600
 		TD.config.force_touchdeck = true
-		TD.config.internal_build = true 
+		TD.config.internal_build = true
 		TD.config.help_configuration_overlay = true
 		TD.config.disable_metrics_error = true
-		TD.config.disable_metrics_event = true 
+		TD.config.disable_metrics_event = true
 		TD.controller.stats.setExperiments({
 			config: {
 				live_engagement_in_column_8020: {
@@ -1490,7 +1535,7 @@ function loginStuff() {
 	$(mtd_nd_header_image).attr("style","background-image:url(" + bannerPhoto + ");"); // Fetch header and place in nav drawer
 	$(mtd_nd_header_photo).attr("src",avatarPhoto)
 	.mouseup(function(){
-		var profileLinkyThing = $(".account-settings-bb a[href=\"https://twitter.com/"+getProfileInfo().screenName+"\"]");
+		var profileLinkyThing = $(document.querySelector(".account-settings-bb a[href=\"https://twitter.com/"+getProfileInfo().screenName+"\"]"));
 
 		mtdPrepareWindows();
 		if (profileLinkyThing.length > -1) {
@@ -1530,9 +1575,6 @@ function navigationSetup() {
 	$(".app-header-inner").append(
 		make("a").attr("id","mtd-navigation-drawer-button").addClass("js-header-action mtd-drawer-button link-clean cf app-nav-link").html('<div class="obj-left"><div class="mtd-nav-activator"></div><div class="nbfc padding-ts"></div>')
 		.click(function(){
-			// TODO: Wire button to open navigation drawer
-			// TODO: Remove the above TODO from back when i was developing mtd 5.0
-
 			if (typeof mtd_nav_drawer_background !== "undefined") {
 				$("#mtd_nav_drawer_background").attr("class","mtd-nav-drawer-background");
 			}
@@ -1620,8 +1662,8 @@ function keyboardShortcutHandler(e) {
 	if (e.key.toUpperCase() === "A" && e.ctrlKey && e.shiftKey) { //pressing Ctrl+Shift+A toggles the outline accessibility option
 		console.log("User has pressed the proper key combination to toggle outlines!");
 
-		if ($("accoutline").length > 0) {
-			$("accoutline").click();
+		if ($("#accoutline").length > 0) {
+			$("#accoutline").click();
 		} else {
 			settingsData.accessibility.options.accoutline.activate.func();
 		}

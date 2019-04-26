@@ -17,7 +17,7 @@ const { autoUpdater } = require('electron-updater');
 const Store = require('electron-store');
 const store = new Store({name:"mtdsettings"});
 
-const devBuildExpiration = {year:2019,month:4,day:25}
+const devBuildExpiration = {year:2019,month:4,day:26}
 // months start at 0 for whatever reason, so number is essentially added by 1
 const devBuildExpirationActive = true;
 

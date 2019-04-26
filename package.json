@@ -5,16 +5,17 @@
   "main": "main.js",
   "scripts": {
     "pack": "electron-builder --dir",
-    "dist": "electron-builder .",
-    "distWindows": "electron-builder -w",
-    "distMac": "electron-builder -m",
-    "distLinux": "electron-builder -l",
+    "dist": "electron-builder . --publish always",
+    "build": "electron-builder .",
+    "buildWindows": "electron-builder -w",
+    "buildMac": "electron-builder -m",
+    "buildLinux": "electron-builder -l",
     "start": "electron .",
-    "test": "electron-builder -mwl"
+    "test": "electron-builder -mwl",
+    "release": "build"
   },
   "build": {
     "appId": "com.dangeredwolf.ModernDeck",
-    "compression": "maximum",
     "win": {
       "legalTrademarks": "Copyright 2014-2019 dangered wolf, released under the MIT licence",
       "publish": [
@@ -51,6 +52,9 @@
     },
     "linux": {
       "category": "Network",
+      "publish": [
+        "github"
+      ],
       "artifactName": "ModernDeck7Beta${arch}.${ext}",
       "target": [
         {

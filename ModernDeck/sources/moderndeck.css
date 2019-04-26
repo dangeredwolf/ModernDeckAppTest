@@ -7962,17 +7962,23 @@ div[data-testid="trend"]>.txt-bold {
 
 .Notification-content p {
 	font-size:13px;
-	padding-top:3px
+	padding-top:3px;
+	display: block;
 }
 
 .Notification-content button {
 	width:33%;
-	display:inline-block;
-	float:right!important;
+	display: block;
+	float: right!important;
 	position:relative;
 	padding-left:10px;
 	justify-content:normal;
-	white-space:nowrap
+	white-space:nowrap;
+}
+
+.Notification-content button+button {
+	margin-top:-30px;
+	margin-left:150px
 }
 
 .Notification-icon {
@@ -8003,7 +8009,8 @@ div[data-testid="trend"]>.txt-bold {
 }
 
 .Notification-title {
-	font-weight:400
+	font-weight:400;
+	display: block;
 }
 
 .Notification-title+.Notification-body {

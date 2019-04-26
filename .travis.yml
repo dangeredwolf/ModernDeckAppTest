@@ -4,6 +4,9 @@ node_js:
 - lts/*
 deploy:
   provider: releases
+  cache:
+    directories:
+      -node_modules
   file_glob: true
   draft: true
   api_key:

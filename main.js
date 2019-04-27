@@ -321,6 +321,8 @@ function makeWindow() {
 		} else if ((code <= -800 && code >= -900) || code === -137 || code === -105) {
 			msg += "We can't connect to Twitter due to a DNS error.\nPlease check your internet connection.";
 			addChromiumErrorCode = true;
+		} else if (code === -106) {
+			msg += "You are disconnected from the Internet. ModernDeck requires an internet connection to start.";
 		} else if (code === -201) {
 			msg += "Please check that your PC's date and time are set correctly. Twitter presented us with a security certificate that either expired or not yet valid.\nIf your date and time are correct, check https://api.twitterstat.us to see if there are any problems at Twitter."
 		} else if (code === -130 || code === -131 || code === -111 || code === -127 || code === -115 || code === -336) {

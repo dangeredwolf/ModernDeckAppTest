@@ -1,6 +1,6 @@
 {
   "name": "ModernDeck",
-  "version": "0.7.1",
+  "version": "0.7.0",
   "description": "ModernDeck",
   "homepage": "https://github.com/dangeredwolf/ModernDeckAPPTEST",
   "bugs": {"url":"https://github.com/dangeredwolf/ModernDeck/issues"},
@@ -59,6 +59,11 @@
       "artifactName": "ModernDeck7Beta.${ext}",
       "minimumSystemVersion": "10.13.1",
       "category": "public.app-category.social-networking"
+    },
+    "dmg": {
+        "icon": "build/dmg/dmg.png",
+        "background": "build/dmg/background.png",
+        "title": "ModernDeck 7"
     },
     "linux": {
       "category": "Network",

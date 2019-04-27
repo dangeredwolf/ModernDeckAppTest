@@ -2,6 +2,14 @@
   "name": "ModernDeck",
   "version": "0.7.1",
   "description": "ModernDeck",
+  "homepage": "https://github.com/dangeredwolf/ModernDeckAPPTEST",
+  "bugs": {"url":"https://github.com/dangeredwolf/ModernDeck/issues"},
+  "author": {
+      "name": "dangered wolf",
+      "email": "d@ngeredwolf.me",
+      "url": "https://github.com/dangeredwolf"
+  },
+  "license": "MIT",
   "main": "main.js",
   "scripts": {
     "pack": "electron-builder --dir",
@@ -56,6 +64,7 @@
       "publish": [
         "github"
       ],
+      "maintainer":"dangeredwolf",
       "artifactName": "ModernDeck7Beta${arch}.${ext}",
       "target": [
         {

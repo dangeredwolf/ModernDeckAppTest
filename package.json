@@ -16,6 +16,7 @@
     "dist": "electron-builder . --publish always",
     "distAll": "electron-builder -mwl --publish always",
     "build": "electron-builder .",
+    "buildAll": "electron-builder -mwl",
     "buildWindows": "electron-builder -w",
     "buildMac": "electron-builder -m",
     "buildLinux": "electron-builder -l",

@@ -675,7 +675,7 @@ select,
 .btn-login[type="submit"],
 .login-container .btn-positive
 {
-	background:var(--secondaryColor)
+	background: var(--secondaryColor)!important;
 }
 
 .btn-login[type="submit"]:active,

@@ -182,6 +182,20 @@ body,body.signin-sheet-present {
 	90% {background:#000}
 	100% {background:#F44336}
 }
+@keyframes colourDemoText {
+	0% {color:#F44336}
+	9% {color:#FF5722}
+	18% {color:#FFC107}
+	27% {color:#4CAF50}
+	36% {color:#009688}
+	45% {color:#2196F3}
+	54% {color:#00BCD4}
+	63% {color:#673AB7}
+	72% {color:#E91E63}
+	81% {color:#555}
+	90% {color:#000}
+	100% {color:#F44336}
+}
 
 @keyframes feather-notification-list-show {
 	0% {display:none;opacity:0;transform:translateY(50%)}
@@ -675,6 +689,10 @@ i {
 
 .mtd-icon-update:before {
 	content:"\e923"
+}
+
+.mtd-icon-disconnected:before {
+	content:"\e1da"
 }
 
 .mtd-icon-arrow-down:before {
@@ -7492,7 +7510,7 @@ li.padding-axl.flex.flex-row.flex-align--center .account-summary-text>a.account-
 }
 
 .form-login {
-	padding:10px
+	padding: 18px;
 }
 
 .column-type-message .tweet-text.with-linebreaks {
@@ -9061,6 +9079,9 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 
 .mtd-colours-demo {
 	animation:colourDemo 10s infinite
+}
+.mtd-colours-demo-text {
+	animation:colourDemoText 10s infinite
 }
 
 .compose .typeahead-item .fullname,.compose .typeahead-item .username {

@@ -60,6 +60,7 @@ var MTDStorage = {};
 
 var contextMenuFunctions;
 
+const newLoginPage = '<div class="app-signin-wrap mtd-signin-wrap"><div class="js-signin-ui app-signin-form pin-top pin-right txt-weight-normal"><section class="js-login-form form-login startflow-panel-rounded"data-auth-type="twitter"><h2 class="form-legend padding-axl">Good evening!</h2><h3 class="form-legend padding-axl">Welcome to ModernDeck</h3><i class="icon icon-moderndeck"></i><div class="margin-a--16"><div class="js-login-error form-message form-error-message error txt-center padding-al margin-bxl is-hidden"><p class="js-login-error-message">An unexpected error occurred. Please try again later.</p></div><a href="https://twitter.com/login?hide_message=true&amp;redirect_after_login=https%3A%2F%2Ftweetdeck.twitter.com%2F%3Fvia_twitter_login%3Dtrue" class="Button Button--primary block txt-size--18 txt-center btn-positive">Sign in with Twitter</a><div class="divider-bar"></div></section></div></div></div>';
 
 var settingsData = {
 	appearance: {
@@ -651,6 +652,8 @@ function retrieveImageFromClipboardAsBlob(pasteEvent, callback){
     }
 }
 
+// Paste event to allow for pasting images in TweetDeck
+
 window.addEventListener("paste", function(e){
 	console.log("got paste");
 	console.log(e);
@@ -671,6 +674,7 @@ window.addEventListener("paste", function(e){
     });
 }, false);
 
+// Alerts the app itself if it becomes offline
 
 const forceAppUpdateOnlineStatus = function(e){
 	if (!require) {return;}
@@ -683,18 +687,27 @@ if (typeof MTDURLExchange === "object" && typeof MTDURLExchange.getAttribute ===
 	console.info("MTDURLExchange completed with URL " + MTDBaseURL);
 }
 
+// Moduleraid became a requirement for ModernDeck after they removed jQuery from the global context
+// Hence why twitter sucks
+
 var twitterSucks = document.createElement("script");
 twitterSucks.type = "text/javascript";
 twitterSucks.src = MTDBaseURL + "sources/libraries/moduleraid.min.js";
 document.head.appendChild(twitterSucks);
 
+// shorthand for creating a mutation observer and observing
+
 function mutationObserver(obj,func,parms) {
 	return (new MutationObserver(func)).observe(obj,parms);
 }
 
+// shorthand function to return true if something exists and false otherwise
+
 function exists(thing) {
 	return ((typeof thing === "object" && thing !== null && thing.length > 0) || !!thing === true || (typeof thing === "string") || (typeof thing === "number"));
 }
+
+// Returns true if stylesheet extension is enabled, false otherwise. Works with custom stylesheets. (see enableCustomStylesheetExtension for more info)
 
 function isStylesheetExtensionEnabled(name) {
 	if ($("#mtd_custom_css_"+name).length > 0) {
@@ -702,6 +715,13 @@ function isStylesheetExtensionEnabled(name) {
 	}
 	return !!document.querySelector("link.mtd-stylesheet-extension[href=\"" + MTDBaseURL + "sources/cssextensions/" + name + ".css\"\]");
 }
+
+// Enables a certain stylesheet extension.
+// Stylesheet extensions are loaded from sources/cssextensions/[name].css
+
+// These are the predefined ModernDeck ones including colour themes, default light and dark themes, and various preferences
+
+// For custom ones, see enableCustomStylesheetExtension
 
 function enableStylesheetExtension(name) {
 	if (name === "default" || $("#mtd_custom_css_"+name).length > 0)
@@ -721,6 +741,8 @@ function enableStylesheetExtension(name) {
 	} else return;
 }
 
+// disables stylesheet extensions. Function also works with custom stylesheet extensions
+
 function disableStylesheetExtension(name) {
 	if (!isStylesheetExtensionEnabled(name))
 		return;
@@ -732,6 +754,8 @@ function disableStylesheetExtension(name) {
 	}
 }
 
+// Custom stylesheet extensions are used for custom user CSS and for certain sliders, such as column width
+
 function enableCustomStylesheetExtension(name,styles) {
 	console.log("enableCustomStylesheetExtension(\""+name+"\")");
 	if (isStylesheetExtensionEnabled(name)) {
@@ -741,9 +765,13 @@ function enableCustomStylesheetExtension(name,styles) {
 	head.append(make("style").html(styles).attr("id","mtd_custom_css_"+name))
 }
 
+// Default account profile info, used to show your profile pic and background in nav drawer
+
 function getProfileInfo() {
 	return TD.cache.twitterUsers.getByScreenName(TD.storage.accountController.getPreferredAccount("twitter").state.username).results[0];
 }
+
+// Loads preferences when moderndeck is started
 
 function loadPreferences() {
 
@@ -787,6 +815,9 @@ function loadPreferences() {
 	}
 }
 
+// getPref(String preferenceKey)
+// Returns value of preference, string or boolean
+
 function getPref(id) {
 	if (id === "mtd_core_theme") {
 		return TD.settings.getTheme();
@@ -815,6 +846,10 @@ function getPref(id) {
 		return val;
 }
 
+
+// purgePrefs()
+// Purges all settings. This is used when you reset ModernDeck in settings
+
 function purgePrefs() {
 	for (var key in localStorage) {
 		if (key.indexOf("mtd_") >= 0) {
@@ -829,6 +864,10 @@ function purgePrefs() {
 		console.log("Clearing electron-store...");
 	}
 }
+
+
+// setPref(String preferenceKey)
+// Sets preference
 
 function setPref(id,p) {
 
@@ -845,6 +884,10 @@ function setPref(id,p) {
 	if (debugStorageSys)
 		console.log("setPref "+id+" to "+p);
 }
+
+
+// hasPref(String preferenceKey)
+// return boolean: whether or not the preference manager (electron-store on app, otherwise localStorage) contains a key
 
 function hasPref(id) {
 	var hasIt;
@@ -879,13 +922,25 @@ function fontParseHelper(a) {
 
 function MTDInit(){
 	console.log("MTDInit");
+
+
 	if (typeof document.getElementsByClassName("js-signin-ui block")[0] !== "undefined" && !replacedLoadingSpinnerNew) {
 		document.getElementsByClassName("js-signin-ui block")[0].innerHTML = '<div class="preloader-wrapper big active"><div class="spinner-layer"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>';
 		replacedLoadingSpinnerNew = true;
 	}
 
+	// The default is dark for the loading screen, once the TD settings load it can use 
+
 	enableStylesheetExtension("dark");
 	html.addClass("dark");
+
+	// Here, we inject our fonts
+
+	// ModernDeck uses Roboto as its general font for Latin (and Cyrillic?) scripts
+	// Noto Sans is used for whatever scripts Roboto doesn't cover
+
+	// font family Material is short for Material icons
+	// font family MD is short for ModernDeck. It contains ModernDeck supplemental icons 
 
 	if (!injectedFonts) {
 
@@ -980,23 +1035,34 @@ function MTDInit(){
 		));
 		injectedFonts = true;
 	}
+
+
+	// These check to see if critical TD variables are in place before proceeding
+
 	if (
 		typeof TD_mustaches === "undefined" ||
 		typeof TD === "undefined" ||
 		typeof TD.util === "undefined" ||
 		typeof TD_mustaches["settings/global_setting_filter_row.mustache"] === "undefined"
 	) {
-		setTimeout(MTDInit,500);
+		setTimeout(MTDInit,100);
 			console.log("waiting on something in order to start MTDInit...");
 		return;
 	}
 
-	if (isEdge) {
-		var beGoneThot = $("link[rel='apple-touch-icon']+link[rel='stylesheet']")[0] || document.querySelector("link[rel='apple-touch-icon']+link[rel='stylesheet']");
-		if (exists(beGoneThot)) {
-			beGoneThot.remove();
-		}
+
+	if (typeof TD_mustaches["login/login_form.mustache"] !== "undefined")
+	 	TD_mustaches["login/login_form.mustache"] = newLoginPage;
+
+	// Especially on Edge, but also on Chrome shortly after launch, sometimes the stylesheet isn't blocked by the network, which breaks the page heavily.
+	// This ensures that the stylesheet is manually removed so that it doesn't cause problems
+
+	var beGone = document.querySelector("link[rel='apple-touch-icon']+link[rel='stylesheet']");
+	if (exists(beGone)) {
+		beGone.remove();
 	}
+
+	// These are features that can be used to force enable tweetdeck developer features. Code updated by @pixeldesu, deckhackers, et al
 
 	if (forceFeatureFlags) {
 		TD.config.config_overlay = {
@@ -1061,6 +1127,8 @@ function MTDInit(){
 		});
 	}
 
+	// This makes numbers appear nicer by overriding tweetdeck's original function which did basically nothing
+
 	TD.util.prettyNumber = function(e) {
 		var howPretty = parseInt(e, 10)
 		if (howPretty >= 100000000) {
@@ -1079,6 +1147,10 @@ function MTDInit(){
 		return howPretty;
 	}
 
+
+	
+	// here we add event listeners to add a fading out animation when a modal dialog is closed
+
 	document.querySelectorAll(".js-modals-container")[0].removeChild = function(rmnode){
 		$(rmnode).addClass("mtd-modal-window-fade-out");
 		setTimeout(function(){
@@ -1095,14 +1167,14 @@ function MTDInit(){
 		};
 	})
 
-	if ($(".js-modal").length > 0) {
-		$(".js-modal").on("removeChild",function(rmnode){
-			$(rmnode).addClass("mtd-modal-window-fade-out");
-			setTimeout(function(){
-				rmnode.remove();
-			},200);
-		});
-	}
+	$(".js-modal").on("removeChild",function(rmnode){
+		$(rmnode).addClass("mtd-modal-window-fade-out");
+		setTimeout(function(){
+			rmnode.remove();
+		},200);
+	});
+
+	// body's removeChild function is overriden to give tooltips their fade out animation
 
 	body.removeChild = function(i) {
 		if ($(i).hasClass("tooltip")) {
@@ -1114,8 +1186,10 @@ function MTDInit(){
 		}
  	};
 
+ 	// change favicon and notification sound
 	$("link[rel=\"shortcut icon\"]").attr("href",MTDBaseURL + "sources/favicon.ico");
 	$(document.querySelector("audio")).attr("src",MTDBaseURL + "sources/alert_2.mp3");
+
 	if (typeof TD_mustaches["settings/global_setting_filter_row.mustache"] !== "undefined")
 		TD_mustaches["settings/global_setting_filter_row.mustache"]='<li class="list-filter cf"> {{_i}}<div class="mtd-mute-text mtd-mute-text-{{getDisplayType}}"></div> {{>text/global_filter_value}}{{/i}} <input type="button" name="remove-filter" value="{{_i}}Remove{{/i}}" data-id="{{id}}"class="js-remove-filter small btn btn-negative"> </li>';
 	if (typeof TD_mustaches["column_loading_placeholder.mustache"] !== "undefined")
@@ -1170,6 +1244,12 @@ function MTDInit(){
 		.replace("Translate this Tweet","Translate Tweet")
 		.replace("{{_i}}Delete{{/i}}","{{_i}}Delete Tweet{{/i}}")
 		.replace(/\…/g,"...");
+	}
+
+	if ($(".app-signin-wrap:not(.mtd-signin-wrap)").length > 0) {
+		console.info("oh no, we're too late!");
+		$(".app-signin-wrap:not(.mtd-signin-wrap)").remove();
+		$(".login-container .startflow").html(newLoginPage);
 	}
 
 	navigationSetup();
@@ -1549,6 +1629,12 @@ function loginStuff() {
 }
 
 function navigationSetup() {
+	if ($(".app-signin-wrap:not(.mtd-signin-wrap)").length > 0) {
+		console.info("oh no, we're too late!");
+		$(".app-signin-wrap:not(.mtd-signin-wrap)").remove();
+		$(".login-container .startflow").html(newLoginPage);
+	}
+
 	if ($(".app-header-inner").length < 1) {
 		setTimeout(navigationSetup,100);
 		return;
@@ -1871,6 +1957,32 @@ function notifyUpdate() {
 	}
 }
 
+var offlineNotification;
+
+function notifyOffline() {
+	if (exists(offlineNotification)) {
+		return;
+	}
+	let notifRoot = mR.findFunction("showErrorNotification")[0].showNotification({title:"Internet Disconnected",timeoutDelayMs:999999999999999999});
+	let notifId = notifRoot._id;
+	offlineNotification = $("li.Notification[data-id=\""+notifId+"\"]");
+	let notifContent = $("li.Notification[data-id=\""+notifId+"\"] .Notification-content");
+	let notifIcon = $("li.Notification[data-id=\""+notifId+"\"] .Notification-icon .Icon");
+
+	if (offlineNotification.length > 0) {
+		notifIcon.removeClass("Icon--notifications").addClass("mtd-icon-disconnected");
+
+		notifContent.append(
+			make("p").html("We detected that you are disconnected from the internet. Many features are unavailable without an internet connection.")
+		)
+	}
+}
+
+function dismissOfflineNotification() {
+	if (!exists(offlineNotification)) {return;}
+	mR.findFunction("showErrorNotification")[0].removeNotification({notification:offlineNotification});
+}
+
 function mtdAppFunctions() {
 
 	if (typeof require === "undefined") {return;}
@@ -1945,7 +2057,13 @@ function mtdAppFunctions() {
 	})
 
 	const updateOnlineStatus = function(){
-		ipcRenderer.send('online-status-changed', navigator.onLine ? 'online' : 'offline')
+
+		if (!navigator.onLine) {
+			notifyOffline();
+		} else {
+			dismissOfflineNotification();
+		}
+
 	}
 
 	window.addEventListener('online',	updateOnlineStatus);

@@ -6,6 +6,7 @@
   "scripts": {
     "pack": "electron-builder --dir",
     "dist": "electron-builder . --publish always",
+    "distAll": "electron-builder -mwl --publish always",
     "build": "electron-builder .",
     "buildWindows": "electron-builder -w",
     "buildMac": "electron-builder -m",

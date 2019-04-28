@@ -1569,7 +1569,7 @@ function openSettings(openMenu) {
 			tab.addClass("mtd-settings-tab-selected");
 		}
 
-		if (!!openmenu && openMenu === key) {
+		if (!!openMenu && openMenu === key) {
 			tab.addClass("mtd-settings-tab-selected");
 		}
 	}

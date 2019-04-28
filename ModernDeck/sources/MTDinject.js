@@ -29,9 +29,11 @@ sendingFeedback,
 hasOutCache,
 TreatGeckoWithCare = false;
 
-const useRaven = false;
+const useRaven = true;
 
 var progress = null;
+
+var useNativeContextMenus = true;
 
 var isDev = false;
 
@@ -407,9 +409,26 @@ var settingsData = {
 				},
 				settingsKey:"mtd_inspectElement",
 				default:false
+			},
+			nativeContextMenus:{
+				title:"Use OS native context menus",
+				type:"checkbox",
+				activate:{
+					func:function(){
+						setPref("mtd_nativecontextmenus",true);
+						useNativeContextMenus = true;
+					}
+				},
+				deactivate:{
+					func:function(){
+						setPref("mtd_nativecontextmenus",false);
+						useNativeContextMenus = false;
+					}
+				},
+				settingsKey:"mtd_nativecontextmenus",
+				default:isApp ? process.platform === "darwin" : false
 			}
-		}
-	}, tweets: {
+		}}, tweets: {
 		tabName:"Tweets",
 		tabId:"tweets",
 		options:{
@@ -929,7 +948,7 @@ function MTDInit(){
 		replacedLoadingSpinnerNew = true;
 	}
 
-	// The default is dark for the loading screen, once the TD settings load it can use 
+	// The default is dark for the loading screen, once the TD settings load it can use
 
 	enableStylesheetExtension("dark");
 	html.addClass("dark");
@@ -940,7 +959,7 @@ function MTDInit(){
 	// Noto Sans is used for whatever scripts Roboto doesn't cover
 
 	// font family Material is short for Material icons
-	// font family MD is short for ModernDeck. It contains ModernDeck supplemental icons 
+	// font family MD is short for ModernDeck. It contains ModernDeck supplemental icons
 
 	if (!injectedFonts) {
 
@@ -1148,7 +1167,7 @@ function MTDInit(){
 	}
 
 
-	
+
 	// here we add event listeners to add a fading out animation when a modal dialog is closed
 
 	document.querySelectorAll(".js-modals-container")[0].removeChild = function(rmnode){
@@ -1896,10 +1915,6 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,
 		restartNow.addClass("hidden");
 	});
 
-	ipcRenderer.on("aboutMenu",function(e,args){
-		openSettings("about");
-	});
-
 	ipcRenderer.on("download-progress",function(e,args){
 		console.log(args);
 		updateIcon.addClass("hidden");
@@ -2019,6 +2034,44 @@ function mtdAppFunctions() {
 		} catch(e){}
 	});
 
+
+		ipcRenderer.on("aboutMenu",function(e,args){
+			if ($(".mtd-settings-tab[data-action=\"about\"]").length > 0){
+				$(".mtd-settings-tab[data-action=\"about\"]").click();
+			} else {
+				openSettings("about");
+			}
+		});
+		ipcRenderer.on("openSettings",function(e,args){
+			openSettings();
+		});
+		ipcRenderer.on("accountsMan",function(e,args){
+			$(".js-show-drawer.js-header-action").click();
+		});
+		ipcRenderer.on("sendFeedback",function(e,args){
+			try {
+				throw "Manually triggered feedback button";
+			} catch(e) {
+				Raven.captureException(e);
+				Raven.showReportDialog();
+			}
+		});
+		ipcRenderer.on("msgModernDeck",function(e,args){
+			$(document).trigger("uiComposeTweet", {
+            type: "message",
+            messageRecipients: [{
+                screenName: "ModernDeck"
+            }]
+        })
+		});
+		ipcRenderer.on("newTweet",function(e,args){
+			$(document).trigger("uiComposeTweet");
+		});
+		ipcRenderer.on("newDM",function(e,args){
+			$(document).trigger("uiComposeTweet");
+			$(".js-dm-button").click();
+		});
+
 	if (html.hasClass("mtd-app")) {
 		var minimise = make("button")
 		.addClass("windowcontrol min")
@@ -2058,10 +2111,19 @@ function mtdAppFunctions() {
 	}
 
 	ipcRenderer.on('context-menu', (event, p) => {
-		var menu = buildContextMenu(p);
+		const electron = require("electron")
+		var theMenu = buildContextMenu(p);
+		let menu = electron.remote.menu;
+		let Menu = electron.remote.Menu;
 
-		if (exists(menu))
-			body.append(menu);
+		if (useNativeContextMenus) {
+			Menu.buildFromTemplate(theMenu).popup();
+			return;
+			//ipcRenderer.send('nativeContextMenu',theMenu);
+		}
+
+		if (exists(theMenu))
+			body.append(theMenu);
 	})
 
 	const updateOnlineStatus = function(){
@@ -2140,6 +2202,13 @@ contextMenuFunctions = {
 }
 
 function makeCMItem(p) {
+	if (useNativeContextMenus) {
+		let dataact = p.dataaction;
+		let data = p.data;
+		let nativemenu = { label:p.text, click(){console.log("yes, a click has occurred");contextMenuFunctions[dataact](data)}, enabled:p.enabled };
+		//nativemenu.click = ;
+		return nativemenu;
+	}
 	var a = make("a").attr("href","#").attr("data-action",p.dataaction).html(p.text).addClass("mtd-context-menu-item");
 	var li = make("li").addClass("is-selectable").append(a);
 
@@ -2171,6 +2240,9 @@ function clearContextMenu() {
 }
 
 function makeCMDivider() {
+	if (useNativeContextMenus) {
+		return {type:'separator'}
+	}
 	return make("div").addClass("drp-h-divider");
 }
 
@@ -2227,6 +2299,10 @@ function buildContextMenu(p) {
 		items.push(makeCMItem({mousex:x,mousey:y,dataaction:"inspectElement",text:"Inspect element",enabled:true,data:{x:x,y:y}}));
 	}
 	//items.push(makeCMItem({mousex:x,mousey:y,dataaction:"newSettings",text:"Open Settings",enabled:true}));
+
+	if (useNativeContextMenus) {
+		return items;
+	}
 
 	var ul = make("ul");
 

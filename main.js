@@ -58,7 +58,10 @@ const template = [
     label: "ModernDeck",
     role: 'appMenu',
     submenu: [
-      { label: 'About ModernDeck...', click(){ if (!mainWindow){return;} mainWindow.send("aboutMenu", true); } },
+      { label: 'About ModernDeck...', click(){ if (!mainWindow){return;}mainWindow.send("aboutMenu"); } },
+      { type: 'separator' },
+			{ label: 'Preferences...', click(){ if (!mainWindow){return;}mainWindow.send("openSettings"); } },
+			{ label: 'Accounts...', click(){ if (!mainWindow){return;}mainWindow.send("accountsMan"); } },
       { type: 'separator' },
       { role: 'services' },
       { type: 'separator' },
@@ -73,6 +76,9 @@ const template = [
     label: 'File',
     role: 'fileMenu',
     submenu: [
+			{ label: 'New Tweet...', click(){ if (!mainWindow){return;}mainWindow.send("newTweet"); } },
+			{ label: 'New Direct Message...', click(){ if (!mainWindow){return;}mainWindow.send("newDM"); } },
+      { type: 'separator' },
       { role: 'close' }
     ]
   },
@@ -108,6 +114,7 @@ const template = [
       { role: 'resetzoom' },
       { role: 'zoomin' },
       { role: 'zoomout' },
+      { role: 'toggledevtools' },
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
@@ -127,10 +134,8 @@ const template = [
   {
     role: 'help',
     submenu: [
-      {
-        label: 'Learn More test',
-        click () { require('electron').shell.openExternalSync('https://twitter.com/ModernDeck') }
-      }
+			{ label: 'Send Feedback', click(){ if (!mainWindow){return;}mainWindow.send("sendFeedback");}},
+			{ label: 'Message @ModernDeck', click(){ if (!mainWindow){electron.shell.openExternal("https://twitter.com/messages/compose?recipient_id=2927859037");return;}mainWindow.send("msgModernDeck"); } },
     ]
   }
 ]
@@ -539,7 +544,12 @@ function makeWindow() {
 	mainWindow.webContents.on("context-menu", function(event, params) {
 		mainWindow.send("context-menu", params);
 	});
-
+	ipcMain.on("nativeContextMenu",function(event,params){
+		console.log(params);
+		let newMenu = 	Menu.buildFromTemplate(params);
+		console.log(newMenu);
+	newMenu.popup();
+	});
 	ipcMain.on("copy",function(event){
 		mainWindow.webContents.copy();
 	});

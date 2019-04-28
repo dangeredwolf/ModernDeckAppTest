@@ -5,7 +5,7 @@
 
 "use strict";
 
-var SystemVersion = "Build 2019-04-26";
+var SystemVersion = "Build 2019-04-27";
 var MTDBaseURL = "https://raw.githubusercontent.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if using online client
 
 var msgID,

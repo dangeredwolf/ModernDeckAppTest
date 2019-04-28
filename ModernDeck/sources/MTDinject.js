@@ -1282,7 +1282,7 @@ function openLegacySettings() {
 	new TD.components.GlobalSettings;
 }
 
-function openSettings() {
+function openSettings(openMenu) {
 
 	mtdPrepareWindows();
 
@@ -1565,7 +1565,11 @@ function openSettings() {
 		container.append(subPanel);
 
 
-		if (tab.index() === 0) {
+		if (!openMenu && tab.index() === 0) {
+			tab.addClass("mtd-settings-tab-selected");
+		}
+
+		if (!!openmenu && openMenu === key) {
 			tab.addClass("mtd-settings-tab-selected");
 		}
 	}
@@ -1890,6 +1894,10 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,
 		updateh3.addClass("hidden");
 		tryAgain.addClass("hidden");
 		restartNow.addClass("hidden");
+	});
+
+	ipcRenderer.on("aboutMenu",function(e,args){
+		openSettings("about");
 	});
 
 	ipcRenderer.on("download-progress",function(e,args){

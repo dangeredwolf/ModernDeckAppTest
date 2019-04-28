@@ -58,7 +58,7 @@ const template = [
     label: "ModernDeck",
     role: 'appMenu',
     submenu: [
-      { role: 'about' },
+      { label: 'About ModernDeck...', click(){ if (!mainWindow){return;} mainWindow.send("aboutMenu", true); } },
       { type: 'separator' },
       { role: 'services' },
       { type: 'separator' },

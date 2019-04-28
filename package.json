@@ -1,7 +1,7 @@
 {
   "name": "ModernDeck",
   "version": "0.7.3",
-  "description": "ModernDeck",
+  "description": "TweetDeck, but more beautiful and fun than ever.",
   "homepage": "https://github.com/dangeredwolf/ModernDeckAPPTEST",
   "bugs": {"url":"https://github.com/dangeredwolf/ModernDeck/issues"},
   "author": {
@@ -27,6 +27,7 @@
   "build": {
     "appId": "com.dangeredwolf.ModernDeck",
     "win": {
+      "icon":"build/icon.ico",
       "legalTrademarks": "Copyright 2014-2019 dangered wolf, released under the MIT licence",
       "publish": [
         "github"
@@ -56,6 +57,7 @@
       "publish": [
         "github"
       ],
+      "icon":"build/icon.icns",
       "artifactName": "ModernDeck7Beta.${ext}",
       "minimumSystemVersion": "10.13.1",
       "category": "public.app-category.social-networking"

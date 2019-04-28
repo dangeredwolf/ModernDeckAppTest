@@ -1922,7 +1922,11 @@ a .column-title-back .icon:after {
 
 .account-summary-text>a.account-link {
 
-	margin-left:6px
+margin-left:6px;
+
+margin-top: 17px;
+
+/* display: block!important; */
 }
 
 .js-column-social-proof .account-summary-text>a.account-link,.tweet-detail-wrapper .account-summary-text>a.account-link {
@@ -1947,11 +1951,15 @@ a .column-title-back .icon:after {
 	font-size:0.75rem!important
 }
 
+.js-user-actions-menu.btn {
+	margin-top:30px
+}
+
 .account-inline {
 	box-sizing:border-box;
 	position:relative;
-	max-width:100%;
-	text-overflow:ellipsis
+	max-width: 100%;
+	text-overflow:ellipsis;
 }
 
 .account-inline .fullname,.account-inline .username,.account-link.txt-bold {
@@ -6250,7 +6258,7 @@ r
 
 .activity-header+.account-summary .fullname {
 	padding-left:0;
-	margin-left:0
+	margin-left:0;
 }
 
 .list-account>:nth-child(2).nbfc {
@@ -7450,7 +7458,7 @@ li.padding-axl.flex.flex-row.flex-align--center .account-summary-text>a.account-
 
 .account-summary-text {
 	padding-left:calc(var(--avatarSize)*1.05);
-	padding-top:15px
+	padding-top:15px;
 }
 
 .js-list-description {
@@ -8343,7 +8351,7 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 }
 
 .account-bio.txt-sub-antialiased.color-twitter-darker-gray.txt-size-variable--13.padding-t--5 {
-	margin-top:0!important
+	margin-top: 17px!important;
 }
 
 .mdl-bottom-right.mdl:not(.sentry-error-embed):not(.med-fullpanel).s-fluid {

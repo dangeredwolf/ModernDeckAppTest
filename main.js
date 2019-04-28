@@ -54,9 +54,9 @@ const mtdSchemeHandler = async (request, callback) => {
 };
 
 const template = [
-  // { role: 'appMenu' }
-  [{
+  {
     label: app.getName(),
+    role: 'appMenu',
     submenu: [
       { role: 'about' },
       { type: 'separator' },
@@ -68,17 +68,17 @@ const template = [
       { type: 'separator' },
       { role: 'quit' }
     ]
-  }],
-  // { role: 'fileMenu' }
+  },
   {
     label: 'File',
+    role: 'fileMenu',
     submenu: [
       { role: 'close' }
     ]
   },
-  // { role: 'editMenu' }
   {
     label: 'Edit',
+    role: 'editMenu',
     submenu: [
       { role: 'undo' },
       { role: 'redo' },
@@ -100,9 +100,9 @@ const template = [
       ]
     ]
   },
-  // { role: 'viewMenu' }
   {
     label: 'View',
+    role: 'viewMenu',
     submenu: [
       { role: 'reload' },
       { role: 'forcereload' },
@@ -114,9 +114,9 @@ const template = [
       { role: 'togglefullscreen' }
     ]
   },
-  // { role: 'windowMenu' }
   {
     label: 'Window',
+    role: 'windowMenu',
     submenu: [
       { role: 'minimize' },
       { role: 'zoom' },

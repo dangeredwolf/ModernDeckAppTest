@@ -150,15 +150,20 @@ Navigate to *ModernDeckAPPTEST\ModernDeck* and click Select Folder
 #### Firefox
 
 Go to *about:debugging*
+
 Check **Enable add-on debugging**
+
 Click **Load Temporary Add-on...**
+
 Navigate to *ModernDeckAPPTEST\ModernDeck\manifest.json*
 
 
 #### Microsoft Edge (Chromium-based)
 
 Open the **...** menu
+
 Click **Extension**
+
 Turn on **Developer Mode** in the bottom left if you haven't already
 
 
@@ -167,21 +172,30 @@ Turn on **Developer Mode** in the bottom left if you haven't already
 First, you need to enabled Developer Features, if you haven't already.
 
 Go to *about:flags*
+
 Check *Enable extension developer features*
+
 Restart Edge if it asks you to
 
 Open the **...** menu
+
 Click **Extensions**
+
 Scroll down to the bottom
+
 Click **Load Extension**
+
 Select the folder *ModernDeckAPPTEST\ModernDeck*
 
 
 #### Opera
 
 Press *Ctrl+Alt+E* to open Extensions
+
 Check **Developer Mode** if you haven't already
+
 Click **Load Unpacked**
+
 Select *ModernDeckAPPTEST\ModernDeck*
 
 

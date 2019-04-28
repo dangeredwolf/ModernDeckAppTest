@@ -1570,7 +1570,7 @@ function openSettings(openMenu) {
 		}
 
 		if (!!openMenu && openMenu === key) {
-			tab.addClass("mtd-settings-tab-selected");
+			tab.click();
 		}
 	}
 

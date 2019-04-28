@@ -55,7 +55,7 @@ const mtdSchemeHandler = async (request, callback) => {
 
 const template = [
   {
-    label: app.getName(),
+    label: "ModernDeck",
     role: 'appMenu',
     submenu: [
       { role: 'about' },
@@ -86,18 +86,16 @@ const template = [
       { role: 'cut' },
       { role: 'copy' },
       { role: 'paste' },
-      [
-        { role: 'delete' },
-        { role: 'selectAll' },
-        { type: 'separator' },
-        {
-          label: 'Speech',
-          submenu: [
+      { role: 'delete' },
+      { role: 'selectAll' },
+      { type: 'separator' },
+      {
+        label: 'Speech',
+        submenu: [
             { role: 'startspeaking' },
             { role: 'stopspeaking' }
-          ]
-        }
-      ]
+        ]
+      }
     ]
   },
   {
@@ -120,12 +118,10 @@ const template = [
     submenu: [
       { role: 'minimize' },
       { role: 'zoom' },
-      [
-        { type: 'separator' },
-        { role: 'front' },
-        { type: 'separator' },
-        { role: 'window' }
-      ]
+      { type: 'separator' },
+      { role: 'front' },
+      { type: 'separator' },
+      { role: 'window' }
     ]
   },
   {

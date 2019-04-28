@@ -17,7 +17,7 @@ const { autoUpdater } = require('electron-updater');
 const Store = require('electron-store');
 const store = new Store({name:"mtdsettings"});
 
-const devBuildExpiration = {year:2019,month:4,day:26}
+const devBuildExpiration = {year:2019,month:4,day:27}
 // months start at 0 for whatever reason, so number is essentially added by 1
 const devBuildExpirationActive = true;
 
@@ -252,14 +252,29 @@ function makeWindow() {
 		}
 	}
 
+	if (process.platform === "darwin" && !app.isInApplicationsFolder()) {
+		const { dialog } = electron;
 
-	var isOnline = true;
+		dialog.showMessageBox({
+			type: "warning",
+			title: "ModernDeck",
+			message: "Updates might not work correctly if you don't run ModernDeck from the Applications folder. Would you like to move it there?",
+			buttons: ["Not now", "Yes, move it"]
+		}, function(response) {
+			if (response == 1) {
+				var moveMe = app.moveToApplicationsFolder();
+				if (!moveMe){
+		    		dialog.showMessageBox({
+		    			type: "error",
+		    			title: "ModernDeck",
+		    			message: "We couldn't automatically move ModernDeck to the applications folder. You may need to move it yourself.",
+		    			buttons: ["OK"]
+		    		});
+				}
+			}
+	    });
 
-	// var online = mainWindow.webContents.executeJavaScript("return typeof TD !== \"undefined\"",false,function(e){
-	// 	isOnline = e;
-	// })
-
-
+	}
 
 	mainWindow.on('page-title-updated', function(event,url) {
 		event.preventDefault();

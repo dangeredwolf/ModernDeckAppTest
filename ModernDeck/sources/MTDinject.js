@@ -5,7 +5,7 @@
 
 "use strict";
 
-var SystemVersion = "Build 2019-04-27";
+var SystemVersion = "Build 2019-04-30";
 var MTDBaseURL = "https://raw.githubusercontent.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if using online client
 
 var msgID,
@@ -245,7 +245,7 @@ var settingsData = {
 				activate:{
 					func:function(opt){
 						console.log(opt);
-						// setPref("mtd_columnwidth",opt);
+						setPref("mtd_columnwidth",opt);
 						enableCustomStylesheetExtension("columnwidth",":root{--columnSize:"+opt+"px!important}");
 					}
 				},
@@ -588,9 +588,7 @@ var settingsData = {
 				},
 				deactivate:{
 					func:function(opt){
-						setPref("mtd_theme","default");
 						setPref("mtd_highcontrast",false);
-						disableStylesheetExtension("amoled");
 						disableStylesheetExtension("highcontrast");
 					}
 				},
@@ -609,7 +607,7 @@ var settingsData = {
 		options:{
 			mtdResetSettings:{
 				title:"Reset Settings",
-				label:"<i class=\"icon material-icon mtd-icon-very-large\">restore</i><b>Reset ModernDeck settings</b><br>If you want to reset ModernDeck to default settings, you can do so here.",
+				label:"<i class=\"icon material-icon mtd-icon-very-large\">restore</i><b>Reset settings</b><br>If you want to reset ModernDeck to default settings, you can do so here.",
 				type:"button",
 				activate:{
 					func:function(){
@@ -640,6 +638,67 @@ var settingsData = {
 				},
 				settingsKey:"mtd_resetSettings",
 				enabled:isApp
+			},
+			mtdSaveBackup:{
+				title:"Save Backup",
+				label:"<i class=\"icon material-icon mtd-icon-very-large\">save_alt</i><b>Save backup</b><br>Saves your preferences to a file to be loaded later.",
+				type:"button",
+				activate:{
+					func:function(){
+						const app = require("electron").remote;
+   						const dialog = app.dialog;
+						const fs = require("fs");
+						const {ipcRenderer} = require('electron');
+
+						var file = "ModernDeck Preferences";
+
+						var preferences = JSON.stringify(store.store);
+
+						dialog.showSaveDialog(
+						{
+							title: "ModernDeck Preferences",
+							filters: [{ name: "Preferences JSON File", extensions: ["json"] }]
+						},
+						function(file) {
+							if (file === undefined) {
+								return;
+							}
+							fs.writeFile(file, preferences, function(e){});
+						}
+					);
+					}
+				},
+				settingsKey:"mtd_backupSettings",
+				enabled:isApp
+			},
+			mtdLoadBackup:{
+				title:"Load Backup",
+				label:"<i class=\"icon material-icon mtd-icon-very-large\">refresh</i><b>Load backup</b><br>Loads your preferences that you have saved previously.",
+				type:"button",
+				activate:{
+					func:function(){
+						const app = require("electron").remote;
+   						const dialog = app.dialog;
+						const fs = require("fs");
+						const {ipcRenderer} = require('electron');
+
+						dialog.showOpenDialog(
+							{ filters: [{ name: "Preferences JSON File", extensions: ["json"] }] },
+							function(file) {
+								if (file === undefined) {
+									return;
+								}
+
+								fs.readFile(file[0],"utf-8",function(e, load) {
+									store.store = JSON.parse(load);
+									ipcRenderer.send("restartApp");
+								});
+							}
+						);
+					}
+				},
+				settingsKey:"mtd_resetSettings",
+				enabled:isApp
 			}
 		}
 	}, about: {
@@ -652,23 +711,23 @@ var settingsData = {
 
 function retrieveImageFromClipboardAsBlob(pasteEvent, callback){
 
-    var items = pasteEvent.clipboardData.items;
+	var items = pasteEvent.clipboardData.items;
 
-    if(items == undefined || pasteEvent.clipboardData == false){
-    	console.log("RIP the paste data");
-        return;
-    };
+	if(items == undefined || pasteEvent.clipboardData == false){
+		console.log("RIP the paste data");
+		return;
+	};
 
-    for (var i = 0; i < items.length; i++) {
-        // Skip content if not image
-        if (items[i].type.indexOf("image") == -1) continue;
-        // Retrieve image on clipboard as blob
-        var blob = items[i].getAsFile();
+	for (var i = 0; i < items.length; i++) {
+		// Skip content if not image
+		if (items[i].type.indexOf("image") == -1) continue;
+		// Retrieve image on clipboard as blob
+		var blob = items[i].getAsFile();
 
-        if(typeof(callback) == "function"){
-            callback(blob);
-        }
-    }
+		if(typeof(callback) == "function"){
+			callback(blob);
+		}
+	}
 }
 
 // Paste event to allow for pasting images in TweetDeck
@@ -676,21 +735,21 @@ function retrieveImageFromClipboardAsBlob(pasteEvent, callback){
 window.addEventListener("paste", function(e){
 	console.log("got paste");
 	console.log(e);
-    retrieveImageFromClipboardAsBlob(e, function(imageBlob){
-        if(imageBlob){
+	retrieveImageFromClipboardAsBlob(e, function(imageBlob){
+		if(imageBlob){
 			console.log("got imageBlob");
 
-        	let buildEvent = jQuery.Event("dragenter",{originalEvent:{dataTransfer:{files:[imageBlob]}}});
-        	let buildEvent2 = jQuery.Event("drop",{originalEvent:{dataTransfer:{files:[imageBlob]}}});
+			let buildEvent = jQuery.Event("dragenter",{originalEvent:{dataTransfer:{files:[imageBlob]}}});
+			let buildEvent2 = jQuery.Event("drop",{originalEvent:{dataTransfer:{files:[imageBlob]}}});
 
-        	console.info("alright so these are the events we're gonna be triggering:");
-        	console.info(buildEvent);
-        	console.info(buildEvent2);
+			console.info("alright so these are the events we're gonna be triggering:");
+			console.info(buildEvent);
+			console.info(buildEvent2);
 
-        	$(document).trigger(buildEvent);
-        	$(document).trigger(buildEvent2);
-        }
-    });
+			$(document).trigger(buildEvent);
+			$(document).trigger(buildEvent2);
+		}
+	});
 }, false);
 
 // Alerts the app itself if it becomes offline
@@ -1583,12 +1642,16 @@ function openSettings(openMenu) {
 		tabs.append(tab);
 		container.append(subPanel);
 
+		console.log("openMenu ?"+exists(openMenu));
+		console.log(openMenu);
 
-		if (!openMenu && tab.index() === 0) {
+
+		if (!exists(openMenu) && tab.index() === 0) {
 			tab.addClass("mtd-settings-tab-selected");
+			tab.click();
 		}
 
-		if (!!openMenu && openMenu === key) {
+		if (exists(openMenu) && openMenu === key) {
 			tab.click();
 		}
 	}
@@ -1710,7 +1773,7 @@ function navigationSetup() {
 				setTimeout(function(){$(".js-app-settings").click()},10);
 				setTimeout(function(){$("a[data-action='keyboardShortcutList']").click()},20);
 			}).append("Keyboard Shortcuts"),
-			make("button").addClass("btn mtd-nav-button").attr("id","mtdsettings").append(make("i").addClass("icon icon-settings")).click(openSettings).append("Settings"),
+			make("button").addClass("btn mtd-nav-button").attr("id","mtdsettings").append(make("i").addClass("icon icon-settings")).click(function(){openSettings()}).append("Settings"),
 			make("div").addClass("mtd-nav-divider"),
 			make("button").addClass("btn mtd-nav-button mtd-nav-group-expand").attr("id","mtd_nav_expand").append(make("i").addClass("icon mtd-icon-arrow-down").attr("id","mtd_nav_group_arrow")).click(function(){
 				$("#mtd_nav_group").toggleClass("mtd-nav-group-expanded");
@@ -2058,11 +2121,11 @@ function mtdAppFunctions() {
 		});
 		ipcRenderer.on("msgModernDeck",function(e,args){
 			$(document).trigger("uiComposeTweet", {
-            type: "message",
-            messageRecipients: [{
-                screenName: "ModernDeck"
-            }]
-        })
+				type: "message",
+				messageRecipients: [{
+				screenName: "ModernDeck"
+			}]
+		})
 		});
 		ipcRenderer.on("newTweet",function(e,args){
 			$(document).trigger("uiComposeTweet");
@@ -2398,7 +2461,7 @@ function coreInit() {
 
 	if (useRaven) {
 		Raven.config('https://92f593b102fb4c1ca010480faed582ae@sentry.io/242524', {
-		    release: SystemVersion
+			release: SystemVersion
 		}).install();
 
 		setTimeout(Raven.context(MTDInit),10);

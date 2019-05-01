@@ -17,7 +17,7 @@ const { autoUpdater } = require('electron-updater');
 const Store = require('electron-store');
 const store = new Store({name:"mtdsettings"});
 
-const devBuildExpiration = {year:2019,month:4,day:27}
+const devBuildExpiration = {year:2019,month:4,day:30}
 // months start at 0 for whatever reason, so number is essentially added by 1
 const devBuildExpirationActive = true;
 
@@ -505,7 +505,7 @@ function makeWindow() {
 			return;
 		}
 
-		if (details.url.indexOf(".css") > -1 && (details.url.indexOf("tfw/css") > -1 && details.url.indexOf("tweetdeck_bundle")) > -1) {
+		if (details.url.indexOf(".css") > -1 && details.url.indexOf("tfw") > -1 && details.url.indexOf("css") > -1 && details.url.indexOf("tweetdeck_bundle") > -1) {
 			callback({redirectURL:"moderndeck://sources/cssextensions/twittercard.css"});
 			return;
 		}

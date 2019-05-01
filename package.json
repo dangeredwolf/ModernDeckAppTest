@@ -57,7 +57,6 @@
       "publish": [
         "github"
       ],
-      "icon":"build/icon.icns",
       "artifactName": "ModernDeck7Beta.${ext}",
       "minimumSystemVersion": "10.13.1",
       "category": "public.app-category.social-networking"

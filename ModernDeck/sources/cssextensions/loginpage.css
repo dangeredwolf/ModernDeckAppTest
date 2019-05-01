@@ -266,7 +266,7 @@ body {
 	-webkit-app-region: drag;
 }
 
-.icon-moderndeck {
+.mtd-signin-wrap .icon-moderndeck {
 	font-size: 69px;
 	font-size: 78px;
 	/* margin-left: 104px; */

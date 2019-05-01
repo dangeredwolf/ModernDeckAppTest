@@ -53,7 +53,7 @@ input[type="radio"]:checked:before,
 .mtd-logo
 {
 	color:var(--secondaryColor);
-	transition:color .3s
+	transition:color .3s;
 }
 
 
@@ -173,22 +173,7 @@ button.try-query
 	background:var(--secondaryColorAlt)!important
 }
 
-li:not(.selected) .list-twitter-list .txt-ellipsis,
-.list-twitter-list .subtitle,
-.mtd-back-default .js-setting-list>li:not(.selected)>.list-link strong,
- .txt-mute,
- .txt-r-dark-gray,
- .typeahead .username,
- .l-column.mdl-column.mdl-column-sml .list-link,
- .lst-group .list-account .username,
- html .btd-grayscale_notification_icons i.icon.activity-indicator,
- .other-replies,
- .tweet-stats>li,
- .txt-r-deep-gray,
- .color-twitter-dark-gray,
- .lst-launcher :not(.is-disabled) .color-twitter-darker-gray,
- .js-send-button[disabled],
- button[disabled]
+li:not(.selected) .list-twitter-list .txt-ellipsis, .list-twitter-list .subtitle, .mtd-back-default .js-setting-list>li:not(.selected)>.list-link strong, .txt-mute, .txt-r-dark-gray, .typeahead .username, .l-column.mdl-column.mdl-column-sml .list-link, html .btd-grayscale_notification_icons i.icon.activity-indicator, .other-replies, .tweet-stats>li, .txt-r-deep-gray, .color-twitter-dark-gray, .lst-launcher :not(.is-disabled) .color-twitter-darker-gray, .js-send-button[disabled], button[disabled]
 {
 	color:var(--placeholderTextColor)
 }
@@ -287,7 +272,8 @@ optgroup,
 }
 
 .txt-mute a:not(:focus):not(.tweet-action):not([data-action]),
-.lst-group h3
+.lst-group h3,
+.lst-group .username
 {
 	color:var(--txtMuteLink)
 }
@@ -626,7 +612,7 @@ select,
 
 .search-input
 {
-	border-bottom:2px solid var(--disabledColor)
+	border-bottom: 2px solid var(--disabledColor);
 }
 
 .mdl-column.l-column .search-input
@@ -673,15 +659,17 @@ select,
 }
 
 .btn-login[type="submit"],
-.login-container .btn-positive
+.login-container .btn-positive,
+.PollXChoice-vote--button
 {
 	background: var(--secondaryColor)!important;
 }
 
 .btn-login[type="submit"]:active,
-.login-container .btn-positive:active
+.login-container .btn-positive:active,
+.PollXChoice-vote--button:active
 {
-	background:var(--secondaryColorPress)
+	background:var(--secondaryColorPress)!important
 }
 
 .js-toggle.padding-al button>span

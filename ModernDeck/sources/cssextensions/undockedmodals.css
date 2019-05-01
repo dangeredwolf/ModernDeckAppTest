@@ -7,7 +7,7 @@
 
 .mdl:not(.med-fullpanel) {
 	animation:windowDown .3s cubic-bezier(.19,1,.22,1);
-	width:640px;
+	width:calc(var(--columnSize) + 252px);
 	margin:0 auto;
 	max-height:900px;
 	bottom:auto;

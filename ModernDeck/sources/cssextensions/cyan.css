@@ -5,6 +5,18 @@
   Released under the MIT Licence
 */
 
+.light:root {
+	--primaryColor:#00BCD4 !important;
+}
+
+.dark:root {
+	--secondaryColor:#00BCD4 !important;
+	--secondaryColorBright:#00BCD4 !important;
+	--secondaryColorAlt:#00BCD4;
+	--secondaryColorPress:#00BCD4;
+	--secondaryColorDeep:#007786;
+}
+
 
 .light .mtd-settings-tab-container,.light .mdl-header,.light .application,.light .mtd-back-blue.mtd-light .app-navigator .js-hide-drawer,.light .app-navigator .js-hide-drawer,.light .edit-conversation-name,.light .drawer-header,.light .column:not(.is-new) .column-message,.light body,.light .column-header,.light .column-header-temp {
 	background:#00BCD4!important

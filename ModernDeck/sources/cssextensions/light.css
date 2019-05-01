@@ -333,14 +333,7 @@ input[type="checkbox"][disabled]:before {
 	color: var(--typeaheadColor)!important;
 }
 
-.edit-conversation-name,
-.app-navigator .js-hide-drawer,
-.column-message,
-.app-navigator .js-hide-drawer,
-.drawer-header,
-body,
-.is-options-open .column-settings-link,
-.mtd-settings-tab-container
+.edit-conversation-name, .app-navigator .js-hide-drawer, .column-message, .app-navigator .js-hide-drawer, .drawer-header, body, .mtd-settings-tab-container
 {
 	background:var(--primaryColor)
 }
@@ -822,7 +815,8 @@ textarea::placeholder
 }
 
 .is-unread .txt-mute,
-.is-unread .conversation-indicator
+.is-unread .conversation-indicator,
+.column-header .txt-mute,.column-header-title>.attribution
 {
 	color:var(--columnAlt)
 }
@@ -863,11 +857,6 @@ textarea::placeholder
 	color:var(--disabledColor)
 }
 
-.js-column-social-proof .username,
-.dropdown-menu a
-{
-	opacity:0.75
-}
 .js-character-count {
 
 	color:var(--typeaheadColor)

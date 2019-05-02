@@ -17,7 +17,7 @@ const { autoUpdater } = require('electron-updater');
 const Store = require('electron-store');
 const store = new Store({name:"mtdsettings"});
 
-const devBuildExpiration = {year:2019,month:4,day:30}
+const devBuildExpiration = {year:2019,month:5,day:1}
 // months start at 0 for whatever reason, so number is essentially added by 1
 const devBuildExpirationActive = true;
 
@@ -492,7 +492,7 @@ function makeWindow() {
 		(details, callback) => {
 			var foo = details.responseHeaders;
 			foo["content-security-policy"] =[
-				"default-src 'self'; connect-src * moderndeck:; font-src https: data: * moderndeck:; frame-src https: moderndeck:; frame-ancestors 'self' https: moderndeck:; img-src https: data: moderndeck:; media-src * moderndeck:; object-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://sentry.io https://cdn.jsdelivr.net https://ajax.googleapis.com moderndeck: https://cdn.ravenjs.com/ https://*.twitter.com https://*.twimg.com https://rawgit.com https://*.rawgit.com https://ssl.google-analytics.com https://api-ssl.bitly.com; style-src 'self' 'unsafe-inline' 'unsafe-eval' https: moderndeck:;"];
+				"default-src 'self'; connect-src * moderndeck:; font-src https: data: * moderndeck:; frame-src https: moderndeck:; frame-ancestors 'self' https: moderndeck:; img-src https: data: moderndeck:; media-src * moderndeck:; object-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://c6.patreon.com https://sentry.io https://cdn.jsdelivr.net https://ajax.googleapis.com moderndeck: https://cdn.ravenjs.com/ https://*.twitter.com https://*.twimg.com https://rawgit.com https://*.rawgit.com https://ssl.google-analytics.com https://api-ssl.bitly.com; style-src 'self' 'unsafe-inline' 'unsafe-eval' https: moderndeck:;"];
 			callback({ responseHeaders: foo});
 		}
 	);

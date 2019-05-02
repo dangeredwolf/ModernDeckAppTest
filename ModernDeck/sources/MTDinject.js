@@ -5,8 +5,8 @@
 
 "use strict";
 
-var SystemVersion = "Build 2019-04-30";
-var MTDBaseURL = "https://raw.githubusercontent.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if using online client
+var SystemVersion = "Build 2019-05-01";
+var MTDBaseURL = "https://raw.githubusercontent.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if MTDURLExchange isn't completed properly
 
 var msgID,
 FetchProfileInfo,
@@ -1568,14 +1568,22 @@ function openSettings(openMenu) {
 			var info = make("p").html("Made with <i class=\"icon icon-heart mtd-about-heart\"></i> by <a href=\"https://twitter.com/dangeredwolf\" rel=\"user\" target=\"_blank\">dangeredwolf</a> in Columbus, OH since 2014<br><br>ModernDeck is an open source project released under the MIT license.");
 			var infoCont = make("div").addClass("mtd-about-info").append(info);
 
-
+			var patronInfo = make("div").addClass("mtd-patron-info").append(
+				make("div").addClass("mtd-patreon-button").append(
+					make("iframe").attr("src","https://www.patreon.com/platform/iframe?widget=become-patron-button&creatorID=3469384")
+				),
+				make("div").addClass("mtd-patron-list").append(
+					make("iframe")
+				)
+			)
 			updateCont.append(updateIcon,updateh2,updateh3,tryAgain,restartNow);
 
 			if (isApp) {
-				subPanel.append(updateCont,infoCont);
+				subPanel.append(updateCont);
 			}
 
 			subPanel.append(infoCont);
+			//subPanel.append(patronInfo);
 
 			if (isApp) {
 				mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,tryAgain,restartNow);

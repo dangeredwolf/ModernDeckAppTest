@@ -14,7 +14,7 @@
 	--pureWhite:#fff!important
 }
 
-.is-options-open .column-settings-link,.prf-header .prf-siteurl,.prf .fullname,.prf-actions .action-text:after,.prf-header,.prf-header .username,.prf-header .link-clean {
+.prf-header .prf-bio a,.is-options-open .column-settings-link,.prf-header .prf-siteurl,.prf .fullname,.prf-actions .action-text:after,.prf-header,.prf-header .username,.prf-header .link-clean {
 	color:var(--pureWhite)!important
 }
 

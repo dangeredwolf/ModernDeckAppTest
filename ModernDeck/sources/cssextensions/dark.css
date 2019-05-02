@@ -115,7 +115,7 @@ html,
   color:var(--bodyTextColor)
 }
 
-.dropdown-menu a[data-action]:active, .column, .column-scroller, .column-detail-level-2, .js-account-manager-container, .contributor-manager, .js-contributor-manager-container, .column-panel, .contributor-adder-block, .contributor-row, .Notification-inner, .DateRange
+.dropdown-menu a[data-action]:active, .column, .column-scroller, .column-detail-level-2, .js-account-manager-container, .contributor-manager, .js-contributor-manager-container, .column-panel, .contributor-adder-block, .contributor-row, .DateRange
 {
 	background:var(--backdropColor)
 }
@@ -739,7 +739,7 @@ button[type="submit"]:active,button[type="submit"]:focus,.mtd-settings-button:fo
 }
 
 .Notification-inner {
-	background:var(--modalWindowColor);
+	background:var(--secondaryColor);
 }
 
 .account-settings-bb a[rel="user"] {

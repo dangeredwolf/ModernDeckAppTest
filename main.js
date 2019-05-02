@@ -629,21 +629,21 @@ function makeWindow() {
 		mainWindow.webContents.executeJavaScript('\
 			document.querySelector("html").classList.add("mtd-maximized");\
 			document.querySelector(".windowcontrol.max").innerHTML = "&#xE3E0";\
-			');
+		');
 	});
 
 	mainWindow.on('unmaximize', function() {
 		mainWindow.webContents.executeJavaScript('\
 			document.querySelector("html").classList.remove("mtd-maximized");\
 			document.querySelector(".windowcontrol.max").innerHTML = "&#xE3C6";\
-			');
+		');
 	});
 
 	mainWindow.on('enter-full-screen', function() {
 		mainWindow.webContents.executeJavaScript('document.querySelector("html").classList.remove("mtd-app");\
-		document.querySelector("html").classList.remove("mtd-app-win");\
-		document.querySelector("html").classList.remove("mtd-app-mac");\
-		document.querySelector("html").classList.remove("mtd-app-linux");\
+			document.querySelector("html").classList.remove("mtd-app-win");\
+			document.querySelector("html").classList.remove("mtd-app-mac");\
+			document.querySelector("html").classList.remove("mtd-app-linux");\
 		');
 	});
 

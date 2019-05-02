@@ -2023,7 +2023,7 @@ function mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,
 	})
 
 	restartNow.click(function(){
-		ipcRenderer.send('restartApp');
+		ipcRenderer.send('restartAndInstallUpdates');
 	});
 
 	ipcRenderer.send('checkForUpdates');

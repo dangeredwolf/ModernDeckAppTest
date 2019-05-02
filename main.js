@@ -580,12 +580,15 @@ function makeWindow() {
 	ipcMain.on("inspectElement",function(event,arg){
 		mainWindow.webContents.inspectElement(arg.x,arg.y);
 	});
-	ipcMain.on("restartApp",function(event,arg){
-    	setTimeout(function(){
-    		app.relaunch();
-    		app.exit();
-    	},100);
-	});
+  ipcMain.on("restartApp",function(event,arg){
+      setTimeout(function(){
+        app.relaunch();
+        app.exit();
+      },100);
+  });
+  ipcMain.on("restartAndInstallUpdates",function(event,arg){
+      autoUpdater.quitAndInstall(false,true);
+  });
 	ipcMain.on("destroyEverything",function(event,arg){
 		var ses = session.defaultSession;
 		store.clear();

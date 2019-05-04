@@ -5,7 +5,7 @@
 
 "use strict";
 
-var SystemVersion = "Release Candidate 1 (Build 2019-05-03)";
+var SystemVersion = "7.0 Release Candidate 1 (Build 2019-05-03)";
 var MTDBaseURL = "https://raw.githubusercontent.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if MTDURLExchange isn't completed properly
 
 var msgID,
@@ -1709,7 +1709,7 @@ function openSettings(openMenu) {
 			}
 		} else if (settingsData[key].enum === "aboutpage") {
 			var logo = make("i").addClass("mtd-logo icon-moderndeck icon");
-			var h1 = make("h1").addClass("mtd-about-title").html("ModernDeck 7 Beta");
+			var h1 = make("h1").addClass("mtd-about-title").html("ModernDeck 7");
 			var h2 = make("h2").addClass("mtd-version-title").html(SystemVersion);
 			var logoCont = make("div").addClass("mtd-logo-container").append(logo,h1,h2);
 

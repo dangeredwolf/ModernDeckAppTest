@@ -47,7 +47,8 @@
     "sources/*",
     "sources/cssextensions/*",
     "sources/fonts/*",
-    "sources/libraries/*"
+    "sources/libraries/*",
+    "sources/img/*"
   ],
 
   "browser_action": {

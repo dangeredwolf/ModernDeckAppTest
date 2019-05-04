@@ -69,6 +69,10 @@
     max-height: 707px;
 }
 
+.mdl.s-profile {
+	min-height:515px!important
+}
+
 .mdl.s-fluid {
 	height:auto!important;
 	min-width:400px;

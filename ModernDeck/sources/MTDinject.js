@@ -5,7 +5,7 @@
 
 "use strict";
 
-var SystemVersion = "Build 2019-05-01";
+var SystemVersion = "Release Candidate 1 (Build 2019-05-03)";
 var MTDBaseURL = "https://raw.githubusercontent.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if MTDURLExchange isn't completed properly
 
 var msgID,
@@ -30,6 +30,7 @@ hasOutCache,
 TreatGeckoWithCare = false;
 
 const useRaven = true;
+let ugltStarted = false;
 
 var progress = null;
 
@@ -52,6 +53,9 @@ var isEdge = typeof MSGesture !== "undefined";
 var isFirefox = typeof mozInnerScreenX !== "undefined";
 var isApp = typeof require !== "undefined";
 var isChrome = typeof chrome !== "undefined" && !isEdge && !isFirefox; // may also return true on chromium-based browsers like opera, edge chromium, and electron
+var isWin = navigator.userAgent.indexOf("Windows NT") > -1;
+var isMac = navigator.userAgent.indexOf("Mac OS X") > -1;
+var ctrlShiftText = isMac ? "⇧⌘" : "Ctrl+Shift+";
 
 var injectedFonts = false;
 
@@ -62,12 +66,20 @@ var MTDStorage = {};
 
 var contextMenuFunctions;
 
-const newLoginPage = '<div class="app-signin-wrap mtd-signin-wrap"><div class="js-signin-ui app-signin-form pin-top pin-right txt-weight-normal"><section class="js-login-form form-login startflow-panel-rounded"data-auth-type="twitter"><h2 class="form-legend padding-axl">Good evening!</h2><h3 class="form-legend padding-axl">Welcome to ModernDeck</h3><i class="icon icon-moderndeck"></i><div class="margin-a--16"><div class="js-login-error form-message form-error-message error txt-center padding-al margin-bxl is-hidden"><p class="js-login-error-message">An unexpected error occurred. Please try again later.</p></div><a href="https://twitter.com/login?hide_message=true&amp;redirect_after_login=https%3A%2F%2Ftweetdeck.twitter.com%2F%3Fvia_twitter_login%3Dtrue" class="Button Button--primary block txt-size--18 txt-center btn-positive">Sign in with Twitter</a><div class="divider-bar"></div></section></div></div></div>';
+var newLoginPage = '<div class="app-signin-wrap mtd-signin-wrap"><div class="js-signin-ui app-signin-form pin-top pin-right txt-weight-normal"><section class="js-login-form form-login startflow-panel-rounded"data-auth-type="twitter"><h2 class="form-legend padding-axl">Good evening!</h2><h3 class="form-legend padding-axl">Welcome to ModernDeck</h3><i class="icon icon-moderndeck"></i><div class="margin-a--16"><div class="js-login-error form-message form-error-message error txt-center padding-al margin-bxl is-hidden"><p class="js-login-error-message">An unexpected error occurred. Please try again later.</p></div><a href="https://twitter.com/login?hide_message=true&amp;redirect_after_login=https%3A%2F%2Ftweetdeck.twitter.com%2F%3Fvia_twitter_login%3Dtrue" class="Button Button--primary block txt-size--18 txt-center btn-positive">Sign in with Twitter</a><div class="divider-bar"></div></section></div></div></div>';
+
+let mtdStarted = new Date();
+
+if (mtdStarted.getHours() < 12) {
+	newLoginPage = newLoginPage.replace("Good evening","Good morning");
+} else if (mtdStarted.getHours() < 18) {
+	newLoginPage = newLoginPage.replace("Good evening","Good afternoon");
+}
 
 var settingsData = {
-	appearance: {
-		tabName:"Appearance",
-		tabId:"appearance",
+	themes: {
+		tabName:"Themes",
+		tabId:"themes",
 		options:{
 			coretheme:{
 				headerBefore:"Themes",
@@ -97,6 +109,11 @@ var settingsData = {
 						if (opt === "dark" && isStylesheetExtensionEnabled("paper")) {
 							disableStylesheetExtension("paper");
 							setPref("mtd_theme","default");
+						}
+
+						if (hasPref("mtd_customcss")) {
+							disableStylesheetExtension("customcss");
+							enableCustomStylesheetExtension("customcss",getPref("mtd_customcss"));
 						}
 					}
 				},
@@ -153,6 +170,11 @@ var settingsData = {
 							enableStylesheetExtension("amoled");
 							setPref("mtd_theme","amoled");
 						}
+
+						if (hasPref("mtd_customcss")) {
+							disableStylesheetExtension("customcss");
+							enableCustomStylesheetExtension("customcss",getPref("mtd_customcss"));
+						}
 					}
 				},
 				options:{
@@ -183,7 +205,33 @@ var settingsData = {
 				},
 				settingsKey:"mtd_theme",
 				default:"default"
-			},
+			}, customCss:{
+				title:"Custom CSS",
+				type:"textarea",
+				placeholder:":root {\n"+
+				"	--retweetColor:red;\n"+
+				"	--primaryColor:#00ff00!important;\n"+
+				"}\n\n"+
+				"a:hover {\n"+
+				"	text-decoration:underline\n"+
+				"}",
+				activate:{
+					func:function(opt){
+
+						setPref("mtd_customcss",opt);
+						enableCustomStylesheetExtension("customcss",opt);
+
+					}
+				},
+				settingsKey:"mtd_customcss",
+				default:""
+			}
+		}
+	},
+	appearance: {
+		tabName:"Appearance",
+		tabId:"appearance",
+		options:{
 			dockedmodals:{
 				headerBefore:"Behavior",
 				title:"Use docked modals",
@@ -353,9 +401,172 @@ var settingsData = {
 				},
 				settingsKey:"mtd_sensitive_alt",
 				default:false
+			},
+			accoutline:{
+				headerBefore:"Accessibility",
+				title:"Always show outlines around focused items ("+ctrlShiftText+"A to toggle)",
+				type:"checkbox",
+				activate:{
+					htmlAddClass:"mtd-acc-focus-ring"
+				},
+				deactivate:{
+					htmlRemoveClass:"mtd-acc-focus-ring"
+				},
+				settingsKey:"mtd_outlines",
+				default:false
+			},
+			highcont:{
+				title:"Enable High Contrast theme ("+ctrlShiftText+"H to toggle)",
+				type:"checkbox",
+				activate:{
+					func:function(opt){
+						if (TD.settings.getTheme() === "light") {
+							TD.settings.setTheme("dark");
+							disableStylesheetExtension("light");
+							enableStylesheetExtension("dark");
+						}
+						disableStylesheetExtension(getPref("mtd_theme") || "default");
+						setPref("mtd_theme","amoled");
+						setPref("mtd_highcontrast",true);
+						enableStylesheetExtension("amoled");
+						enableStylesheetExtension("highcontrast");
+					}
+				},
+				deactivate:{
+					func:function(opt){
+						setPref("mtd_highcontrast",false);
+						disableStylesheetExtension("highcontrast");
+					}
+				},
+				settingsKey:"mtd_highcontrast",
+				default:false
 			}
-
 		}
+	}, tweets: {
+		tabName:"Tweets",
+		tabId:"tweets",
+		options:{
+			stream:{
+				headerBefore:"Function",
+				title:"Stream Tweets in realtime",
+				type:"checkbox",
+				activate:{
+					func:function(){
+						TD.settings.setUseStream(true);
+					}
+				},
+				deactivate:{
+					func:function(){
+						TD.settings.setUseStream(false);
+					}
+				},
+				queryFunction:function(){
+					return TD.settings.getUseStream();
+				}
+			},
+			autoplayGifs:{
+				title:"Automatically play GIFs",
+				type:"checkbox",
+				activate:{
+					func:function(){
+						TD.settings.setAutoPlayGifs(true);
+					}
+				},
+				deactivate:{
+					func:function(){
+						TD.settings.setAutoPlayGifs(false);
+					}
+				},
+				queryFunction:function(){
+					return TD.settings.getAutoPlayGifs();
+				}
+			},
+			startupNotifications:{
+				title:"Show notifications on startup",
+				type:"checkbox",
+				activate:{
+					func:function(){
+						TD.settings.setShowStartupNotifications(true);
+					}
+				},
+				deactivate:{
+					func:function(){
+						TD.settings.setShowStartupNotifications(false);
+					}
+				},
+				queryFunction:function(){
+					return TD.settings.getShowStartupNotifications();
+				}
+			},
+			linkshort:{
+				headerBefore:"Link Shortening",
+				title:"Link Shortener Service",
+				type:"dropdown",
+				activate:{
+					func:function(set){
+						if (shortener === "twitter") {
+							$("bitlyUsername").addClass("hidden");
+							$("bitlyApiKey").addClass("hidden");
+						} else if (shortener === "bitly") {
+							$("bitlyUsername").removeClass("hidden");
+							$("bitlyApiKey").removeClass("hidden");
+						}
+						TD.settings.setLinkShortener(set);
+					}
+				},
+				queryFunction:function(){
+					var shortener = TD.settings.getLinkShortener();
+					if (shortener === "twitter") {
+						$("bitlyUsername").addClass("hidden");
+						$("bitlyApiKey").addClass("hidden");
+					} else if (shortener === "bitly") {
+						$("bitlyUsername").removeClass("hidden");
+						$("bitlyApiKey").removeClass("hidden");
+					}
+					return shortener;
+				},
+				options:{
+					twitter:{value:"twitter",text:"Twitter"},
+					bitly:{value:"bitly",text:"Bit.ly"}
+				}
+			},
+			bitlyUsername:{
+				title:"Bit.ly Username",
+				type:"textbox",
+				activate:{
+					func:function(set){
+						TD.settings.setBitlyAccount({
+							apiKey:((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().apiKey) ? TD.settings.getBitlyAccount() : {apiKey:""}).login,
+							login:set
+						})
+					}
+				},
+				queryFunction:function(){
+					return ((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().login) ? TD.settings.getBitlyAccount() : {login:""}).login;
+				}
+			},
+			bitlyApiKey:{
+				title:"Bit.ly API Key",
+				type:"textbox",
+				addClass:"mtd-big-text-box",
+				activate:{
+					func:function(set){
+						TD.settings.setBitlyAccount({
+							login:((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().login) ? TD.settings.getBitlyAccount() : {login:""}).login,
+							apiKey:set
+						});
+					}
+				},
+				queryFunction:function(){
+					return ((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().apiKey) ? TD.settings.getBitlyAccount() : {apiKey:""}).apiKey;
+				}
+			}
+		}
+	}, mutes: {
+		tabName:"Mutes",
+		tabId:"mutes",
+		options:{},
+		enum:"mutepage"
 	}, app: {
 		tabName:"App",
 		tabId:"app",
@@ -428,186 +639,13 @@ var settingsData = {
 				settingsKey:"mtd_nativecontextmenus",
 				default:isApp ? process.platform === "darwin" : false
 			}
-		}}, tweets: {
-		tabName:"Tweets",
-		tabId:"tweets",
-		options:{
-			stream:{
-				headerBefore:"Function",
-				title:"Stream Tweets in realtime",
-				type:"checkbox",
-				activate:{
-					func:function(){
-						TD.settings.setUseStream(true);
-					}
-				},
-				deactivate:{
-					func:function(){
-						TD.settings.setUseStream(false);
-					}
-				},
-				queryFunction:function(){
-					return TD.settings.getUseStream();
-				}
-			},
-			autoplayGifs:{
-				title:"Automatically play GIFs",
-				type:"checkbox",
-				activate:{
-					func:function(){
-						TD.settings.setAutoPlayGifs(true);
-					}
-				},
-				deactivate:{
-					func:function(){
-						TD.settings.setAutoPlayGifs(false);
-					}
-				},
-				queryFunction:function(){
-					return TD.settings.getAutoPlayGifs();
-				}
-			},
-			startupNotifications:{
-				title:"Show notifications on startup",
-				type:"checkbox",
-				activate:{
-					func:function(){
-						TD.settings.setShowStartupNotifications(true);
-					}
-				},
-				deactivate:{
-					func:function(){
-						TD.settings.setShowStartupNotifications(false);
-					}
-				},
-				queryFunction:function(){
-					return TD.settings.getShowStartupNotifications();
-				}
-			}
-		}
-	}, links: {
-		tabName:"Links",
-		tabId:"links",
-		options:{
-			linkshort:{
-				headerBefore:"Link Shortening",
-				title:"Link Shortener Service",
-				type:"dropdown",
-				activate:{
-					func:function(set){
-						if (shortener === "twitter") {
-							$("bitlyUsername").addClass("hidden");
-							$("bitlyApiKey").addClass("hidden");
-						} else if (shortener === "bitly") {
-							$("bitlyUsername").removeClass("hidden");
-							$("bitlyApiKey").removeClass("hidden");
-						}
-						TD.settings.setLinkShortener(set);
-					}
-				},
-				queryFunction:function(){
-					var shortener = TD.settings.getLinkShortener();
-					if (shortener === "twitter") {
-						$("bitlyUsername").addClass("hidden");
-						$("bitlyApiKey").addClass("hidden");
-					} else if (shortener === "bitly") {
-						$("bitlyUsername").removeClass("hidden");
-						$("bitlyApiKey").removeClass("hidden");
-					}
-					return shortener;
-				},
-				options:{
-					twitter:{value:"twitter",text:"Twitter"},
-					bitly:{value:"bitly",text:"Bit.ly"}
-				}
-			},
-			bitlyUsername:{
-				title:"Bit.ly Username",
-				type:"textbox",
-				activate:{
-					func:function(set){
-						TD.settings.setBitlyAccount({
-							apiKey:((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().apiKey) ? TD.settings.getBitlyAccount() : {apiKey:""}).login,
-							login:set
-						})
-					}
-				},
-				queryFunction:function(){
-					return ((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().login) ? TD.settings.getBitlyAccount() : {login:""}).login;
-				}
-			},
-			bitlyApiKey:{
-				title:"Bit.ly API Key",
-				type:"textbox",
-				addClass:"mtd-big-text-box",
-				activate:{
-					func:function(set){
-						TD.settings.setBitlyAccount({
-							login:((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().login) ? TD.settings.getBitlyAccount() : {login:""}).login,
-							apiKey:set
-						});
-					}
-				},
-				queryFunction:function(){
-					return ((TD.settings.getBitlyAccount() && TD.settings.getBitlyAccount().apiKey) ? TD.settings.getBitlyAccount() : {apiKey:""}).apiKey;
-				}
-			}
-		}
-	}, accessibility: {
-		tabName:"Accessibility",
-		tabId:"accessibility",
-		options:{
-			accoutline:{
-				title:"Always show outlines around focused items (Ctrl+Shift+A to toggle)",
-				type:"checkbox",
-				activate:{
-					htmlAddClass:"mtd-acc-focus-ring"
-				},
-				deactivate:{
-					htmlRemoveClass:"mtd-acc-focus-ring"
-				},
-				settingsKey:"mtd_outlines",
-				default:false
-			},
-			highcont:{
-				title:"Enable High Contrast theme (Ctrl+Shift+H to toggle)",
-				type:"checkbox",
-				activate:{
-					func:function(opt){
-						if (TD.settings.getTheme() === "light") {
-							TD.settings.setTheme("dark");
-							disableStylesheetExtension("light");
-							enableStylesheetExtension("dark");
-						}
-						disableStylesheetExtension(getPref("mtd_theme") || "default");
-						setPref("mtd_theme","amoled");
-						setPref("mtd_highcontrast",true);
-						enableStylesheetExtension("amoled");
-						enableStylesheetExtension("highcontrast");
-					}
-				},
-				deactivate:{
-					func:function(opt){
-						setPref("mtd_highcontrast",false);
-						disableStylesheetExtension("highcontrast");
-					}
-				},
-				settingsKey:"mtd_highcontrast",
-				default:false
-			}
-		}
-	}, mutes: {
-		tabName:"Mutes",
-		tabId:"mutes",
-		options:{},
-		enum:"mutepage"
-	}, advanced: {
-		tabName:"Advanced",
-		tabId:"advanced",
+		}}, system: {
+		tabName:"System",
+		tabId:"system",
 		options:{
 			mtdResetSettings:{
 				title:"Reset Settings",
-				label:"<i class=\"icon material-icon mtd-icon-very-large\">restore</i><b>Reset settings</b><br>If you want to reset ModernDeck to default settings, you can do so here.",
+				label:"<i class=\"icon material-icon mtd-icon-very-large\">restore</i><b>Reset settings</b><br>If you want to reset ModernDeck to default settings, you can do so here.<br>Note: Certain built-in TweetDeck settings cannot be cleared, as they are synced to your Twitter account.",
 				type:"button",
 				activate:{
 					func:function(){
@@ -699,6 +737,16 @@ var settingsData = {
 				},
 				settingsKey:"mtd_resetSettings",
 				enabled:isApp
+			},
+			tdLegacySettings: {
+				title:"Legacy settings",
+				label:"Is there a new TweetDeck setting we're missing? Visit legacy settings",
+				type:"link",
+				activate:{
+					func:function(){
+						openLegacySettings();
+					}
+				}
 			}
 		}
 	}, about: {
@@ -761,7 +809,7 @@ const forceAppUpdateOnlineStatus = function(e){
 }
 
 if (typeof MTDURLExchange === "object" && typeof MTDURLExchange.getAttribute === "function") {
-	MTDBaseURL = MTDURLExchange.getAttribute("type") || "https://dangeredwolf.com/assets/mtdtest/";
+	MTDBaseURL = MTDURLExchange.getAttribute("type");
 	console.info("MTDURLExchange completed with URL " + MTDBaseURL);
 }
 
@@ -881,10 +929,12 @@ function loadPreferences() {
 							break;
 						case "dropdown":
 						case "textbox":
+						case "textarea":
 						case "slider":
 							parseActions(pref.activate, setting);
 							break;
 						case "button":
+						case "link":
 							break;
 					}
 				}
@@ -1023,9 +1073,9 @@ function MTDInit(){
 	if (!injectedFonts) {
 
 		$(document.head).append(make("style").html(
-			fontParseHelper({name:"Roboto-Regular"}) +
 			fontParseHelper({family:"MD",name:"mdvectors"}) +
 			fontParseHelper({family:"Material",name:"MaterialIcons"}) +
+			fontParseHelper({name:"Roboto-Regular"}) +
 			fontParseHelper({weight:"500",name:"Roboto-Medium"}) +
 			fontParseHelper({name:"Roboto-Italic",style:"italic"}) +
 			fontParseHelper({weight:"300",name:"Roboto-Light"}) +
@@ -1109,7 +1159,15 @@ function MTDInit(){
 			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansTibetan-Bold",range:"U+0F00-0FFF"}) +
 			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansTifinagh-Regular",range:"U+2D30-2D7F"}) +
 			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansVai-Regular",range:"U+A500-A63F"}) +
-			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansYi-Regular",range:"U+A000-A48F"})
+			fontParseHelper({family:"Noto Sans",weight:"500",name:"NotoSansYi-Regular",range:"U+A000-A48F"}) +
+			fontParseHelper({family:"RobotoMono",name:"RobotoMono-Regular"}) +
+			fontParseHelper({family:"RobotoMono",weight:"500",name:"RobotoMono-Medium"}) +
+			fontParseHelper({family:"RobotoMono",name:"RobotoMono-Italic",style:"italic"}) +
+			fontParseHelper({family:"RobotoMono",weight:"300",name:"RobotoMono-Light"}) +
+			fontParseHelper({family:"RobotoMono",weight:"500",name:"RobotoMono-MediumItalic",style:"italic"}) +
+			fontParseHelper({family:"RobotoMono",weight:"300",name:"RobotoMono-LightItalic",style:"italic"}) +
+			fontParseHelper({family:"RobotoMono",weight:"100",name:"RobotoMono-Thin"}) +
+			fontParseHelper({family:"RobotoMono",weight:"100",name:"RobotoMono-ThinIalic",style:"italic"})
 		));
 		injectedFonts = true;
 	}
@@ -1328,10 +1386,33 @@ function MTDInit(){
 		console.info("oh no, we're too late!");
 		$(".app-signin-wrap:not(.mtd-signin-wrap)").remove();
 		$(".login-container .startflow").html(newLoginPage);
+		startUpdateGoodLoginText();
 	}
 
 	navigationSetup();
 
+}
+
+function startUpdateGoodLoginText() {
+	if (ugltStarted) {return;}
+	ugltStarted = true;
+
+	$(".startflow-background").attr("style","background-image:url("+MTDBaseURL+"sources/img/bg1.jpg)")
+
+	setInterval(function(){
+		var text;
+		let newDate = new Date();
+
+		if (newDate.getHours() < 12) {
+			text = "Good morning!";
+		} else if (newDate.getHours() < 18) {
+			text = "Good afternoon!";
+		} else {
+			text = "Good evening!";
+		}
+
+		$(".form-login h2").html(text);
+	},10000);
 }
 
 function sendNotificationMessage(txt) {
@@ -1408,7 +1489,7 @@ function openSettings(openMenu) {
 					setPref(pref.settingsKey, pref.default);
 				}
 
-				let input,select,label,minimum,maximum,button;
+				let input,select,label,minimum,maximum,button,link;
 
 
 				switch(pref.type) {
@@ -1480,8 +1561,74 @@ function openSettings(openMenu) {
 						}
 						break;
 					case "textbox":
-						input = make("input").attr("type","text").attr("id",prefKey).change(function(){
-							parseActions(pref.activate, $(this).val());
+						input = make("input").attr("type","text").attr("id",prefKey);
+
+						if (pref.instantApply === true) {
+							input.on("input",function(){
+								parseActions(pref.activate, $(this).val());
+							});
+						} else {
+							input.change(function(){
+								parseActions(pref.activate, $(this).val());
+							});
+						}
+
+						if (exists(pref.settingsKey)) {
+							input.val(getPref(pref.settingsKey));
+						} else if (!exists(pref.settingsKey) && exists(pref.queryFunction)) {
+							input.val(pref.queryFunction())
+						}
+
+						label = make("label").addClass("control-label").html(pref.title);
+
+						if (exists(pref.initFunc)) {
+							pref.initFunc(input);
+						}
+
+						option.append(label,input);
+						break;
+					case "textarea":
+						input = make("textarea").addClass("mtd-textarea").attr("id",prefKey).attr("rows","10").attr("cols","80").attr("placeholder",pref.placeholder || "").attr("spellcheck",false);
+
+						if (pref.instantApply === true) {
+							input.on("input",function(){
+								parseActions(pref.activate, $(this).val());
+							});
+						} else {
+							input.change(function(){
+								parseActions(pref.activate, $(this).val());
+							});
+						}
+
+
+						// thank you https://sumtips.com/snippets/javascript/tab-in-textarea/ for this amazing hack for tabs to work
+						input.keydown(function(e)
+						{
+							var kC = e.keyCode ? e.keyCode : e.charCode ? e.charCode : e.which;
+							if (kC == 9 && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey)
+							{
+								var oS = input[0].scrollTop;
+								if (input[0].setSelectionRange)
+								{
+									var sS = input[0].selectionStart;
+									var sE = input[0].selectionEnd;
+									input[0].value = input[0].value.substring(0, sS) + "\t" + input[0].value.substr(sE);
+									input[0].setSelectionRange(sS + 1, sS + 1);
+									input[0].focus();
+								}
+								else if (input[0].createTextRange)
+								{
+									document.selection.createRange().text = "\t";
+									e.returnValue = false;
+								}
+								input[0].scrollTop = oS;
+								if (e.preventDefault)
+								{
+									e.preventDefault();
+								}
+								return false;
+							}
+							return true;
 						});
 
 						if (exists(pref.settingsKey)) {
@@ -1543,6 +1690,18 @@ function openSettings(openMenu) {
 						}
 
 						option.append(label,button);
+						break;
+					case "link":
+						link = make("a").html(pref.label).addClass("mtd-settings-link")
+						.click(function(){
+							parseActions(pref.activate,true);
+						});
+
+						if (exists(pref.initFunc)) {
+							pref.initFunc(link);
+						}
+
+						option.append(link);
 						break;
 				}
 
@@ -1727,6 +1886,7 @@ function navigationSetup() {
 		console.info("oh no, we're too late!");
 		$(".app-signin-wrap:not(.mtd-signin-wrap)").remove();
 		$(".login-container .startflow").html(newLoginPage);
+		startUpdateGoodLoginText();
 	}
 
 	if ($(".app-header-inner").length < 1) {
@@ -1839,7 +1999,7 @@ function navigationSetup() {
 }
 
 function keyboardShortcutHandler(e) {
-	if (e.key.toUpperCase() === "A" && e.ctrlKey && e.shiftKey) { //pressing Ctrl+Shift+A toggles the outline accessibility option
+	if (e.key.toUpperCase() === "A" && (isMac ? e.metaKey : e.ctrlKey) && e.shiftKey) { //pressing Ctrl+Shift+A toggles the outline accessibility option
 		console.log("User has pressed the proper key combination to toggle outlines!");
 
 		if ($("#accoutline").length > 0) {
@@ -1849,7 +2009,13 @@ function keyboardShortcutHandler(e) {
 		}
 
 	}
-	if (e.key.toUpperCase() === "H" && e.ctrlKey && e.shiftKey) { //pressing Ctrl+Shift+H toggles high contrast
+	if (e.key.toUpperCase() === "C" && (isMac ? e.metaKey : e.ctrlKey) && e.shiftKey) { //pressing Ctrl+Shift+C disabled user CSS
+		console.log("User disabled custom CSS!");
+
+		disableStylesheetExtension("customcss")
+
+	}
+	if (e.key.toUpperCase() === "H" && (isMac ? e.metaKey : e.ctrlKey) && e.shiftKey) { //pressing Ctrl+Shift+H toggles high contrast
 		console.log("User has pressed the proper key combination to toggle high contrast!");
 
 		if ($("#highcont").length > 0) {

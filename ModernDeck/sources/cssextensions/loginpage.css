@@ -93,24 +93,6 @@ select,input {
 	border-radius: 4px;
 }
 
-.form-login-pwd,.form-login-email,.form-login-username {
-	height:20px;
-	font-size:16px;
-	padding:10px 8px
-}
-
-.form-login-pwd::placeholder,.form-login-email::placeholder,.form-login-username::placeholder {
-	color:#939393
-}
-
-.form-login-username {
-	width:256px
-}
-
-.form-login-pwd::placeholder,.form-login-email::placeholder,.form-login-username::placeholder {
-	color:#939393
-}
-
 .form-message {
 	font-size:20px;
 	color:#555
@@ -143,16 +125,6 @@ select,input {
 .startflow-panel .txt-large.padding-tn {
 	font-size:16px!important
 }
-
-.startflow-panel .txt-large.padding-tn:before {
-	font-weight:500;
-	font-size:20px!important;
-	content:"Your account uses two factor authentication";
-	display:block;
-	padding-right:50px;
-	padding-bottom:20px
-}
-
 
 .startflow-background {
 	background-image:url(moderndeck://sources/img/bg1.jpg);

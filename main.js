@@ -17,7 +17,7 @@ const { autoUpdater } = require('electron-updater');
 const Store = require('electron-store');
 const store = new Store({name:"mtdsettings"});
 
-const devBuildExpiration = {year:2019,month:5,day:1}
+const devBuildExpiration = {year:2019,month:5,day:3}
 // months start at 0 for whatever reason, so number is essentially added by 1
 const devBuildExpirationActive = true;
 
@@ -134,8 +134,8 @@ const template = [
   {
     role: 'help',
     submenu: [
-			{ label: 'Send Feedback', click(){ if (!mainWindow){return;}mainWindow.send("sendFeedback");}},
-			{ label: 'Message @ModernDeck', click(){ if (!mainWindow){electron.shell.openExternal("https://twitter.com/messages/compose?recipient_id=2927859037");return;}mainWindow.send("msgModernDeck"); } },
+		{ label: 'Send Feedback', click(){ if (!mainWindow){return;}mainWindow.send("sendFeedback");}},
+		{ label: 'Message @ModernDeck', click(){ if (!mainWindow){electron.shell.openExternal("https://twitter.com/messages/compose?recipient_id=2927859037");return;}mainWindow.send("msgModernDeck"); } },
     ]
   }
 ]
@@ -376,7 +376,9 @@ function makeWindow() {
 	mainWindow.show();
 
 	if (!store.get("mtd_nativetitlebar")) {
-		mtdAppTag = 'document.querySelector("html").classList.add("mtd-app");\n'
+		mtdAppTag = 'document.querySelector("html").classList.add("mtd-app");\n';
+		mtdAppTag += 'document.querySelector("html").classList.add("mtd-js-app");\n';
+
 		if (process.platform === "darwin") {
 			mtdAppTag += 'document.querySelector("html").classList.add("mtd-app-mac");\n'
 		}

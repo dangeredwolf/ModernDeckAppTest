@@ -603,11 +603,15 @@ option,
 }
 
 input,
-textarea,
 select,
 .uneditable-input
 {
 	border-bottom:2px solid var(--disabledColor)
+}
+
+
+textarea {
+	border:2px solid var(--disabledColor)
 }
 
 .search-input
@@ -756,4 +760,9 @@ button[type="submit"]:active,button[type="submit"]:focus,.mtd-settings-button:fo
 }
 .stroke-twitter-red {
 	stroke:var(--redDefault)
+}
+
+.detail-view-inline-text {
+	color:var(--txtMuteLink);
+	border-bottom:3px solid var(--secondaryColorAlt)
 }

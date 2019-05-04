@@ -48,7 +48,7 @@ html .mdl:not(.med-fullpanel), html .mtd-nav-drawer {
 }
 
 input, textarea, select, .uneditable-input {
-    border-bottom-color:#fff
+    border-color: #fff;
 }
 
 
@@ -172,7 +172,7 @@ html .ovl,
 html .overlay,
 html .ModalOverlay
 {
-    background:rgba(255,255,255,.2)!important
+    background:rgba(255,255,255,.5)!important
 }
 
 html .js-modal[style="display: none;"],html .mtd-nav-drawer-background.mtd-nav-drawer-background-hidden {

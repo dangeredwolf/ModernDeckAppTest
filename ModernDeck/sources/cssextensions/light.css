@@ -917,7 +917,7 @@ textarea::placeholder
 
 textarea
 {
-	border-color:var(--bodyTextColor)
+	border: 2px solid var(--disabledColor)
 }
 
 .column-content
@@ -970,4 +970,9 @@ button[type="submit"]:active,button[type="submit"]:focus,.mtd-settings-button:fo
 }
 .stroke-twitter-red {
 	stroke:var(--redDefault)
+}
+
+.detail-view-inline-text {
+	color:var(--txtMuteLink);
+	border-bottom:3px solid var(--secondaryColorAlt)
 }

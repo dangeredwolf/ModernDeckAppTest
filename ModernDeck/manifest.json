@@ -23,7 +23,6 @@
     {
       "matches": ["https://tweetdeck.twitter.com/*"],
       "js": ["extension/MTDLoad.js"],
-      "css": ["sources/ModernDeck.css"],
       "run_at": "document_end"
     }
   ],

@@ -1654,14 +1654,6 @@ button:hover,button:focus,.Button--primary {
 	pointer-events:none!important
 }
 
-.column-holder .column-panel:nth-child(2),
-.is-shifted-1 .column-panel:nth-child(n+2),
-.is-shifted-2 .column-detail-level-2,
-.is-shifted-2 .column-panel:nth-child(n+3) {
-	transition:left var(--animationTiming) .3s;
-	top:54px
-}
-
 .modal-content {
 	width:100%;
 	position:absolute;

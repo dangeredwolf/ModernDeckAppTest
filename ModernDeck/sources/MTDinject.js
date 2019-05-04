@@ -55,7 +55,7 @@ var isApp = typeof require !== "undefined";
 var isChrome = typeof chrome !== "undefined" && !isEdge && !isFirefox; // may also return true on chromium-based browsers like opera, edge chromium, and electron
 var isWin = navigator.userAgent.indexOf("Windows NT") > -1;
 var isMac = navigator.userAgent.indexOf("Mac OS X") > -1;
-var ctrlShiftText = isMac ? "⇧⌘" : "Ctrl+Shift+";
+var ctrlShiftText = isMac ? "⌘⇧" : "Ctrl+Shift+";
 
 var injectedFonts = false;
 
@@ -206,7 +206,7 @@ var settingsData = {
 				settingsKey:"mtd_theme",
 				default:"default"
 			}, customCss:{
-				title:"Custom CSS",
+				title:"Custom CSS ("+ctrlShiftText+"C disables it in case something went wrong)",
 				type:"textarea",
 				placeholder:":root {\n"+
 				"	--retweetColor:red;\n"+

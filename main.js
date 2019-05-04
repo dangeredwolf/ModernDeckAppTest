@@ -325,10 +325,9 @@ function makeWindow() {
 	});
 
 	if (devBuildExpirationActive) {
-		console.log("\n")
-		console.log(checkDevDate.getFullYear() + " vs " + devBuildExpiration.year);
-		console.log(checkDevDate.getMonth() + " vs " + devBuildExpiration.month);
-		console.log(checkDevDate.getDate() + " vs " + devBuildExpiration.day);
+		console.log("\n");
+		console.log("Expiration date: "+devBuildExpiration.year + "/" + (devBuildExpiration.month<9?"0"+(devBuildExpiration.month+1) : devBuildExpiration.month+1) + "/" + devBuildExpiration.day);
+		console.log("Today's date: "+checkDevDate.getFullYear() + "/" + (checkDevDate.getMonth()<9?"0"+(checkDevDate.getMonth()+1) : checkDevDate.getMonth()+1) + "/" + checkDevDate.getDate())
 
 		if ((!!devBuildExpiration.year && (!!devBuildExpiration.month || devBuildExpiration.month === 0) && !!devBuildExpiration.day) &&
 			checkDevDate.getFullYear() > devBuildExpiration.year ||

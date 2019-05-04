@@ -963,6 +963,7 @@ i {
 }
 
 .icon-user-switch:before,
+.icon-compose-grid:before,
 .Icon--compose-grid:before,
 .Icon--user-switch:before
 {
@@ -1586,6 +1587,10 @@ button:hover,button:focus,.Button--primary {
 	margin:auto;
 	position:relative;
 	transition:transform .25s var(--animationTiming);
+	top:0
+}
+
+.drawer[data-drawer="compose"] .column-holder {
 	top:-54px
 }
 
@@ -1635,10 +1640,6 @@ button:hover,button:focus,.Button--primary {
 	z-index:5;
 	width:100%;
 	transition:opacity var(--animationTiming) .5s,left var(--animationTiming) .5s
-}
-
-.app-columns-container .column-panel {
-	top:54px
 }
 
 .is-shifted-1 .column-panel:not(.column-detail), .is-shifted-2 .column-holder .column-panel:nth-child(2) {
@@ -1707,7 +1708,7 @@ button:hover,button:focus,.Button--primary {
 	pointer-events:all;
 	left:0;
 	opacity:1;
-	top:54px
+	top:0;
 }
 
 .is-shifted-1 .column-detail-level-2 {

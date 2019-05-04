@@ -54,90 +54,90 @@ const mtdSchemeHandler = async (request, callback) => {
 };
 
 const template = [
-  {
-    label: "ModernDeck",
-    role: 'appMenu',
-    submenu: [
-      { label: 'About ModernDeck...', click(){ if (!mainWindow){return;}mainWindow.send("aboutMenu"); } },
-      { type: 'separator' },
+	{
+		label: "ModernDeck",
+		role: 'appMenu',
+		submenu: [
+			{ label: 'About ModernDeck...', click(){ if (!mainWindow){return;}mainWindow.send("aboutMenu"); } },
+			{ type: 'separator' },
 			{ label: 'Preferences...', click(){ if (!mainWindow){return;}mainWindow.send("openSettings"); } },
 			{ label: 'Accounts...', click(){ if (!mainWindow){return;}mainWindow.send("accountsMan"); } },
-      { type: 'separator' },
-      { role: 'services' },
-      { type: 'separator' },
-      { role: 'hide' },
-      { role: 'hideothers' },
-      { role: 'unhide' },
-      { type: 'separator' },
-      { role: 'quit' }
-    ]
-  },
-  {
-    label: 'File',
-    role: 'fileMenu',
-    submenu: [
+			{ type: 'separator' },
+			{ role: 'services' },
+			{ type: 'separator' },
+			{ role: 'hide' },
+			{ role: 'hideothers' },
+			{ role: 'unhide' },
+			{ type: 'separator' },
+			{ role: 'quit' }
+		]
+	},
+	{
+		label: 'File',
+		role: 'fileMenu',
+		submenu: [
 			{ label: 'New Tweet...', click(){ if (!mainWindow){return;}mainWindow.send("newTweet"); } },
 			{ label: 'New Direct Message...', click(){ if (!mainWindow){return;}mainWindow.send("newDM"); } },
-      { type: 'separator' },
-      { role: 'close' }
-    ]
-  },
-  {
-    label: 'Edit',
-    role: 'editMenu',
-    submenu: [
-      { role: 'undo' },
-      { role: 'redo' },
-      { type: 'separator' },
-      { role: 'cut' },
-      { role: 'copy' },
-      { role: 'paste' },
-      { role: 'delete' },
-      { role: 'selectAll' },
-      { type: 'separator' },
-      {
-        label: 'Speech',
-        submenu: [
-            { role: 'startspeaking' },
-            { role: 'stopspeaking' }
-        ]
-      }
-    ]
-  },
-  {
-    label: 'View',
-    role: 'viewMenu',
-    submenu: [
-      { role: 'reload' },
-      { role: 'forcereload' },
-      { type: 'separator' },
-      { role: 'resetzoom' },
-      { role: 'zoomin' },
-      { role: 'zoomout' },
-      { role: 'toggledevtools' },
-      { type: 'separator' },
-      { role: 'togglefullscreen' }
-    ]
-  },
-  {
-    label: 'Window',
-    role: 'windowMenu',
-    submenu: [
-      { role: 'minimize' },
-      { role: 'zoom' },
-      { type: 'separator' },
-      { role: 'front' },
-      { type: 'separator' },
-      { role: 'window' }
-    ]
-  },
-  {
-    role: 'help',
-    submenu: [
-		{ label: 'Send Feedback', click(){ if (!mainWindow){return;}mainWindow.send("sendFeedback");}},
-		{ label: 'Message @ModernDeck', click(){ if (!mainWindow){electron.shell.openExternal("https://twitter.com/messages/compose?recipient_id=2927859037");return;}mainWindow.send("msgModernDeck"); } },
-    ]
-  }
+			{ type: 'separator' },
+			{ role: 'close' }
+		]
+	},
+	{
+		label: 'Edit',
+		role: 'editMenu',
+		submenu: [
+			{ role: 'undo' },
+			{ role: 'redo' },
+			{ type: 'separator' },
+			{ role: 'cut' },
+			{ role: 'copy' },
+			{ role: 'paste' },
+			{ role: 'delete' },
+			{ role: 'selectAll' },
+			{ type: 'separator' },
+			{
+				label: 'Speech',
+				submenu: [
+					{ role: 'startspeaking' },
+					{ role: 'stopspeaking' }
+				]
+			}
+		]
+	},
+	{
+		label: 'View',
+		role: 'viewMenu',
+		submenu: [
+			{ role: 'reload' },
+			{ role: 'forcereload' },
+			{ type: 'separator' },
+			{ role: 'resetzoom' },
+			{ role: 'zoomin' },
+			{ role: 'zoomout' },
+			{ role: 'toggledevtools' },
+			{ type: 'separator' },
+			{ role: 'togglefullscreen' }
+		]
+	},
+	{
+		label: 'Window',
+		role: 'windowMenu',
+		submenu: [
+			{ role: 'minimize' },
+			{ role: 'zoom' },
+			{ type: 'separator' },
+			{ role: 'front' },
+			{ type: 'separator' },
+			{ role: 'window' }
+		]
+	},
+	{
+		role: 'help',
+		submenu: [
+			{ label: 'Send Feedback', click(){ if (!mainWindow){return;}mainWindow.send("sendFeedback");}},
+			{ label: 'Message @ModernDeck', click(){ if (!mainWindow){electron.shell.openExternal("https://twitter.com/messages/compose?recipient_id=2927859037");return;}mainWindow.send("msgModernDeck"); } },
+		]
+	}
 ]
 
 
@@ -217,46 +217,51 @@ function makeLoginWindow(url,teams) {
 
 
 function saveImageAs(url) {
-  function pipePromise(source, outputPath) {
-    if (!outputPath) {
-      return Promise.resolve();
-    }
+	if (!url) {
+		throw "hey man where the URL at";
+		return;
+	}
 
-    const stream = source.pipe(fs.createWriteStream(outputPath));
+	function pipePromise(source, outputPath) {
+		if (!outputPath) {
+			return Promise.resolve();
+		}
 
-    return new Promise((resolve, reject) => {
-      stream.on('finish', resolve);
-      stream.on('error', reject);
-    });
-  };
+		const stream = source.pipe(fs.createWriteStream(outputPath));
 
-  let path = url.match(/\/([A-Z])\w+\.[A-z]+/g)[0];
-  path = path.substr(1);
+		return new Promise((resolve, reject) => {
+			stream.on('finish', resolve);
+			stream.on('error', reject);
+		});
+	};
 
-  function getOutputPath(ext) {
-    return dialog.showSaveDialog({ defaultPath: path });
-  };
+	let path = url.match(/\/([A-Z])\w+\.[A-z]+/g)[0];
+	path = path.substr(1);
 
-    const got = require('got');
+	function getOutputPath(ext) {
+		return dialog.showSaveDialog({ defaultPath: path });
+	};
 
-    const promise = new Promise(resolve => {
-      let resolved;
+	const got = require('got');
 
-      const stream = got.stream(url).pipe(
-        through2(function(chunk, enc, callback) {
-          if (!resolved) {
-            resolve({ ext: imageType(chunk).ext, stream });
-            resolved = true;
-          }
+	const promise = new Promise(resolve => {
+		let resolved;
 
-          this.push(chunk);
-          callback();
-        }
-      ));
-    });
+		const stream = got.stream(url).pipe(
+			through2(function(chunk, enc, callback) {
+				if (!resolved) {
+					resolve({ ext: imageType(chunk).ext, stream });
+					resolved = true;
+				}
 
-    return promise
-      .then(result => pipePromise(result.stream, getOutputPath(result.ext)));
+				this.push(chunk);
+				callback();
+			}
+		));
+	});
+
+	return promise
+	.then(result => pipePromise(result.stream, getOutputPath(result.ext)));
 
 };
 
@@ -273,7 +278,7 @@ function saveWindowBounds() {
 		y: bounds.y,
 		width: bounds.width,
 		height: bounds.height
-  	});
+		});
 
 	store.set("usedDisplay", matchedDisplay.id);
 }
@@ -357,15 +362,15 @@ function makeWindow() {
 			if (response == 1) {
 				var moveMe = app.moveToApplicationsFolder();
 				if (!moveMe){
-		    		dialog.showMessageBox({
-		    			type: "error",
-		    			title: "ModernDeck",
-		    			message: "We couldn't automatically move ModernDeck to the applications folder. You may need to move it yourself.",
-		    			buttons: ["OK"]
-		    		});
+					dialog.showMessageBox({
+						type: "error",
+						title: "ModernDeck",
+						message: "We couldn't automatically move ModernDeck to the applications folder. You may need to move it yourself.",
+						buttons: ["OK"]
+					});
 				}
 			}
-	    });
+		});
 
 	}
 
@@ -582,15 +587,15 @@ function makeWindow() {
 	ipcMain.on("inspectElement",function(event,arg){
 		mainWindow.webContents.inspectElement(arg.x,arg.y);
 	});
-  ipcMain.on("restartApp",function(event,arg){
-      setTimeout(function(){
-        app.relaunch();
-        app.exit();
-      },100);
-  });
-  ipcMain.on("restartAndInstallUpdates",function(event,arg){
-      autoUpdater.quitAndInstall(false,true);
-  });
+	ipcMain.on("restartApp",function(event,arg){
+		setTimeout(function(){
+			app.relaunch();
+			app.exit();
+		},100);
+	});
+	ipcMain.on("restartAndInstallUpdates",function(event,arg){
+		autoUpdater.quitAndInstall(false,true);
+	});
 	ipcMain.on("destroyEverything",function(event,arg){
 		var ses = session.defaultSession;
 		store.clear();
@@ -600,13 +605,13 @@ function makeWindow() {
 		ses.cookies.flushStore(function(){});
 		ses.clearStorageData({
 			storages:['appcache','cookies','filesystem','indexdb','localstorage','shadercache','websql','serviceworkers'],
-        	quotas: ['temporary','persistent','syncable']
-        },function(){
+			quotas: ['temporary','persistent','syncable']
+		},function(){
 			setTimeout(function(){
-    			app.relaunch();
-    			app.exit();
-    		},500);
-    	});
+				app.relaunch();
+				app.exit();
+			},500);
+		});
 
 
 	});
@@ -616,10 +621,10 @@ function makeWindow() {
 		isRestarting = true;
 		store.set("mtd_nativetitlebar",arg);
 
-    	setTimeout(function(){
-    		app.relaunch();
-    		app.exit();
-    	},100);
+		setTimeout(function(){
+			app.relaunch();
+			app.exit();
+		},100);
 
 	});
 

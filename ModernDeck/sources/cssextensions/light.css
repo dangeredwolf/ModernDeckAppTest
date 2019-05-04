@@ -250,6 +250,7 @@ input[type="checkbox"][disabled]:before {
 
 .invalid-char-count,
 .unfollow-text,
+.cancel-req-text,
 #add-filter:not([disabled]),
 .btn-negative:not([disabled]):not(.is-disabled),
 .Button--danger:not([disabled]):not(.is-disabled),

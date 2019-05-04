@@ -7004,7 +7004,7 @@ p[lang="yi"] a[rel="hashtag"],p[lang="yi"] a[rel="user"]
 }
 
 .prf-follow-state .dropdown-menu {
-	top:-288px;
+	top:-275px;
 	right:6px
 }
 
@@ -7932,7 +7932,7 @@ div[data-testid="trend"]>.txt-bold {
 	padding-left:7px
 }
 
-.follow-btn .action-text.pending-text {
+.follow-btn .action-text.pending-text,.follow-btn .action-text.cancel-req-text {
 	padding-left:9px;
 	padding-top:12px
 }

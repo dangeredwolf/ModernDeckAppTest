@@ -5,8 +5,10 @@
 
 "use strict";
 
-var SystemVersion = "7.0 Release Candidate 1 (Build 2019-05-03)";
-var MTDBaseURL = "https://raw.githubusercontent.com/dangeredwolf/ModernDeck/stable/ModernDeck/"; // Defaults to streaming if MTDURLExchange isn't completed properly
+var SystemVersion = "7.0";
+var MTDBaseURL = "https://raw.githubusercontent.com/dangeredwolf/ModernDeck/master/ModernDeck/"; // Defaults to streaming if MTDURLExchange isn't completed properly
+
+//var MTDBaseURL = "https://ton.twimg.com/tweetdeck-deb/web/dist/"
 
 var msgID,
 FetchProfileInfo,
@@ -638,6 +640,20 @@ var settingsData = {
 				},
 				settingsKey:"mtd_nativecontextmenus",
 				default:isApp ? process.platform === "darwin" : false
+			},theme:{
+				title:"App update channel (requires restart)",
+				type:"dropdown",
+				activate:{
+					func:function(opt){
+						setPref("mtd_updatechannel",opt)
+					}
+				},
+				options:{
+					latest:{value:"latest","text":"Latest"},
+					beta:{value:"beta","text":"Beta"}
+				},
+				settingsKey:"mtd_updatechannel",
+				default:"latest"
 			}
 		}}, system: {
 		tabName:"System",
@@ -1710,14 +1726,13 @@ function openSettings(openMenu) {
 		} else if (settingsData[key].enum === "aboutpage") {
 			var logo = make("i").addClass("mtd-logo icon-moderndeck icon");
 			var h1 = make("h1").addClass("mtd-about-title").html("ModernDeck 7");
-			var h2 = make("h2").addClass("mtd-version-title").html(SystemVersion);
+			var h2 = make("h2").addClass("mtd-version-title").html("Version " +SystemVersion);
 			var logoCont = make("div").addClass("mtd-logo-container").append(logo,h1,h2);
 
-			subPanel.append(logoCont)//.append(make("p").html("This early, development version of the ModernDeck app does not have automatic updating yet. This build expires 1 month after the build date shown above. ").append(make("a").attr("href","https://github.com/dangeredwolf/ModernDeckAPPTEST/releases").html("Please check the linked GitHub releases page for updates.")))
-			;
+			subPanel.append(logoCont);
 
 			var updateCont = make("div").addClass("mtd-update-container").html('<div class="mtd-update-spinner preloader-wrapper small active"><div class="spinner-layer"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div>');
-			var updateSpinner = $(".mtd-update-spinner");//$(updateCont.children()[0]);
+			var updateSpinner = $(".mtd-update-spinner");
 			var updateIcon = make("i").addClass("material-icon hidden");
 			var updateh2 = make("h2").addClass("mtd-update-h2").html("Checking for updates...");
 			var updateh3 = make("h3").addClass("mtd-update-h3 hidden").html("");
@@ -1738,14 +1753,18 @@ function openSettings(openMenu) {
 			updateCont.append(updateIcon,updateh2,updateh3,tryAgain,restartNow);
 
 			if (isApp) {
-				subPanel.append(updateCont);
+				if (!html.hasClass("mtd-winstore") && !html.hasClass("mtd-macappstore")) {
+					subPanel.append(updateCont);
+				}
 			}
 
 			subPanel.append(infoCont);
 			//subPanel.append(patronInfo);
 
 			if (isApp) {
-				mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,tryAgain,restartNow);
+				if (!html.hasClass("mtd-winstore") && !html.hasClass("mtd-macappstore")) {
+					mtdAppUpdatePage(updateCont,updateh2,updateh3,updateIcon,updateSpinner,tryAgain,restartNow);
+				}
 			}
 		} else if (settingsData[key].enum === "mutepage") {
 
@@ -1896,7 +1915,8 @@ function navigationSetup() {
 
 	loadPreferences();
 
-	$(".column-scroller,.more-tweets-btn-container").each(function(a,b){ // Fixes a bug in TweetDeck's JS caused by ModernDeck having different animations in column preferences
+	$(".column-scroller,.more-tweets-btn-container").each(function(a,b){
+		// Fixes a bug in TweetDeck's JS caused by ModernDeck having different animations in column settings
 		var c = $(b);
 		mutationObserver(b,function(){
 			if (typeof c.attr("style") !== "undefined") {

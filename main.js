@@ -17,9 +17,9 @@ const { autoUpdater } = require('electron-updater');
 const Store = require('electron-store');
 const store = new Store({name:"mtdsettings"});
 
-const devBuildExpiration = {year:2019,month:5,day:3}
+const devBuildExpiration = {year:2019,month:5,day:4}
 // months start at 0 for whatever reason, so number is essentially added by 1
-const devBuildExpirationActive = true;
+const devBuildExpirationActive = false;
 
 let mainWindow;
 
@@ -33,7 +33,7 @@ let mtdAppTag = '';
 
 autoUpdater.setFeedURL({
 	"owner": "dangeredwolf",
-	"repo": "ModernDeckAPPTEST",
+	"repo": "ModernDeck",
 	"provider": "github"
 });
 
@@ -306,6 +306,10 @@ function makeWindow() {
 		titleBarStyle = "default";
 	}
 
+	if (store.has("mtd_updatechannel")) {
+		autoUpdater.channel = store.get("mtd_updatechannel");
+	}
+
 	mainWindow = new BrowserWindow({
 		width: 975,
 		height: 650,
@@ -341,7 +345,7 @@ function makeWindow() {
 			},function(response){
 				const { shell } = electron;
 				if (response === 0) {
-					shell.openExternal("https://github.com/dangeredwolf/ModernDeckAPPTEST/releases");
+					shell.openExternal("https://github.com/dangeredwolf/ModernDeck/releases");
 				}
 				app.quit();
 			});
@@ -379,9 +383,24 @@ function makeWindow() {
 
 	mainWindow.show();
 
+	dialog.showMessageBox(mainWindow,{
+		title:"ModernDeck",
+		message:"process.windowsStore = "+process.windowsStore,
+		type:"error",
+		buttons:["Close"]},function(response){});
+
+	mtdAppTag += 'document.querySelector("html").classList.add("mtd-js-app");\n';
+
+	if (!!process.windowsStore) {
+		mtdAppTag += 'document.querySelector("html").classList.add("mtd-winstore");\n';
+	}
+
+	if (!!process.mas) {
+		mtdAppTag += 'document.querySelector("html").classList.add("mtd-macappstore");\n';
+	}
+
 	if (!store.get("mtd_nativetitlebar")) {
-		mtdAppTag = 'document.querySelector("html").classList.add("mtd-app");\n';
-		mtdAppTag += 'document.querySelector("html").classList.add("mtd-js-app");\n';
+		mtdAppTag += 'document.querySelector("html").classList.add("mtd-app");\n';
 
 		if (process.platform === "darwin") {
 			mtdAppTag += 'document.querySelector("html").classList.add("mtd-app-mac");\n'

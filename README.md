@@ -1,12 +1,10 @@
 # ModernDeck 7 Beta
 
-[![Build Status](https://travis-ci.com/dangeredwolf/ModernDeckAPPTEST.svg?branch=master)](https://travis-ci.com/dangeredwolf/ModernDeckAPPTEST)
+[![Build Status](https://travis-ci.com/dangeredwolf/ModernDeck.svg?branch=master)](https://travis-ci.com/dangeredwolf/ModernDeck)
 
 Welcome to the future of ModernDeck. ModernDeck is an extension/app for TweetDeck that brings a vastly overhauled interface with tons of Material Design influence, as well as new customisation features.
 
 ModernDeck is designed by dangeredwolf in Columbus, OH and released under the MIT License.
-
-ℹ *This README file is in itself a prototype document dealing with all the new build options for ModernDeck, so bear with me if anything is missing.*
 
 
 
@@ -62,7 +60,7 @@ First, of course, `cd` into a directory where you want to clone the source to.
 
 Next, clone the git.
 
-`git clone https://github.com/dangeredwolf/ModernDeckAPPTEST.git`
+`git clone https://github.com/dangeredwolf/ModernDeck.git`
 
 ⚠ *This URL will only be valid until ModernDeck 7.0 is released, where it will be graduated into the main ModernDeck source tree.*
 
@@ -86,16 +84,16 @@ This will allow you to test code changes without creating an installer every tim
 
 If you want to create the proper installers, you can run:
 
-`npm run dist`
+`npm run build`
 ...to build for every platform your OS supports building for
 
-`npm run distWindows`
+`npm run buildWindows`
 ...to build for Windows
 
-`npm run distMac`
+`npm run buildMac`
 ...to build for macOS
 
-`npm run distLinux`
+`npm run buildLinux`
 ...to build for Linux
 
 
@@ -121,9 +119,7 @@ First, of course, `cd` into a directory where you want to clone the source to.
 
 Next, clone the git.
 
-`git clone https://github.com/dangeredwolf/ModernDeckAPPTEST.git`
-
-⚠ *This URL will only be valid until ModernDeck 7.0 is released, where it will be graduated into the main ModernDeck source tree.*
+`git clone https://github.com/dangeredwolf/ModernDeck.git`
 
 ❓ *You can also use [GitHub Desktop](https://desktop.github.com/) to clone ModernDeck*
 
@@ -144,7 +140,7 @@ Check *Developer Mode* in the corner if you haven't already.
 
 Click the **Load Unpacked** button
 
-Navigate to *ModernDeckAPPTEST\ModernDeck* and click Select Folder
+Navigate to *ModernDeck\ModernDeck* and click Select Folder
 
 
 #### Firefox
@@ -155,7 +151,7 @@ Check **Enable add-on debugging**
 
 Click **Load Temporary Add-on...**
 
-Navigate to *ModernDeckAPPTEST\ModernDeck\manifest.json*
+Navigate to *ModernDeck\ModernDeck\manifest.json*
 
 
 #### Microsoft Edge (Chromium-based)
@@ -185,7 +181,7 @@ Scroll down to the bottom
 
 Click **Load Extension**
 
-Select the folder *ModernDeckAPPTEST\ModernDeck*
+Select the folder *ModernDeck\ModernDeck*
 
 
 #### Opera
@@ -196,7 +192,7 @@ Check **Developer Mode** if you haven't already
 
 Click **Load Unpacked**
 
-Select *ModernDeckAPPTEST\ModernDeck*
+Select *ModernDeck\ModernDeck*
 
 
 ## ❓ Questions?

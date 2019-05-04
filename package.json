@@ -1,8 +1,8 @@
 {
 	"name": "ModernDeck",
-	"version": "0.7.5",
+	"version": "7.0.0",
 	"description": "TweetDeck, but more beautiful and fun than ever.",
-	"homepage": "https://github.com/dangeredwolf/ModernDeckAPPTEST",
+	"homepage": "https://github.com/dangeredwolf/ModernDeck",
 	"bugs": {
 		"url": "https://github.com/dangeredwolf/ModernDeck/issues"
 	},
@@ -32,13 +32,21 @@
 			],
 			"target": [
 				{
-					"target": "nsis",
+					"target": "appx",
 					"arch": [
             "ia32",
             "x64"
 					]
 				}
 			]
+		},
+		"appx": {
+			"publisher":"CN=FEC2801E-B19C-4051-A5E2-465F7B251519",
+			"publisherDisplayName":"dangeredwolf",
+			"identityName":"53434dangeredwolf.ModernDeck",
+      "artifactName":"ModernDeck${arch}.${ext}",
+			"applicationId":"ModernDeck",
+      "backgroundColor":"#0078D7"
 		},
 		"nsis": {
 			"deleteAppDataOnUninstall": true,

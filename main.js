@@ -235,8 +235,8 @@ function saveImageAs(url) {
 		});
 	};
 
-	let path = url.match(/\/([A-Z])\w+\.[A-z]+/g)[0];
-	path = path.substr(1);
+	let path = url.match(/(([A-z_\-])+\w+\.[A-z]+)/g);
+	path = path[1];
 
 	function getOutputPath(ext) {
 		return dialog.showSaveDialog({ defaultPath: path });

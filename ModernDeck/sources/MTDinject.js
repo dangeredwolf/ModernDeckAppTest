@@ -1627,6 +1627,7 @@ function openSettings(openMenu) {
 						// thank you https://sumtips.com/snippets/javascript/tab-in-textarea/ for this amazing hack for tabs to work
 						input.keydown(function(e)
 						{
+
 							var kC = e.keyCode ? e.keyCode : e.charCode ? e.charCode : e.which;
 							if (kC == 9 && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey)
 							{
@@ -2026,6 +2027,8 @@ function navigationSetup() {
 }
 
 function keyboardShortcutHandler(e) {
+	console.log(e);
+
 	if (e.key.toUpperCase() === "A" && (isMac ? e.metaKey : e.ctrlKey) && e.shiftKey) { //pressing Ctrl+Shift+A toggles the outline accessibility option
 		console.log("User has pressed the proper key combination to toggle outlines!");
 

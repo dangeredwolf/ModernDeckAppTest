@@ -668,7 +668,7 @@ var settingsData = {
 		options:{
 			mtdResetSettings:{
 				title:"Reset Settings",
-				label:"<i class=\"icon material-icon mtd-icon-very-large\">restore</i><b>Reset settings</b><br>If you want to reset ModernDeck to default settings, you can do so here.",
+				label:"<i class=\"icon material-icon mtd-icon-very-large\">restore</i><b>Reset settings</b><br>If you want to reset ModernDeck to default settings, you can do so here. This will restart ModernDeck.",
 				type:"button",
 				activate:{
 					func:function(){

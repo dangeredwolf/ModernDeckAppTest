@@ -57,7 +57,7 @@ var isApp = typeof require !== "undefined";
 var isChrome = typeof chrome !== "undefined" && !isEdge && !isFirefox; // may also return true on chromium-based browsers like opera, edge chromium, and electron
 var isWin = navigator.userAgent.indexOf("Windows NT") > -1;
 var isMac = navigator.userAgent.indexOf("Mac OS X") > -1;
-var ctrlShiftText = isMac ? "⌘⇧" : "Ctrl+Shift+";
+var ctrlShiftText = isMac ? "⌃⇧" : "Ctrl+Shift+";
 
 var injectedFonts = false;
 
@@ -2029,7 +2029,7 @@ function navigationSetup() {
 function keyboardShortcutHandler(e) {
 	console.log(e);
 
-	if (e.key.toUpperCase() === "A" && (isMac ? e.metaKey : e.ctrlKey) && e.shiftKey) { //pressing Ctrl+Shift+A toggles the outline accessibility option
+	if (e.key.toUpperCase() === "A" && (e.ctrlKey) && e.shiftKey) { //pressing Ctrl+Shift+A toggles the outline accessibility option
 		console.log("User has pressed the proper key combination to toggle outlines!");
 
 		if ($("#accoutline").length > 0) {
@@ -2039,13 +2039,13 @@ function keyboardShortcutHandler(e) {
 		}
 
 	}
-	if (e.key.toUpperCase() === "C" && (isMac ? e.metaKey : e.ctrlKey) && e.shiftKey) { //pressing Ctrl+Shift+C disabled user CSS
+	if (e.key.toUpperCase() === "C" && (e.ctrlKey) && e.shiftKey) { //pressing Ctrl+Shift+C disabled user CSS
 		console.log("User disabled custom CSS!");
 
 		disableStylesheetExtension("customcss")
 
 	}
-	if (e.key.toUpperCase() === "H" && (isMac ? e.metaKey : e.ctrlKey) && e.shiftKey) { //pressing Ctrl+Shift+H toggles high contrast
+	if (e.key.toUpperCase() === "H" && (e.ctrlKey) && e.shiftKey) { //pressing Ctrl+Shift+H toggles high contrast
 		console.log("User has pressed the proper key combination to toggle high contrast!");
 
 		if ($("#highcont").length > 0) {

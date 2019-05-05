@@ -641,11 +641,18 @@ var settingsData = {
 				settingsKey:"mtd_nativecontextmenus",
 				default:isApp ? process.platform === "darwin" : false
 			},theme:{
-				title:"App update channel (requires restart)",
+				title:"App update channel",
 				type:"dropdown",
 				activate:{
 					func:function(opt){
-						setPref("mtd_updatechannel",opt)
+						setPref("mtd_updatechannel",opt);
+
+						setTimeout(function(){
+							const {ipcRenderer} = require('electron');
+							if (!!ipcRenderer)
+								ipcRenderer.send("changeChannel", opt);
+
+						},300)
 					}
 				},
 				options:{

@@ -383,12 +383,6 @@ function makeWindow() {
 
 	mainWindow.show();
 
-	dialog.showMessageBox(mainWindow,{
-		title:"ModernDeck",
-		message:"process.windowsStore = "+process.windowsStore,
-		type:"error",
-		buttons:["Close"]},function(response){});
-
 	mtdAppTag += 'document.querySelector("html").classList.add("mtd-js-app");\n';
 
 	if (!!process.windowsStore) {
@@ -722,6 +716,10 @@ autoUpdater.on("update-not-available",function(e){
 
 ipcMain.on('checkForUpdates',function(e){
 	autoUpdater.checkForUpdates();
+});
+
+ipcMain.on('changeChannel',function(e){
+	autoUpdater.channel = store.get("mtd_updatechannel");
 });
 
 systemPreferences.on("inverted-color-scheme-changed",function(e,v){

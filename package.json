@@ -32,21 +32,21 @@
 			],
 			"target": [
 				{
-					"target": "appx",
+					"target": "nsisWeb",
 					"arch": [
-            "ia32",
-            "x64"
+						"ia32",
+						"x64"
 					]
 				}
 			]
 		},
 		"appx": {
-			"publisher":"CN=FEC2801E-B19C-4051-A5E2-465F7B251519",
-			"publisherDisplayName":"dangeredwolf",
-			"identityName":"53434dangeredwolf.ModernDeck",
-      "artifactName":"ModernDeck${arch}.${ext}",
-			"applicationId":"ModernDeck",
-      "backgroundColor":"#0078D7"
+			"publisher": "CN=FEC2801E-B19C-4051-A5E2-465F7B251519",
+			"publisherDisplayName": "dangeredwolf",
+			"identityName": "53434dangeredwolf.ModernDeck",
+			"artifactName": "ModernDeck${arch}.${ext}",
+			"applicationId": "ModernDeck",
+			"backgroundColor": "#0078D7"
 		},
 		"nsis": {
 			"deleteAppDataOnUninstall": true,
@@ -84,10 +84,10 @@
 				{
 					"target": "AppImage",
 					"arch": [
-            "x64",
-            "ia32",
-            "arm64",
-            "armv7l"
+						"x64",
+						"ia32",
+						"arm64",
+						"armv7l"
 					]
 				}
 			]

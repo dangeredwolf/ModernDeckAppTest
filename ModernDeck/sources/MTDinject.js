@@ -404,6 +404,18 @@ var settingsData = {
 				settingsKey:"mtd_sensitive_alt",
 				default:false
 			},
+			colNavAlwaysVis:{
+				title:"Always display column icons in navigator",
+				type:"checkbox",
+				activate:{
+					htmlAddClass:"mtd-mtd-column-nav-always-visible"
+				},
+				deactivate:{
+					htmlRemoveClass:"mtd-mtd-column-nav-always-visible"
+				},
+				settingsKey:"mtd_column_nav_always_visible",
+				default:false
+			},
 			accoutline:{
 				headerBefore:"Accessibility",
 				title:"Always show outlines around focused items ("+ctrlShiftText+"A to toggle)",
@@ -645,6 +657,9 @@ var settingsData = {
 				type:"dropdown",
 				activate:{
 					func:function(opt){
+						if (!isApp) {
+							return;
+						}
 						setPref("mtd_updatechannel",opt);
 
 						setTimeout(function(){
@@ -1393,7 +1408,7 @@ function MTDInit(){
 		.replace("Embed this Tweet","Embed Tweet")
 		.replace("Copy link to this Tweet","Copy link address")
 		.replace("Share via Direct Message","Share via message")
-		.replace("Like from accounts…","Like from...")
+		//.replace("Like from accounts…","Like from...")
 		.replace("Send a Direct Message","Send message")
 		.replace("Add or remove from Lists…","Add/remove from list...")
 		.replace("See who quoted this Tweet","View quotes")
@@ -1735,7 +1750,15 @@ function openSettings(openMenu) {
 			var logo = make("i").addClass("mtd-logo icon-moderndeck icon");
 			var h1 = make("h1").addClass("mtd-about-title").html("ModernDeck 7");
 			var h2 = make("h2").addClass("mtd-version-title").html("Version " +SystemVersion);
-			var logoCont = make("div").addClass("mtd-logo-container").append(logo,h1,h2);
+			var logoCont = make("div").addClass("mtd-logo-container");
+
+			if (!isApp) {
+				logoCont.append(
+					make("p").addClass("mtd-check-out-app").html("Did you know ModernDeck has a native app now? <a href='https://github.com/dangeredwolf/ModernDeck/releases'>Check it out!</a>")
+				)
+			}
+
+			logoCont.append(logo,h1,h2);
 
 			subPanel.append(logoCont);
 

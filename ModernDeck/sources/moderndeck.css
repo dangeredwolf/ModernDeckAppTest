@@ -261,13 +261,13 @@ body,body.signin-sheet-present {
 .account-remove-check-open .account-remove-check,
 .contributor-row[data-state="confirmRemove"] .contributor-confirm-remove,
 .contributor-row[data-state="settings"] .contributor-settings {
-	animation:windowDown .2s var(--animationTiming)!important
+	animation:windowDown 0.2s var(--animationTiming)!important
 }
 
 .overlay.mtd-modal-window-fade-out,
 .dropdown-menu.mtd-dropdown-fade-out,
 .accs-header {
-	animation:fadeOut .2s var(--animationTiming)
+	animation:fadeOut 0.2s var(--animationTiming)
 }
 
 .mtd-dropdown-fade-out {
@@ -277,7 +277,7 @@ body,body.signin-sheet-present {
 
 .js-dropdown,
 .js-popover {
-	animation:fadeIn .3s var(--animationTiming)
+	animation:fadeIn 0.3s var(--animationTiming)
 }
 
 .is-actionable,
@@ -448,7 +448,7 @@ body.scroll-v .spinner-layer {
 }
 
 #spinnerContainer {
-	animation:containerRotate 1.568s linear infinite,fadeOut .4s cubic-bezier(.4,0,.2,1)
+	animation:containerRotate 1.568s linear infinite,fadeOut 0.4s cubic-bezier(.4,0,.2,1)
 }
 
 .application {
@@ -1586,7 +1586,7 @@ button:hover,button:focus,.Button--primary {
 	height:100%;
 	margin:auto;
 	position:relative;
-	transition:transform .25s var(--animationTiming);
+	transition:transform 0.25s var(--animationTiming);
 	top:0
 }
 
@@ -1639,7 +1639,7 @@ button:hover,button:focus,.Button--primary {
 	position:absolute;
 	z-index:5;
 	width:100%;
-	transition:opacity var(--animationTiming) .5s,left var(--animationTiming) .5s
+	transition:opacity var(--animationTiming) 0.5s,left var(--animationTiming) 0.5s
 }
 
 .is-shifted-1 .column-panel:not(.column-detail), .is-shifted-2 .column-holder .column-panel:nth-child(2) {
@@ -1929,12 +1929,12 @@ a .column-title-back .icon:after {
 	box-shadow:0 3px 6px var(--lightShadow);
 	overflow:hidden;
 	pointer-events:all;
-	transition:height .25s var(--animationTiming);
+	transition:height 0.25s var(--animationTiming);
 	z-index:13
 }
 
 .is-column-options-animating {
-	transition:height .25s var(--animationTiming)
+	transition:height 0.25s var(--animationTiming)
 }
 
 .column-options .button-tray {
@@ -1992,7 +1992,7 @@ a .column-title-back .icon:after {
 
 .chirp-container {
 	opacity:1!important;
-	transition:padding-top .3s ease-in-out
+	transition:padding-top 0.3s ease-in-out
 }
 
 .draggable-dragging .chirp-container {
@@ -2005,12 +2005,12 @@ a .column-title-back .icon:after {
 }
 
 .column:not(.draggable-dragging) .stream-item,.js-tweet-translation,.replies-after .stream-item.is-actionable {
-	animation:tweetIncomingTimeline .4s var(--animationTiming);
-	transition:background .25s var(--animationTiming),box-shadow .25s var(--animationTiming),transform .25s var(--animationTiming),left .35s var(--animationTiming)
+	animation:tweetIncomingTimeline 0.4s var(--animationTiming);
+	transition:background 0.25s var(--animationTiming),box-shadow 0.25s var(--animationTiming),transform 0.25s var(--animationTiming),left .35s var(--animationTiming)
 }
 
 .js-column-social-proof .stream-item {
-	animation:columnStreamItemSlide .5s var(--animationTiming)!important
+	animation:columnStreamItemSlide 0.5s var(--animationTiming)!important
 }
 
 .item-box {
@@ -2265,7 +2265,7 @@ a .column-title-back .icon:after {
 }
 
 .media-sensitive,.facet-subtitle {
-	transition:opacity .25s var(--animationTiming)
+	transition:opacity 0.25s var(--animationTiming)
 }
 
 .media-sensitive-detail {
@@ -2570,7 +2570,7 @@ div.media-size-small {
 }
 
 .tweet-detail-wrapper,.ovl,.overlay {
-	animation:fadeIn .25s var(--animationTiming)
+	animation:fadeIn 0.25s var(--animationTiming)
 }
 
 .tweet-detail-media {
@@ -2638,7 +2638,7 @@ div.media-size-small {
 }
 
 .rpl textarea {
-	transition:height .25s var(--animationTiming)
+	transition:height 0.25s var(--animationTiming)
 }
 
 .rpl input {
@@ -2695,7 +2695,7 @@ div.media-size-small {
 	top:40px;
 	margin-left:0;
 	overflow:visible;
-	transition:transform .2s var(--animationTiming);
+	transition:transform 0.2s var(--animationTiming);
 	-webkit-app-region:no-drag
 }
 
@@ -2725,7 +2725,7 @@ div.media-size-small {
 }
 
 .app-nav-link,.app-search-fake i {
-	animation:fadeIn .4s forwards var(--animationTiming)
+	animation:fadeIn 0.4s forwards var(--animationTiming)
 }
 
 .app-nav-link i {
@@ -2764,9 +2764,9 @@ div.media-size-small {
 	margin-left:45px;
 	border-radius:32px;
 	transform:scale(0);
-	animation:popIn .5s forwards var(--animationTiming);
+	animation:popIn 0.5s forwards var(--animationTiming);
 	z-index:5;
-	transition:all .2s var(--animationTiming)
+	transition:all 0.2s var(--animationTiming)
 }
 
 .tweet-button>i {
@@ -2782,6 +2782,7 @@ div.media-size-small {
 	height:26px;
 	position:absolute;
 	transform:scale(.85,.85);
+	-moz-transform:scale(.85,.85) translateY(-3px)!important;
 	text-align:center
 }
 
@@ -2795,7 +2796,7 @@ div.media-size-small {
 	z-index:7;
 	background-size:26px 26px;
 	font-style:normal;
-	transition:all .25s var(--animationTiming);
+	transition:all 0.25s var(--animationTiming);
 	opacity:0
 }
 
@@ -2806,8 +2807,8 @@ div.media-size-small {
 
 .tweet-button.is-hidden>i:before {
 	margin-left:108px;
-	transition:all .25s var(--animationTiming);
-	transform:scale(1)
+	transition:all 0.25s var(--animationTiming);
+	transform:scale(1)!important
 }
 
 .attach-compose-buttons {
@@ -2924,7 +2925,7 @@ div.media-size-small {
 	left:0;
 	right:0;
 	border-radius:0;
-	animation:menuDownLarge .4s var(--animationTiming);
+	animation:menuDownLarge 0.4s var(--animationTiming);
 	width:auto
 }
 
@@ -3041,7 +3042,7 @@ div.media-size-small {
 	padding:5px 8px 4px;
 	text-align:center;
 	border-radius:2px;
-	animation:windowDown .3s var(--animationTiming)
+	animation:windowDown 0.3s var(--animationTiming)
 }
 
 .character-count,.character-count-compose {
@@ -3160,7 +3161,7 @@ div.media-size-small {
 	position:absolute;
 	margin:0;
 	max-height:100%;
-	animation:windowSlider .3s var(--animationTiming)
+	animation:windowSlider 0.3s var(--animationTiming)
 }
 
 .Modal {
@@ -3178,7 +3179,7 @@ div.media-size-small {
 	z-index:100;
 	pointer-events:none;
 	opacity:0;
-	transition:opacity .2s ease-in-out
+	transition:opacity 0.2s ease-in-out
 }
 
 .Modal.is-visible {
@@ -3524,7 +3525,7 @@ div.media-size-small {
 	margin-top:8px;
 	left:27%;
 	width:65%;
-	transition:margin .25s var(--animationTiming)
+	transition:margin 0.25s var(--animationTiming)
 }
 
 .application .compose-title {
@@ -3832,7 +3833,7 @@ div.media-size-small {
 	box-shadow:0 3px 6px rgba(0,0,0,.7);
 	border-radius:4px 4px 0 0;
 	pointer-events:all;
-	animation:mediaSlideUp .4s var(--animationTiming)
+	animation:mediaSlideUp 0.4s var(--animationTiming)
 }
 
 .med-embeditem {
@@ -3853,7 +3854,7 @@ div.media-size-small {
 	padding-bottom:0;
 	opacity:1!important;
 	pointer-events:all;
-	animation:windowDown .4s var(--animationTiming)
+	animation:windowDown 0.4s var(--animationTiming)
 }
 
 .s-shorter {
@@ -3899,7 +3900,7 @@ a:hover .icn-button-next {
 }
 
 .embed-modal {
-	transition:height .4s
+	transition:height 0.4s
 }
 
 .embed-modal .mdl-inner {
@@ -4445,7 +4446,7 @@ input[type="checkbox"]:active {
 }
 
 .calweek,#caltitle {
-	animation:menuDownLarge .3s var(--animationTiming);
+	animation:menuDownLarge 0.3s var(--animationTiming);
 	clear:left
 }
 
@@ -4726,7 +4727,7 @@ input[type="checkbox"]:active {
 
 .social-proof-animating {
 	height:0;
-	transition:height .2s;
+	transition:height 0.2s;
 	overflow-y:hidden
 }
 
@@ -4842,7 +4843,7 @@ input[type="checkbox"]:active {
 	width:220px;
 	margin-right:-10px;
 	border-radius:2px;
-	animation:menuDown .3s var(--animationTiming)
+	animation:menuDown 0.3s var(--animationTiming)
 }
 
 .dropdown-menu li:not(.drp-h-divider),.dropdown-menu menuitem:not(.drp-h-divider) {
@@ -4862,7 +4863,7 @@ input[type="checkbox"]:active {
 	top:auto;
 	bottom:0;
 	right:0;
-	animation:menuUp .3s var(--animationTiming)
+	animation:menuUp 0.3s var(--animationTiming)
 }
 
 .ovl-trap {
@@ -4876,8 +4877,8 @@ input[type="checkbox"]:active {
 	box-shadow:0 2px 5px rgba(117,117,117,.8);
 	margin-left:auto;
 	pointer-events:all;
-	animation:leftPopoverDown .25s var(--animationTiming);
-	transition:opacity .25s var(--animationTiming),max-height .2s var(--animationTiming)
+	animation:leftPopoverDown 0.25s var(--animationTiming);
+	transition:opacity 0.25s var(--animationTiming),max-height 0.2s var(--animationTiming)
 }
 
 .popover-content {
@@ -4889,10 +4890,10 @@ input[type="checkbox"]:active {
 	left:65px;
 	top:-45px;
 	right:0;
-	animation:rightPopoverDown .25s var(--animationTiming)
+	animation:rightPopoverDown 0.25s var(--animationTiming)
 }
 
-.mtd-js-app:not(.mtd-app) .popover-position-rt  {
+.mtd-js-app:not(.mtd-app) .popover-position-rt {
 	top:-60px
 }
 
@@ -4957,7 +4958,7 @@ input[type="checkbox"]:active {
 	right:0;
 	overflow:visible;
 	opacity:0;
-	animation:fadeIn .4s forwards 4s var(--animationTiming)
+	animation:fadeIn 0.4s forwards 4s var(--animationTiming)
 }
 
 .mtd-js-app .column-navigator {
@@ -4992,7 +4993,9 @@ input[type="checkbox"]:active {
 }
 
 .mtd-app .column-nav-link,
-.mtd-app .numbered-badge {
+.mtd-app .numbered-badge,
+.mtd-column-nav-always-visible .column-nav-link,
+.mtd-column-nav-always-visible .numbered-badge {
 	transition:0.3s all 0s;
 	transition-delay:0s!important
 }
@@ -5086,7 +5089,7 @@ input[type="checkbox"]:active {
 	margin-bottom:15px;
 	margin-left:10px!important;
 	width:235px;
-	animation:calendarMenuDown .3s var(--animationTiming)
+	animation:calendarMenuDown 0.3s var(--animationTiming)
 }
 
 .js-column-detail .column-title-back:after,.js-tweet-results .column-title-back:after,.js-tweet-social-proof-back:after {
@@ -5365,8 +5368,8 @@ a[rel="user"]:active,
 .js-modal[style="display: none;"] {
 	display:block!important;
 	margin-top:200%;
-	animation:fadeOut .2s forwards var(--animationTiming);
-	transition:margin-top 1s .2s!important
+	animation:fadeOut 0.2s forwards var(--animationTiming);
+	transition:margin-top 1s 0.2s!important
 }
 
 .hide-detail-view-inline .column-navigator {
@@ -5437,7 +5440,8 @@ a[rel="user"]:active,
 	width:35px;
 	font-size:0;
 	padding-top:0;
-	float:right
+	float:right;
+	-moz-transform:translateX(-10px)
 }
 
 .drawer-header,.Panel-header {
@@ -5704,7 +5708,7 @@ a[rel="user"]:active,
 	line-height:50px;
 	opacity:0;
 	pointer-events:none;
-	transition:all .25s var(--animationTiming);
+	transition:all 0.25s var(--animationTiming);
 	z-index:5
 }
 
@@ -5864,7 +5868,7 @@ a[rel="user"]:active,
 .js-column-options .dropdown-menu {
 	margin-bottom:6px;
 	bottom:0;
-	animation:menuUp .4s var(--animationTiming);
+	animation:menuUp 0.4s var(--animationTiming);
 	top:initial
 }
 
@@ -5935,7 +5939,7 @@ a[rel="user"]:active,
 .more-tweets-btn-container--visible .more-tweets-btn,.more-tweets-btn-container--loading .more-tweets-btn {
 	opacity:1;
 	top:25px;
-	animation:moreTweetsButtonDown .7s cubic-bezier(.55,0,.1,1)
+	animation:moreTweetsButtonDown 0.7s cubic-bezier(.55,0,.1,1)
 }
 
 .js-compose-message-recipient-container .typeahead-user-list {
@@ -6152,7 +6156,7 @@ button.mtd-no-transform-case {
 	opacity:0;
 	margin-top:-20px;
 	pointer-events:none;
-	transition:opacity .2s var(--animationTiming),margin-top .2s var(--animationTiming)
+	transition:opacity 0.2s var(--animationTiming),margin-top 0.2s var(--animationTiming)
 }
 
 .contributor-row[data-state="settings"] .contributor-settings-role,.contributor-row[data-state="settings"] .contributor-confirm-change,.contributor-row[data-state="closed"] .contributor-detail,.contributor-row[data-state="settings"] .contributor-remove {
@@ -6418,12 +6422,12 @@ button.mtd-no-transform-case {
 	left:28px;
 	opacity:0;
 	text-align:center;
-	transition:opacity .3s var(--animationTiming) .1s,left .25s var(--animationTiming)
+	transition:opacity 0.3s var(--animationTiming) 0.1s,left 0.25s var(--animationTiming)
 }
 
 .btn-fav-faved-text {
 	left:42px;
-	transition:opacity .4s var(--animationTiming) .13s,left .25s var(--animationTiming)
+	transition:opacity 0.4s var(--animationTiming) 0.13s,left 0.25s var(--animationTiming)
 }
 
 .s-favorited:not(:hover)>.btn-fav-faved-text {
@@ -6474,7 +6478,7 @@ button.mtd-no-transform-case {
 
 .s-profile {
 	overflow-y:auto;
-	animation:profileSlide .7s var(--animationTiming)
+	animation:profileSlide 0.7s var(--animationTiming)
 }
 
 .report-flow {
@@ -6734,7 +6738,7 @@ body>.message-banner[style="color:rgb(85, 85, 85); background-color:rgb(178, 213
 }
 
 .compose .quoted-tweet {
-	animation:menuUpRelative .3s var(--animationTiming)
+	animation:menuUpRelative 0.3s var(--animationTiming)
 }
 
 .compose .quoted-tweet .account-link>.nbfc {
@@ -7236,7 +7240,7 @@ legend.frm-legend+div+.control-group>.control-label,legend.frm-legend+div+div+.c
 }
 
 .sentry-error-embed {
-	animation:windowDown .3s var(--animationTiming)!important;
+	animation:windowDown 0.3s var(--animationTiming)!important;
 	width:600px!important;
 	margin:0 auto!important;
 	max-height:900px!important;
@@ -7629,7 +7633,7 @@ label[for="inline-account-safeguard-checkbox"] {
 .column-content .accordion-panel a[rel="url noopener noreferrer"] {
 	color:var(--rootWhiteColor)!important;
 	opacity:0.4!important;
-	transition:height .25s var(--animationTiming)
+	transition:height 0.25s var(--animationTiming)
 }
 
 .js-stats-list {
@@ -7802,7 +7806,7 @@ body+div,body+div>div {
 	border-radius:5px!important;
 	overflow:hidden!important;
 	pointer-events:none;
-	animation:windowDown .4s var(--animationTiming)
+	animation:windowDown 0.4s var(--animationTiming)
 }
 
 .tweet:not(.txt-mute) .tweet-body {
@@ -8033,13 +8037,13 @@ div[data-testid="trend"]>.txt-bold {
 .ProgressBar::-moz-progress-bar {
 	background-color:#1da1f2;
 	border-radius:2px 0 0 2px;
-	transition:width .6s ease
+	transition:width 0.6s ease
 }
 
 .ProgressBar::-webkit-progress-value {
 	background-color:#1da1f2;
 	border-radius:2px 0 0 2px;
-	transition:width .6s ease
+	transition:width 0.6s ease
 }
 
 .ProgressBar::-webkit-progress-bar {
@@ -8730,7 +8734,7 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 
 .contributor-row {
 	overflow:hidden;
-	transition:background .2s var(--animationTiming),height .2s var(--animationTiming),opacity .2s var(--animationTiming)
+	transition:background 0.2s var(--animationTiming),height 0.2s var(--animationTiming),opacity 0.2s var(--animationTiming)
 }
 
 .padding-a--8 {
@@ -8744,7 +8748,7 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 	bottom:0;
 	order:1;
 	right:-274px;
-	transition:opacity .2s ease-in-out,left .2s ease-in-out,right .2s ease-in-out
+	transition:opacity 0.2s ease-in-out,left 0.2s ease-in-out,right 0.2s ease-in-out
 }
 
 .Drawer--modal.is-open {
@@ -8758,7 +8762,7 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 	order:1;
 	width:608px;
 	position:relative;
-	transition:left .4s ease-in-out,right .4s ease-in-out,margin-left .4s ease-in-out,margin-right .4s ease-in-out
+	transition:left 0.4s ease-in-out,right 0.4s ease-in-out,margin-left 0.4s ease-in-out,margin-right 0.4s ease-in-out
 }
 
 .Drawer--inline.Drawer--large {
@@ -8913,7 +8917,7 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 	max-width:630px;
 	box-shadow:0 5px 15px 1px var(--contextMenuShadow);
 	border-radius:3px;
-	animation:windowDown .4s var(--animationTiming)
+	animation:windowDown 0.4s var(--animationTiming)
 }
 
 .DateRange-presets.PillGroup {
@@ -9261,7 +9265,7 @@ li.padding-axl.flex.flex-row.flex-align--center .fullname {
 }
 
 #mtd_af_mdl {
-	animation:windowDown .3s var(--animationTiming)
+	animation:windowDown 0.3s var(--animationTiming)
 }
 
 @keyframes colourDemoAprilFoolsBackground
@@ -9407,7 +9411,8 @@ html:not(.mtd-app) .windowcontrols, .mtd-app-mac .windowcontrols {
 	right:79px
 }
 
-.mtd-app .column-nav-item,.mtd-app .column-nav-item.is-new {
+.mtd-app .column-nav-item,.mtd-app .column-nav-item.is-new,
+.mtd-mtd-column-nav-always-visible .column-nav-item,.mtd-mtd-column-nav-always-visible .column-nav-item.is-new {
 	opacity:1!important;
 	width:40px!important;
 	transform:none;
@@ -9567,7 +9572,7 @@ html:not(.mtd-app) .windowcontrols, .mtd-app-mac .windowcontrols {
 	padding:20px 23.4px;
 	color:var(--rootWhiteColor);
 	-webkit-app-region:no-drag;
-	transition:color .3s var(--animationTiming), border-bottom .3s var(--animationTiming)
+	transition:color 0.3s var(--animationTiming), border-bottom 0.3s var(--animationTiming)
 }
 
 html:not(.mtd-js-app) .mtd-settings-tab {
@@ -9777,7 +9782,7 @@ label.checkbox::selection,label.control-label::selection {
 	font-size:14px
 }
 
-.dropdown-menu .dropdown-text-large a[data-action]:before  {
+.dropdown-menu .dropdown-text-large a[data-action]:before {
 	display:none!important
 }
 
@@ -9995,7 +10000,7 @@ footer>.js-tweet-stats>.tweet-stats:not(.js-stats-list) {
 	padding:10px
 }
 
-.remove-recent-search-item  {
+.remove-recent-search-item {
 	margin-top:-16px
 }
 
@@ -10032,4 +10037,10 @@ footer>.js-tweet-stats>.tweet-stats:not(.js-stats-list) {
 .padding-l--10 {
 	padding-left:10px;
 	padding-right:10px
+}
+
+.mtd-check-out-app {
+	position:absolute;
+	top:100px;
+	font-size:14px!important
 }

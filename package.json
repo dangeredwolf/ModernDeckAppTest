@@ -44,19 +44,19 @@
 			"publisher": "CN=FEC2801E-B19C-4051-A5E2-465F7B251519",
 			"publisherDisplayName": "dangeredwolf",
 			"identityName": "53434dangeredwolf.ModernDeck",
-			"artifactName": "ModernDeck${arch}.${ext}",
+			"artifactName": "ModernDeck_${arch}.${ext}",
 			"applicationId": "ModernDeck",
 			"backgroundColor": "#0078D7"
 		},
 		"nsis": {
 			"deleteAppDataOnUninstall": true,
-			"artifactName": "ModernDeck7Full${arch}.${ext}",
+			"artifactName": "ModernDeck7Full_${arch}.${ext}",
 			"uninstallDisplayName": "ModernDeck 7",
 			"differentialPackage": true
 		},
 		"nsisWeb": {
 			"deleteAppDataOnUninstall": true,
-			"artifactName": "ModernDeck7${arch}.${ext}",
+			"artifactName": "ModernDeck7_${arch}.${ext}",
 			"uninstallDisplayName": "ModernDeck 7",
 			"differentialPackage": true
 		},
@@ -79,7 +79,7 @@
 				"github"
 			],
 			"maintainer": "dangeredwolf",
-			"artifactName": "ModernDeck7${arch}.${ext}",
+			"artifactName": "ModernDeck7_${arch}.${ext}",
 			"target": [
 				{
 					"target": "AppImage",

@@ -1,4 +1,4 @@
 owner: dangeredwolf
 repo: ModernDeck
 provider: github
-updaterCacheDirName: moderndeck-d-updater
+updaterCacheDirName: moderndeck-updater

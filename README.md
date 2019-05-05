@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/dangeredwolf/ModernDeck.svg?branch=master)](https://travis-ci.com/dangeredwolf/ModernDeck)
 
-Welcome to the future of ModernDeck. ModernDeck is an extension/app for TweetDeck that brings a vastly overhauled interface with tons of Material Design influence, as well as new customisation features.
+ModernDeck is an extension/app for TweetDeck that brings a vastly overhauled interface with tons of Material Design influence, as well as new customisation features.
 
 ModernDeck is designed by dangeredwolf in Columbus, OH and released under the MIT License.
 
@@ -61,8 +61,6 @@ First, of course, `cd` into a directory where you want to clone the source to.
 Next, clone the git.
 
 `git clone https://github.com/dangeredwolf/ModernDeck.git`
-
-⚠ *This URL will only be valid until ModernDeck 7.0 is released, where it will be graduated into the main ModernDeck source tree.*
 
 Finally, install all the necessary dependencies
 

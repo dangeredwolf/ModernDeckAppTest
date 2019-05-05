@@ -668,7 +668,7 @@ var settingsData = {
 		options:{
 			mtdResetSettings:{
 				title:"Reset Settings",
-				label:"<i class=\"icon material-icon mtd-icon-very-large\">restore</i><b>Reset settings</b><br>If you want to reset ModernDeck to default settings, you can do so here.<br>Note: Certain built-in TweetDeck settings cannot be cleared, as they are synced to your Twitter account.",
+				label:"<i class=\"icon material-icon mtd-icon-very-large\">restore</i><b>Reset settings</b><br>If you want to reset ModernDeck to default settings, you can do so here.",
 				type:"button",
 				activate:{
 					func:function(){
@@ -734,7 +734,7 @@ var settingsData = {
 			},
 			mtdLoadBackup:{
 				title:"Load Backup",
-				label:"<i class=\"icon material-icon mtd-icon-very-large\">refresh</i><b>Load backup</b><br>Loads your preferences that you have saved previously.",
+				label:"<i class=\"icon material-icon mtd-icon-very-large\">refresh</i><b>Load backup</b><br>Loads your preferences that you have saved previously. This will restart ModernDeck.",
 				type:"button",
 				activate:{
 					func:function(){
